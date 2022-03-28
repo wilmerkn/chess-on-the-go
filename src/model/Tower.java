@@ -4,7 +4,6 @@ import javax.swing.*;
 
 public class Tower extends ChessPiece{
 
-
     private Icon icon; //used to store the chesspiece sprite
     private ChessPieceType chessPieceType; //enum for type
     private int[] moveset; //check best way to go about it
