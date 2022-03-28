@@ -1,2 +1,4 @@
-package model;public class Board {
+package model;
+
+public class Board {
 }

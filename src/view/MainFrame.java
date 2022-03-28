@@ -1,2 +1,4 @@
-package view;public class MainFrame {
+package view;
+
+public class MainFrame {
 }
