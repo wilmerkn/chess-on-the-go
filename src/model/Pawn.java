@@ -7,11 +7,20 @@ public class Pawn extends ChessPiece{
     private Icon icon; //used to store the chesspiece sprite
     private ChessPieceType chessPieceType; //enum for type
     private int[] moveset; //check best way to go about it
+    private int[] attackMoveset;
     private boolean alive;
 
     public Pawn(){
         this.alive = true;
         this.chessPieceType = ChessPieceType.PAWN;
+    }
+
+    public int[] getAttackMoveset() {
+        return attackMoveset;
+    }
+
+    public void setAttackMoveset(int[] attackMoveset) {
+        this.attackMoveset = attackMoveset;
     }
 
     public int[] getMoveset() {
