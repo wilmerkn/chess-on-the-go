@@ -1,7 +1,6 @@
-import controller.Controller;
-
+import controller.GameLogic;
 public class Main {
     public static void main(String[] args) {
-        Controller controller = new Controller();
+        GameLogic gc = new GameLogic();
     }
 }
