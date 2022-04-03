@@ -2,6 +2,7 @@ package model;
 
 public class Player {
     private String usrName;
+    private String passW;
     private boolean turn;
 
     private int pbScore;
@@ -9,6 +10,10 @@ public class Player {
 
     public Player(){
 
+    }
+
+    public String getPassW() {
+        return passW;
     }
 
     public int getPbScore() {
@@ -29,6 +34,10 @@ public class Player {
 
     public void setPbTime(String pbTime) {
         this.pbTime = pbTime;
+    }
+
+    public void setPassW(String passW) {
+        this.passW = passW;
     }
 
     public void setTurn(boolean turn) {
