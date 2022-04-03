@@ -36,7 +36,7 @@ public class GameTimerTask implements Runnable{
                 String clockdisplay = time.format(formatter); //format time
                 //view.getClock().setText(clockdisplay); //display time in GUI
 
-                System.out.println(clockdisplay);
+                System.out.println(clockdisplay); //debugging, remove when implemented in GUI
 
                 Thread.sleep(1000); //wait 1 sec
 
