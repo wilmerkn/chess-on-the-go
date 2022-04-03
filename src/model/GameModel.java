@@ -1,7 +1,7 @@
 package model;
 
 public class GameModel {
-    ChessPiece[] chessPieces;
+    ChessPieceBluePrint[] chessPieces; //use hashmap instead
 
     public GameModel(){
 
