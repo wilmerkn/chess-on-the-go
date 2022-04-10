@@ -2,7 +2,7 @@ package model;
 
 import javax.swing.*;
 
-public class Pawn implements ChessPieceBluePrint {
+public class Pawn extends ChessPiece {
 
     private Icon icon; //used to store the chesspiece sprite
     private ChessPieceType chessPieceType; //enum for type

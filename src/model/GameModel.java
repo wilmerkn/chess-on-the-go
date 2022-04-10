@@ -1,7 +1,7 @@
 package model;
 
 public class GameModel {
-    private ChessPieceBluePrint[] chessPieces; //use hashmap instead
+    private ChessPiece[] chessPieces; //use hashmap instead
     private Player[] players;
     private int turn;
 
@@ -13,10 +13,6 @@ public class GameModel {
 
     public Player[] getPlayers() {
         return players;
-    }
-
-    public ChessPieceBluePrint[] getChessPieces() {
-        return chessPieces;
     }
 
     public GameTimer getGameTimer() {
@@ -35,11 +31,17 @@ public class GameModel {
         this.players = players;
     }
 
-    public void setChessPieces(ChessPieceBluePrint[] chessPieces) {
-        this.chessPieces = chessPieces;
-    }
-
     public void setGameTimer(GameTimer gameTimer) {
         this.gameTimer = gameTimer;
     }
+
+    public ChessPiece[] getChessPieces() {
+        return chessPieces;
+    }
+
+    public void setChessPieces(ChessPiece[] chessPieces) {
+        this.chessPieces = chessPieces;
+    }
+
+
 }
