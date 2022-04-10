@@ -6,6 +6,7 @@ public class Runner extends ChessPiece {
 
     private Icon icon; //used to store the chesspiece sprite
     private ChessPieceType chessPieceType; //enum for type
+    private ChessPieceColor color;
     private int[] moveset; //check best way to go about it
     private int[] attackMoveset;
     private boolean alive;
