@@ -10,7 +10,11 @@ public class GameLogic {
 
     public GameLogic(){
         this.model = new GameModel();
-        this.view = new GameView();
+        this.view = new GameView(this);
+    }
+
+    public void generateMap(){
+
     }
 
 }
