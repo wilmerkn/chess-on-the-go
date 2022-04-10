@@ -1,5 +1,6 @@
 package model;
 
+//work in progress timer class to measure the time of a occuring game of chess
 public class GameTimer {
 
     private GameTimerTask threadtask;

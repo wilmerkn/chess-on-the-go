@@ -1,5 +1,6 @@
 package model;
 
+//abstract class inherited by chesspieces
 public abstract class ChessPiece implements ChessPieceBluePrint{
 
 

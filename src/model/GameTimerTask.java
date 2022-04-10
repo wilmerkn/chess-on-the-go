@@ -5,6 +5,7 @@ import view.GameView;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
+//task inherited by a thread to start a timer
 //todo currently only shows current time. change to time passed in game
 public class GameTimerTask implements Runnable{
 

@@ -10,11 +10,13 @@ public class Bishop extends ChessPiece {
     private int[] attackMoveset;
     private boolean alive;
 
+    //constructor
     public Bishop(){
         this.alive = true;
         this.chessPieceType = ChessPieceType.BISHOP;
     }
 
+    //getters-setters
     public int[] getAttackMoveset() {
         return attackMoveset;
     }
@@ -51,6 +53,7 @@ public class Bishop extends ChessPiece {
         this.alive = alive;
     }
 
+    //placeholdermethods
     @Override
     public void attack() {
 
@@ -61,6 +64,7 @@ public class Bishop extends ChessPiece {
 
     }
 
+    //to string
     @Override
     public String toString() {
         String outText = String.format("PieceType: " + "%s" + ", piece status: " + "%s", chessPieceType,alive);

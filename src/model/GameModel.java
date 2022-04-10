@@ -1,5 +1,6 @@
 package model;
 
+//model class containing what controller may need
 public class GameModel {
     private ChessPiece[] chessPieces; //use hashmap instead
     private Player[] players;
