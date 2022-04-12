@@ -10,7 +10,6 @@ import java.time.format.DateTimeFormatter;
 import java.time.temporal.TemporalAmount;
 
 //task inherited by a thread to start a timer
-//todo currently only shows current time. change to time passed in game
 public class GameTimerTask implements Runnable{
 
     private boolean stopFlag; //stop flag for while loop
@@ -56,8 +55,8 @@ public class GameTimerTask implements Runnable{
                 hour = formatter.format(hours);
                 minute = formatter.format(minutes); //formats time to 00 unit
                 second = formatter.format(seconds);
-                String time = String.valueOf(hour + ":" + minute + ":" + second);
-                System.out.println(time); //debugging, remove when set in GUI
+                String clockTime = String.valueOf(hour + ":" + minute + ":" + second);
+                System.out.println(clockTime); //debugging, remove when set in GUI
                 seconds++;
 
                 Thread.sleep(1000); //wait 1 sec

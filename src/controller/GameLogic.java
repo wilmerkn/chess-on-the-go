@@ -19,6 +19,10 @@ public class GameLogic {
         //generates Logic map
     }
 
+    public void generateLogicalMap(){
+        //generates String Based map
+    }
+
     public void Update(){
         //update GUI elements
     }
