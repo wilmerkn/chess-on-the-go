@@ -6,10 +6,10 @@ public class GameMap {
     private int mapDimension;
 
 
-    public GameMap(ChessPiece[][] map, String[][] mapRep, int mapDimension){
+    public GameMap(int mapDimension){
         this.mapDimension = mapDimension;
-        this.mapRep = mapRep;
-        this.map = map;
+        this.mapRep = new String[mapDimension][mapDimension];
+        this.map = new ChessPiece[mapDimension][mapDimension];
     }
 
     public void displayMap(){

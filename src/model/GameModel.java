@@ -6,10 +6,13 @@ public class GameModel {
     private Player[] players;
     private int turn;
 
+    private GameMap map;
+
     private GameTimer gameTimer;
 
     public GameModel(){
         gameTimer = new GameTimer();
+        map = new GameMap(8);
     }
 
     public Player[] getPlayers() {
