@@ -18,7 +18,7 @@ public class GameLogic {
 
     public void loadGameMap(){
         model.initializeMap();
-    }
+    } //method to load in a map with all chesspieces
 
     public void Update(){
         //update GUI elements (update positions of sprites then revaluate and repaint)
