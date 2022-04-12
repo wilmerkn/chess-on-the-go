@@ -44,12 +44,12 @@ public class GameTimerTask implements Runnable{
 
                 NumberFormat formatter = new DecimalFormat("00");
                 if (seconds == N) {
-                    seconds = 00; //increment time
+                    seconds = 00; //increment minutes and reset if second = 60
                     minutes++;
                 }
 
                 if (minutes == N) {
-                    minutes = 00;
+                    minutes = 00; //increment hours and reset if minutes = 60
                     hours++;
                 }
                 hour = formatter.format(hours);
