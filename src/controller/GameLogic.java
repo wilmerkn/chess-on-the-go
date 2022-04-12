@@ -26,7 +26,7 @@ public class GameLogic {
 
 
     public void Update(){
-        //update GUI elements
+        //update GUI elements (update positions of sprites then revaluate and repaint)
     }
 
 }

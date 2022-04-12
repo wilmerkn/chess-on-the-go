@@ -12,7 +12,7 @@ public class GameMap {
         this.map = new ChessPieceAbstract[mapDimension][mapDimension];
     }
 
-    //displays string based map and showing the objects stored on the positions
+    //displays string based map and showing the objects stored on the positions (Updates when run)
     public void displayMap(){
         System.out.println("-----------------------------------------------------------");
         for(int row = 0; row < mapDimension; row++){
@@ -24,7 +24,7 @@ public class GameMap {
         System.out.println("-----------------------------------------------------------");
     }
 
-    //displays string based map and showing chosen strings on positions
+    //displays string based map and showing chosen strings on positions (Updates when run)
     public void displayLogicalMap(){
         System.out.println("-----------------------------------------------------------");
         for(int row = 0; row < mapDimension; row++){
