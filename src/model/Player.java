@@ -12,8 +12,9 @@ public class Player {
 
     public Player(String usrName){
         this.usrName = usrName;
-        this.gamesplayed = Integer.valueOf(0); //internally similar to gamesplayed = 0
-        this.gameswon = Integer.valueOf(0);
+        this.gamesplayed = 0; //internally similar to gamesplayed = 0
+        this.gameswon = 0;
+        this.turn = false;
     }
 
     public String getPassW() {
