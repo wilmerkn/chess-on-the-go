@@ -2,14 +2,17 @@ package model;
 
 //model class containing what controller may need
 public class GameModel {
-    private ChessPiece[] chessPieces; //use hashmap instead
+    private ChessPieceAbstract[] chessPieces; //use hashmap instead
     private Player[] players;
     private int turn;
+
+    private GameMap map;
 
     private GameTimer gameTimer;
 
     public GameModel(){
         gameTimer = new GameTimer();
+        map = new GameMap(8);
     }
 
     public Player[] getPlayers() {
@@ -36,13 +39,11 @@ public class GameModel {
         this.gameTimer = gameTimer;
     }
 
-    public ChessPiece[] getChessPieces() {
+    public ChessPieceAbstract[] getChessPieces() {
         return chessPieces;
     }
 
-    public void setChessPieces(ChessPiece[] chessPieces) {
+    public void setChessPieces(ChessPieceAbstract[] chessPieces) {
         this.chessPieces = chessPieces;
     }
-
-
 }
