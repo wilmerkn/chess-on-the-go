@@ -2,27 +2,28 @@ package model;
 
 import javax.swing.*;
 
-public class Queen extends ChessPiece {
-
+public class ChessPieceChar extends ChessPiece{
     private Icon icon; //used to store the chesspiece sprite
     private ChessPieceType chessPieceType; //enum for type
-    private ChessPieceColor color;
+    private ChessPieceColor color; //color of a chesspiece (white/black)
     private int[] moveset; //check best way to go about it
     private int[] attackMoveset;
     private boolean alive;
 
-    public Queen(){
+    //constructor color will be null
+    public ChessPieceChar(){
         this.alive = true;
-        this.chessPieceType = ChessPieceType.QUEEN;
+        this.chessPieceType = ChessPieceType.BISHOP;
     }
 
     //constructor to give chesspiece color
-    public Queen(ChessPieceColor color){
+    public ChessPieceChar(ChessPieceColor color){
         this.alive = true;
-        this.chessPieceType = ChessPieceType.QUEEN;
+        this.chessPieceType = ChessPieceType.BISHOP;
         this.color = color;
     }
 
+    //getters-setters
     public int[] getAttackMoveset() {
         return attackMoveset;
     }
@@ -59,6 +60,7 @@ public class Queen extends ChessPiece {
         this.alive = alive;
     }
 
+    //placeholdermethods
     @Override
     public void attack() {
 
@@ -69,10 +71,10 @@ public class Queen extends ChessPiece {
 
     }
 
+    //to string
     @Override
     public String toString() {
         String outText = String.format("PieceType: " + "%s" + ", piece status: " + "%s" + " piece color: " + "%s", chessPieceType,alive,color);
         return outText;
     }
-
 }
