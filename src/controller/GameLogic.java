@@ -13,10 +13,6 @@ public class GameLogic {
     public GameLogic() {
         this.model = new GameModel();
         this.view = new GameView(this);
-
-
-        model.setMap(new GameMap(10));
-        model.getMap().displayMap();
     }
 
     public void generateMap(){
