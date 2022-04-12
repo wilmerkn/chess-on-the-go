@@ -1,10 +1,11 @@
 package model;
 
+import java.util.HashMap;
+
 public class GameMap {
     private ChessPieceAbstract[][] map;
     private String[][] mapRep;
     private int mapDimension;
-
 
     public GameMap(int mapDimension){
         this.mapDimension = mapDimension;
