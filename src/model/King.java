@@ -71,7 +71,7 @@ public class King extends ChessPiece {
 
     @Override
     public String toString() {
-        String outText = String.format("PieceType: " + "%s" + ", piece status: " + "%s", chessPieceType,alive);
+        String outText = String.format("PieceType: " + "%s" + ", piece status: " + "%s" + " piece color: " + "%s", chessPieceType,alive,color);
         return outText;
     }
 }
