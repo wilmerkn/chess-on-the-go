@@ -14,10 +14,6 @@ public class GameLogic {
     public GameLogic() {
         this.model = new GameModel();
         this.view = new GameView(this);
-
-        model.setMap(new GameMap(8));
-        loadGameMap();
-        model.getMap().displayMap();
     }
 
     public void loadGameMap(){
