@@ -10,6 +10,8 @@ public class GameModel {
 
     private GameTimer gameTimer;
 
+    private ChessPiece chessPiece;
+
     public GameModel(){
         gameTimer = new GameTimer();
         map = new GameMap(8);
@@ -45,5 +47,21 @@ public class GameModel {
 
     public void setChessPieces(ChessPieceAbstract[] chessPieces) {
         this.chessPieces = chessPieces;
+    }
+
+    public ChessPiece getChessPiece() {
+        return chessPiece;
+    }
+
+    public GameMap getMap() {
+        return map;
+    }
+
+    public void setChessPiece(ChessPiece chessPiece) {
+        this.chessPiece = chessPiece;
+    }
+
+    public void setMap(GameMap map) {
+        this.map = map;
     }
 }

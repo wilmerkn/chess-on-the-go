@@ -12,12 +12,28 @@ public class GameMap {
         this.map = new ChessPieceAbstract[mapDimension][mapDimension];
     }
 
+    //displays string based map and showing the objects stored on the positions
     public void displayMap(){
-
+        System.out.println("-----------------------------------------------------------");
+        for(int row = 0; row < mapDimension; row++){
+            for(int col = 0; col < mapDimension; col++){
+                System.out.print("[" +map[row][col]+ "]" + " ");
+            }
+            System.out.println();
+        }
+        System.out.println("-----------------------------------------------------------");
     }
 
-    public void displayRepMap(){
-
+    //displays string based map and showing chosen strings on positions
+    public void displayLogicalMap(){
+        System.out.println("-----------------------------------------------------------");
+        for(int row = 0; row < mapDimension; row++){
+            for(int col = 0; col < mapDimension; col++){
+                System.out.print("[" +mapRep[row][col]+ "]" + " ");
+            }
+            System.out.println();
+        }
+        System.out.println("-----------------------------------------------------------");
     }
 
     public ChessPieceAbstract[][] getMap() {
