@@ -106,7 +106,5 @@ public class RegisterView extends JFrame implements ActionListener{
         if (e.getSource() == cancelButton) {
             System.out.println("Going back to login-screen");
         }
-
-
     }
 }
