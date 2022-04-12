@@ -11,10 +11,10 @@ public class GameTimer {
 
     public void turnOn(){
         new Thread(this.threadtask = new GameTimerTask()).start();
-    }
+    } //starts timer
 
     public void turnOff(){
         threadtask.setStopFlag(true);
-    }
+    } //stops timer
 
 }

@@ -1,7 +1,7 @@
 package model;
 
 public class GameMap {
-    private ChessPiece[][] map;
+    private ChessPieceAbstract[][] map;
     private String[][] mapRep;
     private int mapDimension;
 
@@ -9,7 +9,7 @@ public class GameMap {
     public GameMap(int mapDimension){
         this.mapDimension = mapDimension;
         this.mapRep = new String[mapDimension][mapDimension];
-        this.map = new ChessPiece[mapDimension][mapDimension];
+        this.map = new ChessPieceAbstract[mapDimension][mapDimension];
     }
 
     public void displayMap(){
@@ -20,7 +20,7 @@ public class GameMap {
 
     }
 
-    public ChessPiece[][] getMap() {
+    public ChessPieceAbstract[][] getMap() {
         return map;
     }
 
