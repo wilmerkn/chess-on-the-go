@@ -14,12 +14,13 @@ public class ChessPieceChar extends ChessPiece{
     public ChessPieceChar(){
         this.alive = true;
         this.chessPieceType = ChessPieceType.BISHOP;
+        this.color = ChessPieceColor.WHITE;
     }
 
     //constructor to give chesspiece color
-    public ChessPieceChar(ChessPieceColor color){
+    public ChessPieceChar(ChessPieceColor color, ChessPieceType chessPieceType){
         this.alive = true;
-        this.chessPieceType = ChessPieceType.BISHOP;
+        this.chessPieceType = chessPieceType;
         this.color = color;
     }
 
@@ -71,10 +72,10 @@ public class ChessPieceChar extends ChessPiece{
 
     }
 
-    //to string
+    //to-string
     @Override
     public String toString() {
-        String outText = String.format("PieceType: " + "%s" + ", piece status: " + "%s" + " piece color: " + "%s", chessPieceType,alive,color);
+        String outText = String.format("%s" + " color: " + "%s", chessPieceType,color);
         return outText;
     }
 }
