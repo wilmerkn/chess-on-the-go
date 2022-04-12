@@ -43,6 +43,4 @@ public class GameModel {
     public void setChessPieces(ChessPiece[] chessPieces) {
         this.chessPieces = chessPieces;
     }
-
-
 }

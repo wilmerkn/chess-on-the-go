@@ -6,12 +6,12 @@ public class Bishop extends ChessPiece {
 
     private Icon icon; //used to store the chesspiece sprite
     private ChessPieceType chessPieceType; //enum for type
-    private ChessPieceColor color;
+    private ChessPieceColor color; //color of a chesspiece (white/black)
     private int[] moveset; //check best way to go about it
     private int[] attackMoveset;
     private boolean alive;
 
-    //constructor
+    //constructor color will be null
     public Bishop(){
         this.alive = true;
         this.chessPieceType = ChessPieceType.BISHOP;
