@@ -16,6 +16,13 @@ public class Pawn extends ChessPiece {
         this.chessPieceType = ChessPieceType.PAWN;
     }
 
+    //constructor to give chesspiece color
+    public Pawn(ChessPieceColor color){
+        this.alive = true;
+        this.chessPieceType = ChessPieceType.PAWN;
+        this.color = color;
+    }
+
     public int[] getAttackMoveset() {
         return attackMoveset;
     }

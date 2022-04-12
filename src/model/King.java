@@ -16,6 +16,13 @@ public class King extends ChessPiece {
         this.chessPieceType = ChessPieceType.KING;
     }
 
+    //constructor to give chesspiece color
+    public King(ChessPieceColor color){
+        this.alive = true;
+        this.chessPieceType = ChessPieceType.KING;
+        this.color = color;
+    }
+
     public int[] getAttackMoveset() {
         return attackMoveset;
     }

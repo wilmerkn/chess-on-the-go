@@ -16,6 +16,13 @@ public class Tower extends ChessPiece {
         this.chessPieceType = ChessPieceType.TOWER;
     }
 
+    //constructor to give chesspiece color
+    public Tower(ChessPieceColor color){
+        this.alive = true;
+        this.chessPieceType = ChessPieceType.TOWER;
+        this.color = color;
+    }
+
     public int[] getAttackMoveset() {
         return attackMoveset;
     }

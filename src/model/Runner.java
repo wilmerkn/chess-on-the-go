@@ -16,6 +16,13 @@ public class Runner extends ChessPiece {
         this.chessPieceType = ChessPieceType.RUNNER;
     }
 
+    //constructor to give chesspiece color
+    public Runner(ChessPieceColor color){
+        this.alive = true;
+        this.chessPieceType = ChessPieceType.RUNNER;
+        this.color = color;
+    }
+
     public int[] getAttackMoveset() {
         return attackMoveset;
     }

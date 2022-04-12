@@ -17,6 +17,13 @@ public class Bishop extends ChessPiece {
         this.chessPieceType = ChessPieceType.BISHOP;
     }
 
+    //constructor to give chesspiece color
+    public Bishop(ChessPieceColor color){
+        this.alive = true;
+        this.chessPieceType = ChessPieceType.BISHOP;
+        this.color = color;
+    }
+
     //getters-setters
     public int[] getAttackMoveset() {
         return attackMoveset;
