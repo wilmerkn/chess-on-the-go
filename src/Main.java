@@ -1,7 +1,8 @@
 import controller.GameLogic;
+import view.LoginView;
 
 public class Main {
     public static void main(String[] args) {
-        GameLogic gc = new GameLogic();
+        LoginView login = new LoginView();
     }
 }
