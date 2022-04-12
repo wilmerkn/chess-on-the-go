@@ -16,6 +16,13 @@ public class King extends ChessPiece {
         this.chessPieceType = ChessPieceType.KING;
     }
 
+    //constructor to give chesspiece color
+    public King(ChessPieceColor color){
+        this.alive = true;
+        this.chessPieceType = ChessPieceType.KING;
+        this.color = color;
+    }
+
     public int[] getAttackMoveset() {
         return attackMoveset;
     }
@@ -64,7 +71,7 @@ public class King extends ChessPiece {
 
     @Override
     public String toString() {
-        String outText = String.format("PieceType: " + "%s" + ", piece status: " + "%s", chessPieceType,alive);
+        String outText = String.format("PieceType: " + "%s" + ", piece status: " + "%s" + " piece color: " + "%s", chessPieceType,alive,color);
         return outText;
     }
 }

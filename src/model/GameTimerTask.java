@@ -2,8 +2,12 @@ package model;
 
 import view.GameView;
 
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.TemporalAmount;
 
 //task inherited by a thread to start a timer
 //todo currently only shows current time. change to time passed in game
@@ -11,17 +15,22 @@ public class GameTimerTask implements Runnable{
 
     private boolean stopFlag; //stop flag for while loop
     private GameView view; //access to view to change text in components
-    private DateTimeFormatter formatter; //formatter to format correct time
+
+    private int hours;
+    private int minutes;
+    private int seconds;
+    private String hour;
+    private String minute;
+    private String second;
+    private static final int N = 60;
 
     public GameTimerTask(){
         this.view = null;
         stopFlag = false;
-        formatter = DateTimeFormatter.ofPattern("HH:mm:ss"); //time in hours, minutes, seconds
     }
     public GameTimerTask(GameView view){
         this.view = view;
         stopFlag = false;
-        formatter = DateTimeFormatter.ofPattern("HH:mm:ss"); //time in hours, minutes, seconds
     }
 
     public void setStopFlag(boolean stopFlag) {
@@ -30,14 +39,26 @@ public class GameTimerTask implements Runnable{
 
     @Override
     public void run() {
+
         while(!stopFlag){
             try{
 
-                LocalDateTime time = LocalDateTime.now(); //get local time
-                String clockdisplay = time.format(formatter); //format time
-                //view.getClock().setText(clockdisplay); //display time in GUI
+                NumberFormat formatter = new DecimalFormat("00");
+                if (seconds == N) {
+                    seconds = 00; //increment time
+                    minutes++;
+                }
 
-                System.out.println(clockdisplay); //debugging, remove when implemented in GUI
+                if (minutes == N) {
+                    minutes = 00;
+                    hours++;
+                }
+                hour = formatter.format(hours);
+                minute = formatter.format(minutes); //formats time to 00 unit
+                second = formatter.format(seconds);
+                String time = String.valueOf(hour + ":" + minute + ":" + second);
+                System.out.println(time); //debugging, remove when set in GUI
+                seconds++;
 
                 Thread.sleep(1000); //wait 1 sec
 

@@ -16,6 +16,13 @@ public class Pawn extends ChessPiece {
         this.chessPieceType = ChessPieceType.PAWN;
     }
 
+    //constructor to give chesspiece color
+    public Pawn(ChessPieceColor color){
+        this.alive = true;
+        this.chessPieceType = ChessPieceType.PAWN;
+        this.color = color;
+    }
+
     public int[] getAttackMoveset() {
         return attackMoveset;
     }
@@ -64,7 +71,7 @@ public class Pawn extends ChessPiece {
 
     @Override
     public String toString() {
-        String outText = String.format("PieceType: " + "%s" + ", piece status: " + "%s", chessPieceType,alive);
+        String outText = String.format("PieceType: " + "%s" + ", piece status: " + "%s" + " piece color: " + "%s", chessPieceType,alive,color);
         return outText;
     }
 }
