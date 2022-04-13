@@ -83,14 +83,11 @@ fabric.properties
 
 ### Intellij Patch ###
 # Comment Reason: https://github.com/joeblau/gitignore.io/issues/186#issuecomment-215987721
-# Wilmers local xml files, can't change branch etc because of these files,
-#they block most everything, google says they should be in gitignore
+# Comment Reason: https://github.com/toptal/gitignore.io/issues/215
 
-.chess-on-the-go.iml
-.misc.xml
-.modules.xml
-.runConfigurations.xml
-.vcs.xml
+*.iml
+*.xml
+
 # modules.xml
 # .idea/misc.xml
 # *.ipr
