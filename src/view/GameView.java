@@ -8,4 +8,8 @@ public class GameView {
     public GameView(GameLogic gameLogic){
         this.gameLogic = gameLogic;
     }
+
+    public void updateGUI(){
+        gameLogic.Update();
+    }
 }

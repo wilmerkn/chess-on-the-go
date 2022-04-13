@@ -7,6 +7,8 @@ import java.sql.Time;
 import java.util.HashMap;
 import java.util.Map;
 
+//functionality: Map generation, ingame timer (count up).
+
 public class GameLogic {
 
     private GameView view;
@@ -16,9 +18,8 @@ public class GameLogic {
         this.model = new GameModel();
         this.view = new GameView(this);
 
-        model.setMap(new GameMap(8));
-        initializeMap();
-        model.getMap().displayMap();
+        //all game code runs here
+
     }
 
     public void initializeMap(){
