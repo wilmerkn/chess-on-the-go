@@ -19,7 +19,9 @@ public class GameLogic {
         this.view = new GameView(this);
 
         //all game code runs here
-
+        model.setMap(new GameMap(8));
+        initializeMap();
+        model.getMap().displayMap();
     }
 
     public void initializeMap(){
@@ -57,6 +59,10 @@ public class GameLogic {
         gamemap[7][5] = chesspieces.get(4);
         gamemap[7][6] = chesspieces.get(3);
         gamemap[7][7] = chesspieces.get(2);
+    }
+
+    public void drawPlayer2Map(){
+        //draw player 1 map but upside down
     }
 
     public void Update(){
