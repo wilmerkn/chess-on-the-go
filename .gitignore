@@ -87,6 +87,7 @@ fabric.properties
 
 *.iml
 *.xml
+.modules.xml
 
 # modules.xml
 # .idea/misc.xml
