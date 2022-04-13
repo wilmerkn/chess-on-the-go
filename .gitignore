@@ -83,8 +83,12 @@ fabric.properties
 
 ### Intellij Patch ###
 # Comment Reason: https://github.com/joeblau/gitignore.io/issues/186#issuecomment-215987721
+# Comment Reason: https://github.com/toptal/gitignore.io/issues/215
 
-# *.iml
+*.iml
+*.xml
+.modules.xml
+
 # modules.xml
 # .idea/misc.xml
 # *.ipr
@@ -208,3 +212,8 @@ $RECYCLE.BIN/
 *.lnk
 
 # End of https://www.toptal.com/developers/gitignore/api/macos,intellij,windows,java,linux
+.idea/misc.xml
+.idea/modules.xml
+.idea/runConfigurations.xml
+.idea/vcs.xml
+chess-on-the-go.iml
