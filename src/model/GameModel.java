@@ -1,8 +1,9 @@
 package model;
 
+import java.util.HashMap;
+
 //model class containing what controller may need
 public class GameModel {
-    private ChessPieceAbstract[] chessPieces; //use hashmap instead
     private Player[] players;
     private int turn;
 
@@ -10,9 +11,26 @@ public class GameModel {
 
     private GameTimer gameTimer;
 
+    private ChessPiece chessPiece;
+
+    private HashMap<Integer,ChessPieceAbstract> chesspieces = new HashMap<Integer,ChessPieceAbstract>();
+
     public GameModel(){
         gameTimer = new GameTimer();
         map = new GameMap(8);
+
+        chesspieces.put(1, new ChessPiece(ChessPieceColor.WHITE, ChessPieceType.PAWN)); //white Pawn
+        chesspieces.put(2, new ChessPiece(ChessPieceColor.WHITE, ChessPieceType.TOWER)); //white Tower
+        chesspieces.put(3, new ChessPiece(ChessPieceColor.WHITE, ChessPieceType.RUNNER)); //white Runner
+        chesspieces.put(4, new ChessPiece(ChessPieceColor.WHITE, ChessPieceType.BISHOP)); //white Bishop
+        chesspieces.put(5, new ChessPiece(ChessPieceColor.WHITE, ChessPieceType.QUEEN)); //white Queen
+        chesspieces.put(6, new ChessPiece(ChessPieceColor.WHITE, ChessPieceType.KING)); //white King
+        chesspieces.put(7, new ChessPiece(ChessPieceColor.BLACK, ChessPieceType.PAWN)); //black Pawn
+        chesspieces.put(8, new ChessPiece(ChessPieceColor.BLACK, ChessPieceType.TOWER)); //black Tower
+        chesspieces.put(9, new ChessPiece(ChessPieceColor.BLACK, ChessPieceType.RUNNER)); //black Runner
+        chesspieces.put(10, new ChessPiece(ChessPieceColor.BLACK, ChessPieceType.BISHOP)); //black Bishop
+        chesspieces.put(11, new ChessPiece(ChessPieceColor.BLACK, ChessPieceType.QUEEN)); //black Queen
+        chesspieces.put(12, new ChessPiece(ChessPieceColor.BLACK, ChessPieceType.KING)); //black King
     }
 
     public Player[] getPlayers() {
@@ -39,11 +57,27 @@ public class GameModel {
         this.gameTimer = gameTimer;
     }
 
-    public ChessPieceAbstract[] getChessPieces() {
-        return chessPieces;
+    public HashMap<Integer, ChessPieceAbstract> getChesspieces() {
+        return chesspieces;
     }
 
-    public void setChessPieces(ChessPieceAbstract[] chessPieces) {
-        this.chessPieces = chessPieces;
+    public void setChesspieces(HashMap<Integer, ChessPieceAbstract> chesspieces) {
+        this.chesspieces = chesspieces;
+    }
+
+    public ChessPiece getChessPiece() {
+        return chessPiece;
+    }
+
+    public GameMap getMap() {
+        return map;
+    }
+
+    public void setChessPiece(ChessPiece chessPiece) {
+        this.chessPiece = chessPiece;
+    }
+
+    public void setMap(GameMap map) {
+        this.map = map;
     }
 }
