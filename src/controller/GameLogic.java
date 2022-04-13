@@ -7,6 +7,8 @@ import java.sql.Time;
 import java.util.HashMap;
 import java.util.Map;
 
+//functionality: Map generation, ingame timer (count up).
+
 public class GameLogic {
 
     private GameView view;
