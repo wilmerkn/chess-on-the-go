@@ -5,7 +5,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.Color;
-import controller.Controller;
+import controller.LoginController;
 
 
 public class LoginView extends JFrame implements ActionListener {
@@ -95,7 +95,7 @@ public class LoginView extends JFrame implements ActionListener {
         if (e.getSource() == loginButton) {
             System.out.println("Logging in");
             //osäker på om det är "secure" att skicka pass så här
-            Controller.checkLogin(userText.getText(),String.valueOf(passText.getPassword()));
+            LoginController.checkLogin(userText.getText(),String.valueOf(passText.getPassword()));
         }
         if (e.getSource() == registerButton) {
             System.out.println("Register");

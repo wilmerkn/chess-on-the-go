@@ -5,7 +5,6 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.Color;
-import controller.Controller;
 
 
 public class RegisterView extends JFrame implements ActionListener{
