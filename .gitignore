@@ -83,8 +83,11 @@ fabric.properties
 
 ### Intellij Patch ###
 # Comment Reason: https://github.com/joeblau/gitignore.io/issues/186#issuecomment-215987721
+# Comment Reason: https://github.com/toptal/gitignore.io/issues/215
 
-# *.iml
+*.iml
+*.xml
+
 # modules.xml
 # .idea/misc.xml
 # *.ipr
