@@ -1,3 +1,5 @@
+package controller;
+
 import controller.GameLogic;
 import view.LoginView;
 
