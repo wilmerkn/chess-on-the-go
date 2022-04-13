@@ -3,13 +3,18 @@ package model;
 public class Player {
     private String usrName;
     private String passW;
+    private int gamesplayed;
+    private int gameswon;
     private boolean turn;
 
     private int pbScore;
     private String pbTime;
 
-    public Player(){
-
+    public Player(String usrName){
+        this.usrName = usrName;
+        this.gamesplayed = 0; //internally similar to gamesplayed = 0
+        this.gameswon = 0;
+        this.turn = false;
     }
 
     public String getPassW() {
@@ -28,6 +33,22 @@ public class Player {
         return usrName;
     }
 
+    public int getGamesPlayed()
+    {
+        return gamesplayed;
+    }
+
+    public int getGamesWon()
+    {
+        return gameswon;
+    }
+
+    public int getWinPercentage()
+    {
+        //formula to get the percentage
+        return 0;
+    }
+
     public void setPbScore(int pbScore) {
         this.pbScore = pbScore;
     }
@@ -38,6 +59,16 @@ public class Player {
 
     public void setPassW(String passW) {
         this.passW = passW;
+    }
+
+    public void setGamesPlayed(int gamesP)
+    {
+        this.gamesplayed = gamesP;
+    }
+
+    public void setGamesWon(int gamesW)
+    {
+        this.gameswon = gamesW;
     }
 
     public void setTurn(boolean turn) {

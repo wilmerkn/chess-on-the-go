@@ -27,30 +27,29 @@ public class BoardView {
 
     private class BoardPanel extends JPanel {
 
-        private final List<SquarePanel> boardSquares;
-
+        JComponent[][] buttons = new JComponent[8][8];
+        int colorCount = 0;
         public BoardPanel() {
             super(new GridLayout(8, 8));
-            this.boardSquares =  new ArrayList<>();
-            for (int i = 0; i < 64; i++) {
-                SquarePanel squarePanel = new SquarePanel(i);
-                squarePanel.assignColor(i);
-                this.boardSquares.add(squarePanel);
-                this.add(squarePanel);
+            for (int row = 0; row < 8; row++){
+                for(int col = 0; col < 8; col++){
+                    SquarePanel squarePanel = new SquarePanel();
+                    squarePanel.assignColor(colorCount);
+                    buttons[row][col] = squarePanel;
+                    this.add(squarePanel);
+                    colorCount++;
+                }
             }
-
 
             setPreferredSize(BOARD_DIMENSION);
             setVisible(true);
             validate();
         }
-
     }
 
     private class SquarePanel extends JPanel {
 
-        public SquarePanel (int squareID) {
-            this.add(new JLabel("Index: " + squareID));
+        public SquarePanel () {
 
             setPreferredSize(SQUARE_DIMENSION);
             setVisible(true);
