@@ -14,6 +14,7 @@ public class BoardView {
     private final static Dimension BOARD_DIMENSION = new Dimension(400, 300);
     private final static Dimension SQUARE_DIMENSION = new Dimension(15, 15);
 
+    //constructor
     public BoardView() {
         this.frame = new JFrame();
         this.boardPanel = new BoardPanel();
@@ -25,6 +26,7 @@ public class BoardView {
     }
 
 
+    //generates board and stores squares in 2D array
     private class BoardPanel extends JPanel {
 
         JComponent[][] buttons = new JComponent[8][8];
@@ -47,6 +49,7 @@ public class BoardView {
         }
     }
 
+    //panel for the squares
     private class SquarePanel extends JPanel {
 
         public SquarePanel () {
@@ -55,6 +58,7 @@ public class BoardView {
             setVisible(true);
         }
 
+        //draws board with chess color pattern
         public void assignColor(int squareID) {
             int row = squareID/8;
             if(squareID % 2 == 0 ) {
