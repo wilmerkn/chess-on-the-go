@@ -14,12 +14,18 @@ public class BoardView {
     private final static Dimension BOARD_DIMENSION = new Dimension(400, 300);
     private final static Dimension SQUARE_DIMENSION = new Dimension(15, 15);
 
+    private Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
+
+    private int res_x = (int) screen.getWidth();
+    private int res_y = (int) screen.getHeight();
+
     //constructor
     public BoardView() {
         this.frame = new JFrame();
         this.boardPanel = new BoardPanel();
         this.frame.setTitle("Chess");
         this.frame.setSize(CLIENT_DIMENSION);
+        this.frame.setLocation(((int) res_x/2 - ((int)CLIENT_DIMENSION.getWidth()/2)),((int) res_y/2 - ((int)CLIENT_DIMENSION.getHeight()/2))); //devide screen res by 2 and subtract half dimension of client window (centers the window)
         this.frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         this.frame.setVisible(true);
         this.frame.add(boardPanel, BorderLayout.CENTER);
