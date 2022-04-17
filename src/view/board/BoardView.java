@@ -18,8 +18,11 @@ public class BoardView {
     private final static Color DARK_SQUARE_COLOR = new Color(82, 146, 82);
     private static final Border HIGHLIGHTER = BorderFactory.createLineBorder(Color.yellow, 3);
 
+    private BoardPanel boardPanel;
+    private boolean mouseListenerEnabled;
+
     public BoardView() {
-        BoardPanel boardPanel = new BoardPanel();
+        this.boardPanel = new BoardPanel();
         JFrame frame = new JFrame();
         frame.setTitle("Chess");
         frame.setSize(CLIENT_DIMENSION);
@@ -27,6 +30,8 @@ public class BoardView {
         frame.setVisible(true);
         frame.add(boardPanel, BorderLayout.CENTER);
         boardPanel.populateBoard();
+
+        mouseListenerEnabled = true;
     }
 
     private class BoardPanel extends JPanel {
@@ -45,57 +50,74 @@ public class BoardView {
                     setPreferredSize(BOARD_DIMENSION);
                     setVisible(true);
                     validate();
-                    squarePanel.addMouseListener(new MouseListener() {
-                        @Override
-                        public void mouseClicked(MouseEvent e) { }
-
-                        @Override
-                        public void mousePressed(MouseEvent e) {
-                            if(SwingUtilities.isLeftMouseButton(e))  {
-                                if(sourceRow < 0 || sourceCol < 0) {
-                                    sourceRow = squarePanel.getRow();
-                                    sourceCol = squarePanel.getCol();
-                                    squares[sourceRow][sourceCol].toggleHighlight();
-                                    targetRow = targetCol = -1;
-                                } else {
-                                    targetRow = squarePanel.getRow();
-                                    targetCol = squarePanel.getCol();
-                                    movePiece(squares[sourceRow][sourceCol], squares[targetRow][targetCol]);
-                                    squares[sourceRow][sourceCol].toggleHighlight();
-                                    sourceRow = sourceCol = targetRow = targetCol = -1;
-                                }
-                            } else if (SwingUtilities.isRightMouseButton(e) && !(sourceRow == -1 && sourceCol ==-1)) {
-                                squares[sourceRow][sourceCol].toggleHighlight();
-                                sourceRow = sourceCol = targetRow = targetCol = -1;
-                            }
-                        }
-
-                        @Override
-                        public void mouseReleased(MouseEvent e) { }
-
-                        @Override
-                        public void mouseEntered(MouseEvent e) { }
-
-                        @Override
-                        public void mouseExited(MouseEvent e) { }
-                    });
+                    squarePanel.addMouseListener(createMouselistener(squares[row][col]));
                 }
             }
         }
 
         private void movePiece(SquarePanel source, SquarePanel target) {
-            if(target.isOccupied()) target.removePiece();
+            if(!source.isOccupied()) return;
+            else if (target.isOccupied()) target.removePiece();
             target.placePiece(source.getPiece());
             source.removePiece();
         }
 
-        public void populateBoard() {
+        private void populateBoard() {
             for (int i = 0; i < 8; i++) {
                 squares[0][i].placePiece(null);
                 squares[1][i].placePiece(null);
                 squares[6][i].placePiece(null);
                 squares[7][i].placePiece(null);
             }
+        }
+
+        private void enableMouseListener() {
+            mouseListenerEnabled = true;
+        }
+
+        private void disableMouseListener() {
+            mouseListenerEnabled = false;
+        }
+
+        private MouseListener createMouselistener(SquarePanel squarePanel) {
+            return new MouseListener() {
+                @Override
+                public void mouseClicked(MouseEvent e) { }
+
+                @Override
+                public void mousePressed(MouseEvent e) {
+                    if(SwingUtilities.isLeftMouseButton(e))  {
+                        if(!mouseListenerEnabled) return;
+                        if(sourceRow < 0 || sourceCol < 0) {
+                            sourceRow = squarePanel.getRow();
+                            sourceCol = squarePanel.getCol();
+                            squares[sourceRow][sourceCol].toggleHighlight();
+                            targetRow = targetCol = -1;
+                        } else {
+                            targetRow = squarePanel.getRow();
+                            targetCol = squarePanel.getCol();
+                            movePiece(squares[sourceRow][sourceCol], squares[targetRow][targetCol]);
+                            squares[sourceRow][sourceCol].toggleHighlight();
+                            sourceRow = sourceCol = targetRow = targetCol = -1;
+                        }
+                    } else if (SwingUtilities.isRightMouseButton(e) && !(sourceRow == -1 && sourceCol ==-1)) {
+                        squares[sourceRow][sourceCol].toggleHighlight();
+                        sourceRow = sourceCol = targetRow = targetCol = -1;
+                    } else if(SwingUtilities.isMiddleMouseButton(e)) { // Skräp
+                        if(mouseListenerEnabled) disableMouseListener();
+                        else enableMouseListener();
+                    }
+                }
+
+                @Override
+                public void mouseReleased(MouseEvent e) { }
+
+                @Override
+                public void mouseEntered(MouseEvent e) { }
+
+                @Override
+                public void mouseExited(MouseEvent e) { }
+            };
         }
     }
 
@@ -166,9 +188,8 @@ public class BoardView {
         }
 
         private void toggleHighlight() {
-            if(this.getBorder() != null) {
-                this.setBorder(null);
-            } else this.setBorder(HIGHLIGHTER);
+            if(this.getBorder() != null) this.setBorder(null);
+            else this.setBorder(HIGHLIGHTER);
         }
     }
 }
