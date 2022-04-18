@@ -89,6 +89,7 @@ public class BoardView {
                     if(SwingUtilities.isLeftMouseButton(e))  {
                         if(!mouseListenerEnabled) return;
                         if(sourceRow < 0 || sourceCol < 0) {
+                            if(!squarePanel.isOccupied()) return;
                             sourceRow = squarePanel.getRow();
                             sourceCol = squarePanel.getCol();
                             squares[sourceRow][sourceCol].toggleHighlight();
@@ -103,9 +104,6 @@ public class BoardView {
                     } else if (SwingUtilities.isRightMouseButton(e) && !(sourceRow == -1 && sourceCol ==-1)) {
                         squares[sourceRow][sourceCol].toggleHighlight();
                         sourceRow = sourceCol = targetRow = targetCol = -1;
-                    } else if(SwingUtilities.isMiddleMouseButton(e)) { // Skräp
-                        if(mouseListenerEnabled) disableMouseListener();
-                        else enableMouseListener();
                     }
                 }
 
