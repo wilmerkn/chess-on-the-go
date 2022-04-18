@@ -1,13 +1,9 @@
-package model;
+package server.model;
 
-import view.GameView;
+import client.GameView;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
-import java.time.temporal.TemporalAmount;
 
 //task inherited by a thread to start a timer
 public class GameTimerTask implements Runnable{

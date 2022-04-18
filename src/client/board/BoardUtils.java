@@ -1,4 +1,4 @@
-package view.board;
+package client.board;
 
 import javax.swing.*;
 import java.awt.*;

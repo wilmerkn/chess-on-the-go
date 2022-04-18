@@ -1,6 +1,4 @@
-package model;
-
-import java.util.HashMap;
+package server.model;
 
 public class GameMap {
     private ChessPieceAbstract[][] map;

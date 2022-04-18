@@ -1,11 +1,11 @@
-package model;
+package server.model;
 
 //enum with all types of chesspieces
 public enum ChessPieceType {
     KING,
     QUEEN,
     PAWN,
-    TOWER,
+    ROOK,
     BISHOP,
-    RUNNER
+    KNIGHT
 }
