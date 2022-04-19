@@ -1,6 +1,6 @@
-package view;
+package client;
 
-import controller.GameLogic;
+import server.controller.GameLogic;
 
 public class GameView {
     private GameLogic gameLogic;

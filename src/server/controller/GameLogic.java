@@ -1,11 +1,9 @@
-package controller;
+package server.controller;
 
-import model.*;
-import view.GameView;
+import server.model.*;
+import client.GameView;
 
-import java.sql.Time;
 import java.util.HashMap;
-import java.util.Map;
 
 //functionality: Map generation, ingame timer (count up).
 

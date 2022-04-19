@@ -1,11 +1,16 @@
-package view;
+package client;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.Color;
-import controller.LoginController;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.util.Objects;
+
+import server.controller.LoginController;
 
 
 public class LoginView extends JFrame implements ActionListener {
@@ -41,8 +46,8 @@ public class LoginView extends JFrame implements ActionListener {
 
 
         try{
-            image = new ImageIcon(getClass().getResource("Chess-Knight.png"));
-            scaledImage = image.getImage().getScaledInstance(100,100,Image.SCALE_DEFAULT);
+            BufferedImage knightImage = ImageIO.read(new File("sprites/Chess-Knight.png"));
+            scaledImage = knightImage.getScaledInstance(100,100,Image.SCALE_DEFAULT);
             resizedImage = new ImageIcon(scaledImage);
             pictureLabel = new JLabel(resizedImage);
             picturePanel.add(pictureLabel);
