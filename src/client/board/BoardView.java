@@ -9,6 +9,7 @@ import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
 
 public class BoardView {
     private final static Dimension CLIENT_DIMENSION = new Dimension(600, 600);
@@ -20,6 +21,7 @@ public class BoardView {
 
     private BoardPanel boardPanel;
     private boolean mouseListenerEnabled;
+    private final HashMap<String, JLabel> notationToJLMap = BoardUtils.pieceNotationToJL();
 
     public BoardView() {
         this.boardPanel = new BoardPanel();
@@ -29,15 +31,10 @@ public class BoardView {
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         frame.setVisible(true);
         frame.add(boardPanel, BorderLayout.CENTER);
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                boardPanel.populateBoard();
-            }
-        });
-
+        boardPanel.populateBoard();
 
         mouseListenerEnabled = true;
+
     }
 
     private class BoardPanel extends JPanel {
@@ -69,12 +66,26 @@ public class BoardView {
         }
 
         private void populateBoard() {
+            squares[0][0].placePiece(notationToJLMap.get("BR"));
+            squares[0][1].placePiece(notationToJLMap.get("BN"));
+            squares[0][2].placePiece(notationToJLMap.get("BB"));
+            squares[0][3].placePiece(notationToJLMap.get("BQ"));
+            squares[0][4].placePiece(notationToJLMap.get("BK"));
+            squares[0][5].placePiece(notationToJLMap.get("BB"));
+            squares[0][6].placePiece(notationToJLMap.get("BN"));
+            squares[0][7].placePiece(notationToJLMap.get("BR"));
             for (int i = 0; i < 8; i++) {
-                squares[0][i].placePiece(null);
-                squares[1][i].placePiece(null);
-                squares[6][i].placePiece(null);
-                squares[7][i].placePiece(null);
+                squares[1][i].placePiece(notationToJLMap.get("BP"));
+                squares[6][i].placePiece(notationToJLMap.get("WP"));
             }
+            squares[7][0].placePiece(notationToJLMap.get("WR"));
+            squares[7][1].placePiece(notationToJLMap.get("WN"));
+            squares[7][2].placePiece(notationToJLMap.get("WB"));
+            squares[7][3].placePiece(notationToJLMap.get("WQ"));
+            squares[7][4].placePiece(notationToJLMap.get("WK"));
+            squares[7][5].placePiece(notationToJLMap.get("WB"));
+            squares[7][6].placePiece(notationToJLMap.get("WN"));
+            squares[7][7].placePiece(notationToJLMap.get("WR"));
         }
 
         private void enableMouseListener() {
@@ -92,6 +103,7 @@ public class BoardView {
 
                 @Override
                 public void mousePressed(MouseEvent e) {
+
                     if(SwingUtilities.isLeftMouseButton(e))  {
                         if(!mouseListenerEnabled) return;
                         if(sourceRow < 0 || sourceCol < 0) {
@@ -163,24 +175,21 @@ public class BoardView {
             }
         }
 
-        private void placePiece(JLabel pieceToMove) {
-            try {
-                BufferedImage knightImage = ImageIO.read(new File("sprites/Chess-Knight.png"));
-                knightImage = BoardUtils.fitImageToJPanel(this, knightImage);
-                piece = new JLabel(new ImageIcon(knightImage));
-                this.add(piece);
-
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+        private void placePiece(JLabel pieceJL) {
+            JLabel newPieceJL = BoardUtils.cloneIconJL(pieceJL);
+            this.removePiece();
+            piece = newPieceJL;
+            this.add(newPieceJL);
             validate();
         }
 
         private void removePiece() {
-            this.remove(piece);
-            piece = null;
-            revalidate();
-            repaint();
+            if(piece != null) {
+                this.remove(piece);
+                piece = null;
+                revalidate();
+                repaint();
+            }
         }
 
         private JLabel getPiece() {
