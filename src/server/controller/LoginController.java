@@ -1,4 +1,4 @@
-package controller;
+package server.controller;
 
 public class LoginController {
     public static void checkLogin(String user, String password){

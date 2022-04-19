@@ -1,8 +1,8 @@
-package model;
+package server.model;
 
 import java.util.HashMap;
 
-//model class containing what controller may need
+//server.model class containing what server.controller may need
 public class GameModel {
     private Player[] players;
     private int turn;
@@ -20,14 +20,14 @@ public class GameModel {
         map = new GameMap(8);
 
         chesspieces.put(1, new ChessPiece(ChessPieceColor.WHITE, ChessPieceType.PAWN)); //white Pawn
-        chesspieces.put(2, new ChessPiece(ChessPieceColor.WHITE, ChessPieceType.TOWER)); //white Tower
-        chesspieces.put(3, new ChessPiece(ChessPieceColor.WHITE, ChessPieceType.RUNNER)); //white Runner
+        chesspieces.put(2, new ChessPiece(ChessPieceColor.WHITE, ChessPieceType.ROOK)); //white Tower
+        chesspieces.put(3, new ChessPiece(ChessPieceColor.WHITE, ChessPieceType.KNIGHT)); //white Runner
         chesspieces.put(4, new ChessPiece(ChessPieceColor.WHITE, ChessPieceType.BISHOP)); //white Bishop
         chesspieces.put(5, new ChessPiece(ChessPieceColor.WHITE, ChessPieceType.QUEEN)); //white Queen
         chesspieces.put(6, new ChessPiece(ChessPieceColor.WHITE, ChessPieceType.KING)); //white King
         chesspieces.put(7, new ChessPiece(ChessPieceColor.BLACK, ChessPieceType.PAWN)); //black Pawn
-        chesspieces.put(8, new ChessPiece(ChessPieceColor.BLACK, ChessPieceType.TOWER)); //black Tower
-        chesspieces.put(9, new ChessPiece(ChessPieceColor.BLACK, ChessPieceType.RUNNER)); //black Runner
+        chesspieces.put(8, new ChessPiece(ChessPieceColor.BLACK, ChessPieceType.ROOK)); //black Tower
+        chesspieces.put(9, new ChessPiece(ChessPieceColor.BLACK, ChessPieceType.KNIGHT)); //black Runner
         chesspieces.put(10, new ChessPiece(ChessPieceColor.BLACK, ChessPieceType.BISHOP)); //black Bishop
         chesspieces.put(11, new ChessPiece(ChessPieceColor.BLACK, ChessPieceType.QUEEN)); //black Queen
         chesspieces.put(12, new ChessPiece(ChessPieceColor.BLACK, ChessPieceType.KING)); //black King

@@ -1,4 +1,4 @@
-package view.board;
+package client.board;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -29,7 +29,13 @@ public class BoardView {
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         frame.setVisible(true);
         frame.add(boardPanel, BorderLayout.CENTER);
-        boardPanel.populateBoard();
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                boardPanel.populateBoard();
+            }
+        });
+
 
         mouseListenerEnabled = true;
     }

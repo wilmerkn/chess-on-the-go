@@ -1,11 +1,11 @@
-package view;
+package client;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.Color;
-import controller.LoginController;
+import server.controller.LoginController;
 
 
 public class LoginView extends JFrame implements ActionListener {
