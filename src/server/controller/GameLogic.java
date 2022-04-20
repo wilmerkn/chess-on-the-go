@@ -17,9 +17,7 @@ public class GameLogic {
         this.view = new GameView(this);
 
         //all game code runs here
-        model.setMap(new GameMap(8));
-        initializeMap();
-        model.getMap().displayMap();
+
     }
 
     public void initializeMap(){
@@ -65,6 +63,8 @@ public class GameLogic {
 
     public void Update(){
         //update GUI elements (update positions of sprites then revaluate and repaint)
+        
+        
     }
 
 }
