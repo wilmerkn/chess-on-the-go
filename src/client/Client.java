@@ -1,9 +1,11 @@
 package client;
 
+import server.controller.LoginController;
+
 public class Client {
 
     public static void main(String[] args) {
-        LoginView login = new LoginView();
+        LoginController loginController = new LoginController();
 
 
     }
