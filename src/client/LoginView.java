@@ -101,6 +101,7 @@ public class LoginView extends JFrame implements ActionListener {
             System.out.println("Logging in");
             //osäker på om det är "secure" att skicka pass så här
             LoginController.checkLogin(userText.getText(),String.valueOf(passText.getPassword()));
+            loginFrame.setVisible(false);
         }
         if (e.getSource() == registerButton) {
             System.out.println("Register");
