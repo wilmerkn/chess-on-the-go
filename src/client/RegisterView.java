@@ -103,9 +103,12 @@ public class RegisterView extends JFrame implements ActionListener{
     public void actionPerformed(ActionEvent e) {
 
         if (e.getSource() == registerButton) {
-            System.out.println("Registered");
+            System.out.println("New user registered");
+            registerFrame.dispose();
+
         }
         if (e.getSource() == cancelButton) {
+            registerFrame.dispose();
             System.out.println("Going back to login-screen");
         }
     }

@@ -26,9 +26,10 @@ public class BoardView {
     public BoardView() {
         this.boardPanel = new BoardPanel();
         JFrame frame = new JFrame();
-        frame.setTitle("Chess");
+        frame.setTitle("Chess On The Go");
         frame.setSize(CLIENT_DIMENSION);
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        frame.setLocationRelativeTo(null);
         frame.setVisible(true);
         frame.add(boardPanel, BorderLayout.CENTER);
         boardPanel.populateBoard();
