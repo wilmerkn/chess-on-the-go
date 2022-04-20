@@ -62,9 +62,14 @@ public class GameLogic {
     }
 
     public void Update(){
+        int mapDim = model.getMap().getMapDimension();
         //update GUI elements (update positions of sprites then revaluate and repaint)
         
-        
+        for(int row = 0; row < mapDim; row++){
+            for(int col = 0; col < mapDim; col++){
+
+            }
+        }
     }
 
 }
