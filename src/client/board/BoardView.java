@@ -1,5 +1,8 @@
 package client.board;
 
+import org.w3c.dom.ranges.Range;
+import server.model.ChessPiece;
+
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.border.Border;
@@ -22,6 +25,10 @@ public class BoardView {
     private BoardPanel boardPanel;
     private boolean mouseListenerEnabled;
     private final HashMap<String, JLabel> notationToJLMap = BoardUtils.pieceNotationToJL();
+
+
+
+    private JLabel checkLabel;
 
     public BoardView() {
         this.boardPanel = new BoardPanel();
@@ -97,7 +104,10 @@ public class BoardView {
             mouseListenerEnabled = false;
         }
 
-        private MouseListener createMouselistener(SquarePanel squarePanel) {
+
+
+        //fix this later
+        private MouseListener createMouselistener(SquarePanel squarePanel){
             return new MouseListener() {
                 @Override
                 public void mouseClicked(MouseEvent e) { }
@@ -113,12 +123,255 @@ public class BoardView {
                             sourceCol = squarePanel.getCol();
                             squares[sourceRow][sourceCol].toggleHighlight();
                             targetRow = targetCol = -1;
+                            System.out.println("row "+sourceRow);
+                            System.out.println("col "+sourceCol);
+
                         } else {
                             targetRow = squarePanel.getRow();
                             targetCol = squarePanel.getCol();
-                            movePiece(squares[sourceRow][sourceCol], squares[targetRow][targetCol]);
-                            squares[sourceRow][sourceCol].toggleHighlight();
-                            sourceRow = sourceCol = targetRow = targetCol = -1;
+
+                            //if the chess piece is a white pawn
+                            if(targetRow-sourceRow==-1 & targetCol-sourceCol==0 & squares[sourceRow][sourceCol].getPiece().getIcon()==notationToJLMap.get("WP").getIcon()){
+                                movePiece(squares[sourceRow][sourceCol], squares[targetRow][targetCol]);
+                                squares[sourceRow][sourceCol].toggleHighlight();
+                                sourceRow = sourceCol = targetRow = targetCol = -1;
+                            }
+
+                            //if the chess piece is a black pawn
+                            else if(targetRow-sourceRow==1 & targetCol - sourceCol == 0 & squares[sourceRow][sourceCol].getPiece().getIcon()==notationToJLMap.get("BP").getIcon()){
+                                movePiece(squares[sourceRow][sourceCol], squares[targetRow][targetCol]);
+                                squares[sourceRow][sourceCol].toggleHighlight();
+                                sourceRow = sourceCol = targetRow = targetCol = -1;
+                            }
+
+                            //if the chess piece is a black rook
+                            else if(squares[sourceRow][sourceCol].getPiece().getIcon()==notationToJLMap.get("BR").getIcon()){
+                                if(sourceCol==targetCol){
+                                    if (sourceRow < targetRow) {
+                                        for (int i = sourceRow + 1; i <= targetRow; i++)
+                                            movePiece(squares[sourceRow][sourceCol], squares[targetRow][targetCol]);
+                                    } else {
+                                        for (int i = sourceRow - 1; i >= targetRow; i--) {
+                                            movePiece(squares[sourceRow][sourceCol], squares[targetRow][targetCol]);
+                                        }
+                                    }
+                                    squares[sourceRow][sourceCol].toggleHighlight();
+                                    sourceRow = sourceCol = targetRow = targetCol = -1;
+                                }
+                                else if(sourceRow==targetRow){
+                                    if(sourceCol < targetCol) {
+                                        for (int i = sourceCol + 1; i <= targetCol; i++) {
+                                            movePiece(squares[sourceRow][sourceCol], squares[targetRow][targetCol]);
+                                        }
+                                    }
+                                    else{
+                                        for(int i = sourceCol -1; i >= targetCol; i--){
+                                            movePiece(squares[sourceRow][sourceCol], squares[targetRow][targetCol]);
+                                        }
+                                    }
+                                    squares[sourceRow][sourceCol].toggleHighlight();
+                                    sourceRow = sourceCol = targetRow = targetCol = -1;
+                                }
+                            }
+
+                            //if the chess piece is a white rook
+                            else if(squares[sourceRow][sourceCol].getPiece().getIcon()==notationToJLMap.get("WR").getIcon()){
+                                if(sourceCol==targetCol){
+                                    if (sourceRow < targetRow) {
+                                        for (int i = sourceRow + 1; i <= targetRow; i++)
+                                            movePiece(squares[sourceRow][sourceCol], squares[targetRow][targetCol]);
+                                    } else {
+                                        for (int i = sourceRow - 1; i >= targetRow; i--) {
+                                            movePiece(squares[sourceRow][sourceCol], squares[targetRow][targetCol]);
+                                        }
+                                    }
+                                    squares[sourceRow][sourceCol].toggleHighlight();
+                                    sourceRow = sourceCol = targetRow = targetCol = -1;
+                                }
+                                else if(sourceRow==targetRow){
+                                    if(sourceCol < targetCol) {
+                                        for (int i = sourceCol + 1; i <= targetCol; i++) {
+                                            movePiece(squares[sourceRow][sourceCol], squares[targetRow][targetCol]);
+                                        }
+                                    }
+                                    else{
+                                        for(int i = sourceCol -1; i >= targetCol; i--){
+                                            movePiece(squares[sourceRow][sourceCol], squares[targetRow][targetCol]);
+                                        }
+                                    }
+                                    squares[sourceRow][sourceCol].toggleHighlight();
+                                    sourceRow = sourceCol = targetRow = targetCol = -1;
+                                }
+                            }
+
+                            //if the chess piece is a black bishop
+                            else if(squares[sourceRow][sourceCol].getPiece().getIcon()==notationToJLMap.get("BB").getIcon()){
+                                if( Math.abs(sourceRow-targetRow) == Math.abs(sourceCol-targetCol)) {
+                                    movePiece(squares[sourceRow][sourceCol], squares[targetRow][targetCol]);
+                                    squares[sourceRow][sourceCol].toggleHighlight();
+                                    sourceRow = sourceCol = targetRow = targetCol = -1;
+                                }
+                            }
+
+                            //if the chess piece is a white bishop
+                            else if(squares[sourceRow][sourceCol].getPiece().getIcon()==notationToJLMap.get("WB").getIcon()){
+                                if( Math.abs(sourceRow-targetRow) == Math.abs(sourceCol-targetCol)) {
+                                    movePiece(squares[sourceRow][sourceCol], squares[targetRow][targetCol]);
+                                    squares[sourceRow][sourceCol].toggleHighlight();
+                                    sourceRow = sourceCol = targetRow = targetCol = -1;
+                                }
+                            }
+
+                            //if the chess piece is a white knight
+                            else if(squares[sourceRow][sourceCol].getPiece().getIcon()==notationToJLMap.get("WN").getIcon()){
+                                if((targetRow== sourceRow+2 && targetCol==sourceCol+1) || (targetRow== sourceRow+2 && targetCol==sourceCol-1)||
+                                        (targetRow==sourceRow-2 && targetCol==sourceCol+1) || (targetRow==sourceRow-2 && targetCol==sourceCol-1) ||
+                                        (targetRow==sourceRow+1 && targetCol==sourceCol+2) || (targetRow==sourceRow-1 && targetCol==sourceCol+2) ||
+                                        (targetRow==sourceRow+1 && targetCol==sourceCol-2) || (targetRow==sourceRow-1 && targetCol==sourceCol-2)
+                                ){
+                                    movePiece(squares[sourceRow][sourceCol], squares[targetRow][targetCol]);
+                                    squares[sourceRow][sourceCol].toggleHighlight();
+                                    sourceRow = sourceCol = targetRow = targetCol = -1;
+                                }
+                            }
+
+                            //if the chess piece is a black knight
+                            else if(squares[sourceRow][sourceCol].getPiece().getIcon()==notationToJLMap.get("BN").getIcon()){
+                                if((targetRow== sourceRow+2 && targetCol==sourceCol+1) || (targetRow== sourceRow+2 && targetCol==sourceCol-1)||
+                                        (targetRow==sourceRow-2 && targetCol==sourceCol+1) || (targetRow==sourceRow-2 && targetCol==sourceCol-1) ||
+                                        (targetRow==sourceRow+1 && targetCol==sourceCol+2) || (targetRow==sourceRow-1 && targetCol==sourceCol+2) ||
+                                        (targetRow==sourceRow+1 && targetCol==sourceCol-2) || (targetRow==sourceRow-1 && targetCol==sourceCol-2)
+                                ){
+                                    movePiece(squares[sourceRow][sourceCol], squares[targetRow][targetCol]);
+                                    squares[sourceRow][sourceCol].toggleHighlight();
+                                    sourceRow = sourceCol = targetRow = targetCol = -1;
+                                }
+                            }
+
+                            //if the chess piece is a black king
+                            else if(squares[sourceRow][sourceCol].getPiece().getIcon()==notationToJLMap.get("BK").getIcon()){
+                                    if((targetRow== sourceRow+1 && targetCol==sourceCol+1) || (targetRow== sourceRow+1 && targetCol==sourceCol-1) ||
+                                            (targetRow==sourceRow-1 && targetCol==sourceCol+1) || (targetRow==sourceRow-1 && targetCol==sourceCol-1) ||
+                                            (targetRow==sourceRow+1 && targetCol==sourceCol+1) || (targetRow==sourceRow-1 && targetCol==sourceCol+1) ||
+                                            (targetRow==sourceRow+1 && targetCol==sourceCol-1) || (targetRow==sourceRow-1 && targetCol==sourceCol-1) ||
+                                            (targetRow==sourceRow+1 && targetCol==sourceCol) || (targetRow==sourceRow-1 && targetCol==sourceCol)||
+                                            (targetRow==sourceRow && targetCol==sourceCol+1) || (targetRow==sourceRow && targetCol==sourceCol-1)){
+
+                                        movePiece(squares[sourceRow][sourceCol], squares[targetRow][targetCol]);
+                                        squares[sourceRow][sourceCol].toggleHighlight();
+                                        sourceRow = sourceCol = targetRow = targetCol = -1;
+                                    }
+                                }
+
+                            //if the chess piece is a white king
+                            else if(squares[sourceRow][sourceCol].getPiece().getIcon()==notationToJLMap.get("WK").getIcon()){
+                                if((targetRow== sourceRow+1 && targetCol==sourceCol+1) || (targetRow== sourceRow+1 && targetCol==sourceCol-1) ||
+                                        (targetRow==sourceRow-1 && targetCol==sourceCol+1) || (targetRow==sourceRow-1 && targetCol==sourceCol-1) ||
+                                        (targetRow==sourceRow+1 && targetCol==sourceCol+1) || (targetRow==sourceRow-1 && targetCol==sourceCol+1) ||
+                                        (targetRow==sourceRow+1 && targetCol==sourceCol-1) || (targetRow==sourceRow-1 && targetCol==sourceCol-1) ||
+                                        (targetRow==sourceRow+1 && targetCol==sourceCol) || (targetRow==sourceRow-1 && targetCol==sourceCol)||
+                                        (targetRow==sourceRow && targetCol==sourceCol+1) || (targetRow==sourceRow && targetCol==sourceCol-1)){
+
+                                    movePiece(squares[sourceRow][sourceCol], squares[targetRow][targetCol]);
+                                    squares[sourceRow][sourceCol].toggleHighlight();
+                                    sourceRow = sourceCol = targetRow = targetCol = -1;
+                                }
+                            }
+
+                            //if the chess piece is a white queen
+                            else if(squares[sourceRow][sourceCol].getPiece().getIcon()==notationToJLMap.get("WQ").getIcon()) {
+                                if (sourceCol == targetCol) {
+                                    if (sourceRow < targetRow) {
+                                        for (int i = sourceRow + 1; i <= targetRow; i++)
+                                            movePiece(squares[sourceRow][sourceCol], squares[targetRow][targetCol]);
+                                    } else {
+                                        for (int i = sourceRow - 1; i >= targetRow; i--) {
+                                            movePiece(squares[sourceRow][sourceCol], squares[targetRow][targetCol]);
+                                        }
+                                    }
+                                    squares[sourceRow][sourceCol].toggleHighlight();
+                                    sourceRow = sourceCol = targetRow = targetCol = -1;
+                                } else if (sourceRow == targetRow) {
+                                    if (sourceCol < targetCol) {
+                                        for (int i = sourceCol + 1; i <= targetCol; i++) {
+                                            movePiece(squares[sourceRow][sourceCol], squares[targetRow][targetCol]);
+                                        }
+                                    } else {
+                                        for (int i = sourceCol - 1; i >= targetCol; i--) {
+                                            movePiece(squares[sourceRow][sourceCol], squares[targetRow][targetCol]);
+                                        }
+                                    }
+                                    squares[sourceRow][sourceCol].toggleHighlight();
+                                    sourceRow = sourceCol = targetRow = targetCol = -1;
+                                }
+
+                                    else if((targetRow== sourceRow+1 && targetCol==sourceCol+1) || (targetRow== sourceRow+1 && targetCol==sourceCol-1) ||
+                                            (targetRow==sourceRow-1 && targetCol==sourceCol+1) || (targetRow==sourceRow-1 && targetCol==sourceCol-1) ||
+                                            (targetRow==sourceRow+1 && targetCol==sourceCol+1) || (targetRow==sourceRow-1 && targetCol==sourceCol+1) ||
+                                            (targetRow==sourceRow+1 && targetCol==sourceCol-1) || (targetRow==sourceRow-1 && targetCol==sourceCol-1) ||
+                                            (targetRow==sourceRow+1 && targetCol==sourceCol) || (targetRow==sourceRow-1 && targetCol==sourceCol)||
+                                            (targetRow==sourceRow && targetCol==sourceCol+1) || (targetRow==sourceRow && targetCol==sourceCol-1)||
+                                            (targetRow== sourceRow+2 && targetCol==sourceCol+1) || (targetRow== sourceRow+2 && targetCol==sourceCol-1)||
+                                            (targetRow==sourceRow-2 && targetCol==sourceCol+1) || (targetRow==sourceRow-2 && targetCol==sourceCol-1) ||
+                                            (targetRow==sourceRow+1 && targetCol==sourceCol+2) || (targetRow==sourceRow-1 && targetCol==sourceCol+2) ||
+                                            (targetRow==sourceRow+1 && targetCol==sourceCol-2) || (targetRow==sourceRow-1 && targetCol==sourceCol-2) ||
+                                            Math.abs(sourceRow-targetRow) == Math.abs(sourceCol-targetCol) ||
+                                            (targetRow-sourceRow==-1 & targetCol-sourceCol==0)){
+
+                                        movePiece(squares[sourceRow][sourceCol], squares[targetRow][targetCol]);
+                                        squares[sourceRow][sourceCol].toggleHighlight();
+                                        sourceRow = sourceCol = targetRow = targetCol = -1;
+
+                                    }
+                            }
+
+                            //if the chess piece is a black queen
+                            else if(squares[sourceRow][sourceCol].getPiece().getIcon()==notationToJLMap.get("BQ").getIcon()) {
+                                if (sourceCol == targetCol) {
+                                    if (sourceRow < targetRow) {
+                                        for (int i = sourceRow + 1; i <= targetRow; i++)
+                                            movePiece(squares[sourceRow][sourceCol], squares[targetRow][targetCol]);
+                                    } else {
+                                        for (int i = sourceRow - 1; i >= targetRow; i--) {
+                                            movePiece(squares[sourceRow][sourceCol], squares[targetRow][targetCol]);
+                                        }
+                                    }
+                                    squares[sourceRow][sourceCol].toggleHighlight();
+                                    sourceRow = sourceCol = targetRow = targetCol = -1;
+                                } else if (sourceRow == targetRow) {
+                                    if (sourceCol < targetCol) {
+                                        for (int i = sourceCol + 1; i <= targetCol; i++) {
+                                            movePiece(squares[sourceRow][sourceCol], squares[targetRow][targetCol]);
+                                        }
+                                    } else {
+                                        for (int i = sourceCol - 1; i >= targetCol; i--) {
+                                            movePiece(squares[sourceRow][sourceCol], squares[targetRow][targetCol]);
+                                        }
+                                    }
+                                    squares[sourceRow][sourceCol].toggleHighlight();
+                                    sourceRow = sourceCol = targetRow = targetCol = -1;
+                                }
+
+                                else if((targetRow== sourceRow+1 && targetCol==sourceCol+1) || (targetRow== sourceRow+1 && targetCol==sourceCol-1) ||
+                                        (targetRow==sourceRow-1 && targetCol==sourceCol+1) || (targetRow==sourceRow-1 && targetCol==sourceCol-1) ||
+                                        (targetRow==sourceRow+1 && targetCol==sourceCol+1) || (targetRow==sourceRow-1 && targetCol==sourceCol+1) ||
+                                        (targetRow==sourceRow+1 && targetCol==sourceCol-1) || (targetRow==sourceRow-1 && targetCol==sourceCol-1) ||
+                                        (targetRow==sourceRow+1 && targetCol==sourceCol) || (targetRow==sourceRow-1 && targetCol==sourceCol)||
+                                        (targetRow==sourceRow && targetCol==sourceCol+1) || (targetRow==sourceRow && targetCol==sourceCol-1)||
+                                        (targetRow== sourceRow+2 && targetCol==sourceCol+1) || (targetRow== sourceRow+2 && targetCol==sourceCol-1)||
+                                        (targetRow==sourceRow-2 && targetCol==sourceCol+1) || (targetRow==sourceRow-2 && targetCol==sourceCol-1) ||
+                                        (targetRow==sourceRow+1 && targetCol==sourceCol+2) || (targetRow==sourceRow-1 && targetCol==sourceCol+2) ||
+                                        (targetRow==sourceRow+1 && targetCol==sourceCol-2) || (targetRow==sourceRow-1 && targetCol==sourceCol-2) ||
+                                        Math.abs(sourceRow-targetRow) == Math.abs(sourceCol-targetCol) ||
+                                        (targetRow-sourceRow==-1 & targetCol-sourceCol==0)){
+
+                                    movePiece(squares[sourceRow][sourceCol], squares[targetRow][targetCol]);
+                                    squares[sourceRow][sourceCol].toggleHighlight();
+                                    sourceRow = sourceCol = targetRow = targetCol = -1;
+
+                                }
+                            }
+
                         }
                     } else if (SwingUtilities.isRightMouseButton(e) && !(sourceRow == -1 && sourceCol ==-1)) {
                         squares[sourceRow][sourceCol].toggleHighlight();
