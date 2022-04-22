@@ -17,10 +17,10 @@ public class DatabaseConnection {
 
         public DatabaseConnection() {
             this.properties = new Properties();
-            properties.setProperty("user","postgres");
+            properties.setProperty("user","am4039");
             properties.setProperty("password","vz4fv1xd");
             properties.setProperty("ssl","false");
-            url = "jdbc:postgresql://localhost:5432/";
+            url = "jdbc:postgresql://pgserver.mau.se/am4039";
         }
 
         public Connection getConnection(){
