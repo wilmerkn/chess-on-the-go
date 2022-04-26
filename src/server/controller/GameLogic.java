@@ -21,8 +21,9 @@ public class GameLogic {
         //all game code runs here
         model.setMap(new GameMap(8));
         initializeMap();
-        //drawPlayerTwoMap();
+        //inverseMapArray();
         drawMap();
+
     }
 
     public void initializeMap(){
@@ -79,6 +80,23 @@ public class GameLogic {
             }
         }
         map.displayMap();
+    }
+
+    //todo fix this
+    //inverse object array map for player 2
+    public void inverseMapArray(){
+        int mapDim = model.getMap().getMapDimension();
+        ChessPieceAbstract[][] gamemap = model.getMap().getMap();
+
+        for(int row = 0; row < mapDim; row++){
+            for(int col = 0; col < mapDim; col++){
+                if(gamemap[row][col] != null){
+                    ChessPiece chessPiece = (ChessPiece) gamemap[row][col];
+                    gamemap[(mapDim-1)-row][(mapDim-1)-col] = chessPiece;
+                }
+            }
+        }
+        model.getMap().displayMap();
     }
 
     //draws player-one game map
