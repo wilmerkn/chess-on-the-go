@@ -152,8 +152,8 @@ public class BoardView {
                             sourceCol = squarePanel.getCol();
                             squares[sourceRow][sourceCol].toggleHighlight();
                             targetRow = targetCol = -1;
-                            System.out.println("row "+sourceRow);
-                            System.out.println("col "+sourceCol);
+                            //System.out.println("row "+sourceRow);
+                            //System.out.println("col "+sourceCol);
 
                         } else {
                             targetRow = squarePanel.getRow();
@@ -163,6 +163,7 @@ public class BoardView {
                             gameLogic.update(sourceRow,sourceCol,targetRow,targetCol);
                             sourceRow = sourceCol = targetRow = targetCol = -1;
 
+                            /*
                             //if the chess piece is a white pawn
                             if(targetRow-sourceRow==-1 & targetCol-sourceCol==0 & squares[sourceRow][sourceCol].getPiece().getIcon()==notationToJLMap.get("WP").getIcon()){
                                 movePiece(squares[sourceRow][sourceCol], squares[targetRow][targetCol]);
@@ -356,6 +357,7 @@ public class BoardView {
                                         sourceRow = sourceCol = targetRow = targetCol = -1;
 
                                     }
+
                             }
 
                             //if the chess piece is a black queen
@@ -404,7 +406,7 @@ public class BoardView {
 
                                 }
                             }
-
+                            */
                         }
                     } else if (SwingUtilities.isRightMouseButton(e) && !(sourceRow == -1 && sourceCol ==-1)) {
                         squares[sourceRow][sourceCol].toggleHighlight();
@@ -427,7 +429,7 @@ public class BoardView {
         }
     }
 
-    private class SquarePanel extends JPanel {
+    public class SquarePanel extends JPanel {
         private final int row;
         private final int col;
         private JLabel piece;
@@ -465,7 +467,7 @@ public class BoardView {
             }
         }
 
-        private void placePiece(JLabel pieceJL) {
+        public void placePiece(JLabel pieceJL) {
             JLabel newPieceJL = BoardUtils.cloneIconJL(pieceJL);
             this.removePiece();
             piece = newPieceJL;
