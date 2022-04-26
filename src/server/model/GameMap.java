@@ -8,7 +8,7 @@ public class GameMap {
     public GameMap(int mapDimension){
         this.mapDimension = mapDimension;
         this.mapRep = new String[mapDimension][mapDimension];
-        this.map = new ChessPieceAbstract[mapDimension][mapDimension];
+        this.map = new ChessPiece[mapDimension][mapDimension];
     }
 
     //displays string based map and showing the objects stored on the positions (Updates when run)

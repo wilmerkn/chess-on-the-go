@@ -1,5 +1,7 @@
 package client.board;
 
+import server.controller.GameLogic;
+
 import org.w3c.dom.ranges.Range;
 import server.model.ChessPiece;
 
@@ -25,6 +27,7 @@ public class BoardView {
     private BoardPanel boardPanel;
     private boolean mouseListenerEnabled;
     private final HashMap<String, JLabel> notationToJLMap = BoardUtils.pieceNotationToJL();
+    private GameLogic gameLogic;
 
 
 
@@ -39,13 +42,36 @@ public class BoardView {
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
         frame.add(boardPanel, BorderLayout.CENTER);
-        boardPanel.populateBoard();
+        //boardPanel.populateBoard();
+
+        mouseListenerEnabled = true;
+
+    }
+    public BoardView(GameLogic gameLogic) {
+        this.boardPanel = new BoardPanel();
+        JFrame frame = new JFrame();
+        frame.setTitle("Chess On The Go");
+        this.gameLogic = gameLogic;
+        frame.setSize(CLIENT_DIMENSION);
+        frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        frame.setLocationRelativeTo(null);
+        frame.setVisible(true);
+        frame.add(boardPanel, BorderLayout.CENTER);
+        //boardPanel.populateBoard();
 
         mouseListenerEnabled = true;
 
     }
 
-    private class BoardPanel extends JPanel {
+    public BoardPanel getBoardPanel() {
+        return boardPanel;
+    }
+
+    public HashMap<String, JLabel> getNotationToJLMap() {
+        return notationToJLMap;
+    }
+
+    public class BoardPanel extends JPanel {
         private int sourceRow, sourceCol, targetRow, targetCol;
         private final SquarePanel[][] squares = new SquarePanel[8][8];
 
@@ -73,6 +99,7 @@ public class BoardView {
             source.removePiece();
         }
 
+        /*
         private void populateBoard() {
             squares[0][0].placePiece(notationToJLMap.get("BR"));
             squares[0][1].placePiece(notationToJLMap.get("BN"));
@@ -95,6 +122,8 @@ public class BoardView {
             squares[7][6].placePiece(notationToJLMap.get("WN"));
             squares[7][7].placePiece(notationToJLMap.get("WR"));
         }
+
+         */
 
         private void enableMouseListener() {
             mouseListenerEnabled = true;
@@ -129,6 +158,10 @@ public class BoardView {
                         } else {
                             targetRow = squarePanel.getRow();
                             targetCol = squarePanel.getCol();
+                            movePiece(squares[sourceRow][sourceCol], squares[targetRow][targetCol]);
+                            squares[sourceRow][sourceCol].toggleHighlight();
+                            gameLogic.update(sourceRow,sourceCol,targetRow,targetCol);
+                            sourceRow = sourceCol = targetRow = targetCol = -1;
 
                             //if the chess piece is a white pawn
                             if(targetRow-sourceRow==-1 & targetCol-sourceCol==0 & squares[sourceRow][sourceCol].getPiece().getIcon()==notationToJLMap.get("WP").getIcon()){
@@ -388,6 +421,9 @@ public class BoardView {
                 @Override
                 public void mouseExited(MouseEvent e) { }
             };
+        }
+        public SquarePanel[][] getSquares() {
+            return squares;
         }
     }
 
