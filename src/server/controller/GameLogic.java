@@ -21,9 +21,8 @@ public class GameLogic {
         //all game code runs here
         model.setMap(new GameMap(8));
         initializeMap();
-        //inverseMapArray();
+        inverseMapArray();
         drawMap();
-
     }
 
     public void initializeMap(){
@@ -64,6 +63,7 @@ public class GameLogic {
     }
 
     //draws player two map upside down
+    /*
     public void drawPlayerTwoMap(){
         int mapDim = model.getMap().getMapDimension();
         HashMap<String, JLabel> notationLbl = model.getBoardView().getNotationToJLMap();
@@ -80,26 +80,19 @@ public class GameLogic {
             }
         }
         map.displayMap();
-    }
+    }*/
 
-    //todo not sure how to fix
-
+    //inverses map array
     public void inverseMapArray(){
         int mapDim = model.getMap().getMapDimension();
         ChessPieceAbstract[][] gamemap = model.getMap().getMap();
+        ChessPieceAbstract[][] tempArray = new ChessPieceAbstract[mapDim][mapDim];
 
-
-        for(int row = 0; row < mapDim/2; row++){
-            for(int col = 0; col < mapDim; col++){
-                if(gamemap[row][col] != null){
-
-                    ChessPiece temp = (ChessPiece) gamemap[row][col];
-                    gamemap[row][col] = gamemap[(mapDim-1)-row][(mapDim-1)-col];
-                    gamemap[(mapDim-1)-row][(mapDim-1)-col] = temp;
-
-                }
-            }
+        for (int row = mapDim - 1; row >= 0; row--) {
+            for (int col = mapDim - 1; col >= 0; col--)
+                tempArray[(mapDim-1)-row][(mapDim-1)-col] = gamemap[row][col];
         }
+        model.getMap().setMap(tempArray);
     }
 
 
@@ -132,7 +125,9 @@ public class GameLogic {
 
         gamemap[y_or][x_or] = null;
         gamemap[y_tr][x_tr] = tempChesspiece;
+
         map.displayMap();
+        drawMap();
     }
 
 }
