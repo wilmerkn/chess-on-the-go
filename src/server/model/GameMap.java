@@ -43,6 +43,10 @@ public class GameMap {
         return mapRep;
     }
 
+    public void setMap(ChessPieceAbstract[][] map) {
+        this.map = map;
+    }
+
     public int getMapDimension() {
         return mapDimension;
     }
