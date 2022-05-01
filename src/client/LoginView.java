@@ -1,11 +1,17 @@
 package client;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.Color;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.util.Objects;
+
 import server.controller.LoginController;
+import server.controller.RegisterController;
 
 
 public class LoginView extends JFrame implements ActionListener {
@@ -25,8 +31,13 @@ public class LoginView extends JFrame implements ActionListener {
     private final JPasswordField passText;
     private final JLabel userLabel;
     private final JLabel passLabel;
+    private final LoginController loginController;
+    private RegisterController registerController;
 
-    public LoginView(){
+
+    public LoginView(LoginController loginController, RegisterController registerController){
+        this.loginController = loginController;
+
 
         loginFrame = new JFrame("Chess On The Go - Login");
 
@@ -39,10 +50,9 @@ public class LoginView extends JFrame implements ActionListener {
         loginFrame.add(buttonPanel);
         buttonPanel.setBackground(Color.LIGHT_GRAY);
 
-
         try{
-            image = new ImageIcon(getClass().getResource("Chess-Knight.png"));
-            scaledImage = image.getImage().getScaledInstance(100,100,Image.SCALE_DEFAULT);
+            BufferedImage knightImage = ImageIO.read(new File("sprites/Chess-Knight.png"));
+            scaledImage = knightImage.getScaledInstance(100,100,Image.SCALE_DEFAULT);
             resizedImage = new ImageIcon(scaledImage);
             pictureLabel = new JLabel(resizedImage);
             picturePanel.add(pictureLabel);
@@ -80,27 +90,28 @@ public class LoginView extends JFrame implements ActionListener {
         loginFrame.setResizable(false);
         loginFrame.setLocationRelativeTo(null);
         loginFrame.setVisible(true);
-
     }
 
     private void initListeners() {
         this.loginButton.addActionListener(this);
         this.registerButton.addActionListener(this);
-
     }
-
 
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == loginButton) {
-            System.out.println("Logging in");
-            //osäker på om det är "secure" att skicka pass så här
-            LoginController.checkLogin(userText.getText(),String.valueOf(passText.getPassword()));
+            loginController.checkLogin(userText.getText(),String.valueOf(passText.getPassword()));
         }
         if (e.getSource() == registerButton) {
-            System.out.println("Register");
-            RegisterView register = new RegisterView();
+            registerController = new RegisterController();
+            RegisterView register = new RegisterView(registerController);
         }
 
+    }
+    public void closeLoginWindow(){
+        //funkar inte atm, kanske för att det är det första som startas, ska kolla på d
+        this.dispose();
+        //kör en fuskis istället
+        this.setVisible(false);
     }
 }

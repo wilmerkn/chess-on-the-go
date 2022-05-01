@@ -1,10 +1,16 @@
 package client;
 
+import server.controller.RegisterController;
+import server.model.Register;
+
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.Color;
+import java.awt.image.BufferedImage;
+import java.io.File;
 
 
 public class RegisterView extends JFrame implements ActionListener{
@@ -25,14 +31,17 @@ public class RegisterView extends JFrame implements ActionListener{
     ImageIcon image;
     ImageIcon resizedImage;
     Image scaledImage;
+    private final RegisterController registerController;
 
 
-    public RegisterView(){
+
+    public RegisterView(RegisterController registerController){
         registerFrame = new JFrame("Chess On The Go - Registration");
 
+        this.registerController = registerController;
         try{
-            image = new ImageIcon(getClass().getResource("Chess-Knight.png"));
-            scaledImage = image.getImage().getScaledInstance(100,100,Image.SCALE_DEFAULT);
+            BufferedImage knightImage = ImageIO.read(new File("sprites/Chess-Knight.png"));
+            scaledImage = knightImage.getScaledInstance(100,100,Image.SCALE_DEFAULT);
             resizedImage = new ImageIcon(scaledImage);
             pictureLabel = new JLabel(resizedImage);
             picturePanel.add(pictureLabel);
@@ -54,7 +63,7 @@ public class RegisterView extends JFrame implements ActionListener{
         this.passText = new JPasswordField(20);
         registerPanel.add(passText);
 
-        this.countryLabel = new JLabel("Username:");
+        this.countryLabel = new JLabel("Country:");
         registerPanel.add(countryLabel);
 
         this.countryText = new JTextField(20);
@@ -100,10 +109,19 @@ public class RegisterView extends JFrame implements ActionListener{
     public void actionPerformed(ActionEvent e) {
 
         if (e.getSource() == registerButton) {
-            System.out.println("Registered");
+            this.registerController.registerUser(userText.getText(),String.valueOf(passText.getPassword()), countryText.getText());
+            this.closeRegisterWindow();
+            System.out.println("New user registered");
+
+
         }
         if (e.getSource() == cancelButton) {
+            registerFrame.dispose();
             System.out.println("Going back to login-screen");
         }
     }
+    public void closeRegisterWindow(){
+        registerFrame.dispose();
+    }
+
 }

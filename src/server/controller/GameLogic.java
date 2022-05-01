@@ -1,8 +1,10 @@
 package server.controller;
 
+import client.board.BoardView;
 import server.model.*;
 import client.GameView;
 
+import javax.swing.*;
 import java.util.HashMap;
 
 //functionality: Map generation, ingame timer (count up).
@@ -13,13 +15,14 @@ public class GameLogic {
     private GameModel model;
 
     public GameLogic() {
-        this.model = new GameModel();
+        this.model = new GameModel(this);
         this.view = new GameView(this);
 
         //all game code runs here
         model.setMap(new GameMap(8));
         initializeMap();
-        model.getMap().displayMap();
+        //drawPlayerTwoMap();
+        drawMap();
     }
 
     public void initializeMap(){
@@ -59,12 +62,55 @@ public class GameLogic {
         gamemap[7][7] = chesspieces.get(2);
     }
 
-    public void drawPlayer2Map(){
-        //draw player 1 map but upside down
+    //draws player two map upside down
+    public void drawPlayerTwoMap(){
+        int mapDim = model.getMap().getMapDimension();
+        HashMap<String, JLabel> notationLbl = model.getBoardView().getNotationToJLMap();
+        ChessPieceAbstract[][] gamemap = model.getMap().getMap();
+        BoardView.SquarePanel[][] squarePanel = model.getBoardView().getBoardPanel().getSquares();
+        GameMap map = model.getMap();
+
+        for(int row = 0; row < mapDim; row++){
+            for(int col = 0; col < mapDim; col++){
+                if(gamemap[row][col] != null){
+                    ChessPiece chessPiece = (ChessPiece) gamemap[row][col];
+                    squarePanel[(mapDim-1)-row][(mapDim-1)-col].placePiece(notationLbl.get(chessPiece.getSpriteName()));
+                }
+            }
+        }
+        map.displayMap();
     }
 
-    public void Update(){
-        //update GUI elements (update positions of sprites then revaluate and repaint)
+    //draws player-one game map
+    public void drawMap(){
+        int mapDim = model.getMap().getMapDimension();
+        HashMap<String, JLabel> notationLbl = model.getBoardView().getNotationToJLMap();
+        ChessPieceAbstract[][] gamemap = model.getMap().getMap();
+        BoardView.SquarePanel[][] squarePanel = model.getBoardView().getBoardPanel().getSquares();
+        GameMap map = model.getMap();
+
+        for(int row = 0; row < mapDim; row++){
+            for(int col = 0; col < mapDim; col++){
+                if(gamemap[row][col] != null){
+                    ChessPiece chessPiece = (ChessPiece) gamemap[row][col];
+                    squarePanel[row][col].placePiece(notationLbl.get(chessPiece.getSpriteName()));
+                }
+            }
+        }
+        map.displayMap();
+    }
+
+    //method used to update logical game map with chesspieces new position
+    public void update(int y_or, int x_or, int y_tr, int x_tr){ //called when chesspiece is moved
+        ChessPieceAbstract[][] gamemap = model.getMap().getMap();
+        GameMap map = model.getMap();
+
+        ChessPieceAbstract tempChesspiece = null;
+        tempChesspiece = gamemap[y_or][x_or];
+        gamemap[y_or][x_or] = null;
+        gamemap[y_tr][x_tr] = tempChesspiece;
+
+        map.displayMap();
     }
 
 }

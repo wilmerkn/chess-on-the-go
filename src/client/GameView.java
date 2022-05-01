@@ -10,6 +10,6 @@ public class GameView {
     }
 
     public void updateGUI(){
-        gameLogic.Update();
+        //gameLogic.update();
     }
 }
