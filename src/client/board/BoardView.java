@@ -60,7 +60,7 @@ public class BoardView {
 
         private void movePiece(SquarePanel source, SquarePanel target) {
             if(!source.isOccupied()) return;
-            else if (target.isOccupied()) target.removePiece();
+            else target.removePiece();
             target.placePiece(source.getPiece());
             source.removePiece();
         }
@@ -103,21 +103,25 @@ public class BoardView {
 
                 @Override
                 public void mousePressed(MouseEvent e) {
+                    int selectedRow = squarePanel.getRow();
+                    int selectedCol = squarePanel.getCol();
 
                     if(SwingUtilities.isLeftMouseButton(e))  {
                         if(!mouseListenerEnabled) return;
                         if(sourceRow < 0 || sourceCol < 0) {
                             if(!squarePanel.isOccupied()) return;
-                            sourceRow = squarePanel.getRow();
-                            sourceCol = squarePanel.getCol();
+                            sourceRow = selectedRow;
+                            sourceCol = selectedCol;
                             squares[sourceRow][sourceCol].toggleHighlight();
                             targetRow = targetCol = -1;
-                        } else {
-                            targetRow = squarePanel.getRow();
-                            targetCol = squarePanel.getCol();
+                        } else if (!(sourceRow == selectedRow && sourceCol == selectedCol)){
+                            targetRow = selectedRow;
+                            targetCol = selectedCol;
                             movePiece(squares[sourceRow][sourceCol], squares[targetRow][targetCol]);
                             squares[sourceRow][sourceCol].toggleHighlight();
                             sourceRow = sourceCol = targetRow = targetCol = -1;
+                        } else {
+                            squares[sourceRow][sourceCol].toggleHighlight();
                         }
                     } else if (SwingUtilities.isRightMouseButton(e) && !(sourceRow == -1 && sourceCol ==-1)) {
                         squares[sourceRow][sourceCol].toggleHighlight();
