@@ -9,6 +9,8 @@ import java.util.HashMap;
 
 //functionality: Map generation, ingame timer (count up).
 
+//todo way to get every moveset from chesspieces for valid move checks
+
 public class GameLogic {
 
     private GameView view;
@@ -20,8 +22,9 @@ public class GameLogic {
 
         //all game code runs here
         model.setMap(new GameMap(8));
-        initializeMap();
-        inverseMapArray();
+        //initializeMap();
+        debugChesspieces();
+        //inverseMapArray();
         drawMap();
     }
 
@@ -115,19 +118,63 @@ public class GameLogic {
         map.displayMap();
     }
 
+    public void debugChesspieces(){
+        int mapDim = model.getMap().getMapDimension();
+        ChessPieceAbstract[][] gamemap = model.getMap().getMap();
+        HashMap<Integer, ChessPieceAbstract> chesspieces = model.getChesspieces();
+
+        gamemap[3][3] = chesspieces.get(11);
+    }
+
     //method used to update logical game map with chesspieces new position
     public void update(int y_or, int x_or, int y_tr, int x_tr){ //called when chesspiece is moved
         ChessPieceAbstract[][] gamemap = model.getMap().getMap();
         GameMap map = model.getMap();
+        boolean validMove = false;
 
         ChessPieceAbstract tempChesspiece = null;
         tempChesspiece = gamemap[y_or][x_or];
 
-        gamemap[y_or][x_or] = null;
-        gamemap[y_tr][x_tr] = tempChesspiece;
+        //call movecheck here. if all true then make move
+        validMove = moveCheck(y_or,y_tr,x_or,x_tr,gamemap,tempChesspiece);
 
-        map.displayMap();
-        drawMap();
+        if(validMove){
+            System.out.println("valid!");
+            gamemap[y_or][x_or] = null;
+            gamemap[y_tr][x_tr] = tempChesspiece;
+
+            drawMap();
+        }
+
+    }
+
+    public boolean moveCheck(int y_or, int y_tr, int x_or, int x_tr,ChessPieceAbstract[][] gamemap,ChessPieceAbstract chesspiece){
+        //call all check methods in here
+
+        boolean samepos = checkSamePos(y_or,y_tr,x_or,x_tr);
+
+        //check all booleans are negative
+        if(!samepos){
+            return true;
+        }
+        return false;
+    }
+
+    public boolean moveInBounds(){
+
+        return true;
+    }
+
+    public boolean checkSamePos(int y_or, int y_tr, int x_or, int x_tr){
+
+        if(y_or == y_tr && x_or == x_tr){
+            return true;
+        }
+        return false;
+    }
+
+    public void checkObstruction(){
+
     }
 
 }
