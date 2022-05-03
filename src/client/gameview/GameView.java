@@ -20,10 +20,16 @@ public class GameView {
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         frame.setLocationRelativeTo(null);
         frame.setResizable(false);
+        frame.setLayout(null);
+        //frame.getContentPane().setBackground(new Color(35,35,35));
+
         BoardPanel boardPanel = new BoardPanel();
+        boardPanel.setBounds(7, 25, 650, 650);
         ChatPanel chatPanel = new ChatPanel();
-        frame.add(boardPanel, null);
-        frame.add(chatPanel, null);
+        chatPanel.setBounds(810, 7, 175, 700);
+
+        frame.add(boardPanel);
+        frame.add(chatPanel);
         frame.setVisible(true);
 
     }
