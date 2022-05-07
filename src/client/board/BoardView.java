@@ -24,11 +24,10 @@ public class BoardView {
     private final static Color DARK_SQUARE_COLOR = new Color(82, 146, 82);
     private static final Border HIGHLIGHTER = BorderFactory.createLineBorder(Color.yellow, 3);
 
-    private BoardPanel boardPanel;
+    private final BoardPanel boardPanel;
     private boolean mouseListenerEnabled;
     private final HashMap<String, JLabel> notationToJLMap = BoardUtils.pieceNotationToJL();
     private GameLogic gameLogic;
-
 
 
     private JLabel checkLabel;
