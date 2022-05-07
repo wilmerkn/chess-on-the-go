@@ -149,6 +149,7 @@ public class BoardView {
                             if(!squarePanel.isOccupied()) return;
                             sourceRow = squarePanel.getRow();
                             sourceCol = squarePanel.getCol();
+                            gameLogic.highlightMovementPattern(sourceRow,sourceCol);
                             squares[sourceRow][sourceCol].toggleHighlight();
                             targetRow = targetCol = -1;
                             //System.out.println("row "+sourceRow);
@@ -159,6 +160,7 @@ public class BoardView {
                             targetCol = squarePanel.getCol();
                             movePiece(squares[sourceRow][sourceCol], squares[targetRow][targetCol]);
                             squares[sourceRow][sourceCol].toggleHighlight();
+                            gameLogic.highlightMovementPattern(sourceRow,sourceCol);
                             gameLogic.update(sourceRow,sourceCol,targetRow,targetCol);
                             sourceRow = sourceCol = targetRow = targetCol = -1;
 
@@ -491,7 +493,7 @@ public class BoardView {
             return piece != null;
         }
 
-        private void toggleHighlight() {
+        public void toggleHighlight() {
             if(this.getBorder() != null) this.setBorder(null);
             else this.setBorder(HIGHLIGHTER);
         }

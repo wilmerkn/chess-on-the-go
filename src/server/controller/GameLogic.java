@@ -22,8 +22,8 @@ public class GameLogic {
 
         //all game code runs here
         model.setMap(new GameMap(8));
-        initializeMap();
-        //debugChesspieces();
+        //initializeMap();
+        debugChesspieces();
         //inverseMapArray();
 
         drawMap();
@@ -145,17 +145,52 @@ public class GameLogic {
     }
 
     public void debugChesspieces(){
-        int mapDim = model.getMap().getMapDimension();
         ChessPieceAbstract[][] gamemap = model.getMap().getMap();
         HashMap<Integer, ChessPieceAbstract> chesspieces = model.getChesspieces();
 
-        gamemap[3][3] = chesspieces.get(11);
+        gamemap[4][4] = chesspieces.get(9);
+        //9 is knight
+
+        for(int r = 0; r < gamemap.length; r++){
+            for(int c = 0; c < gamemap[r].length;c++){
+                if(gamemap[r][c] != null){
+                    ChessPiece chessPiece = (ChessPiece) gamemap[r][c];
+                    ChessPieceType type = chessPiece.getChessPieceType();
+
+                    if(type.equals(ChessPieceType.KING)){
+                        chessPiece.setMoveset(new int[][]{{1,1,1},
+                                                          {1,0,1},
+                                                          {1,1,1}});
+                    }
+                    if(type.equals(ChessPieceType.QUEEN)){
+                        chessPiece.setMoveset(new int[][]{{1, 2, 2, 2, 1, 2, 2, 2, 1},
+                                                          {2, 1, 2, 2, 1, 2, 2, 1, 2},
+                                                          {2, 2, 1, 2, 1, 2, 1, 2, 2},
+                                                          {2, 2, 2, 1, 1, 1, 2, 2, 2},
+                                                          {1, 1, 1, 1, 0, 1, 1, 1, 1},
+                                                          {2, 2, 2, 1, 1, 1, 2, 2, 2},
+                                                          {2, 2, 1, 2, 1, 2, 1, 2, 2},
+                                                          {2, 1, 2, 2, 1, 2, 2, 1, 2},
+                                                          {1, 2, 2, 2, 1, 2, 2, 2, 1}});
+                    }
+                    if(type.equals(ChessPieceType.KNIGHT)){
+                        chessPiece.setMoveset(new int[][]{{2,1,2,1,2},
+                                                          {1,2,2,2,1},
+                                                          {2,2,0,2,2},
+                                                          {1,2,2,2,1},
+                                                          {2,1,2,1,2}});
+                    }
+
+                }
+            }
+        }
+
     }
 
     //method used to update logical game map with chesspieces new position
     public void update(int y_or, int x_or, int y_tr, int x_tr){ //called when chesspiece is moved
         ChessPieceAbstract[][] gamemap = model.getMap().getMap();
-        GameMap map = model.getMap();
+        BoardView.SquarePanel[][] squarePanel = model.getBoardView().getBoardPanel().getSquares();
         boolean validMove = false;
 
         ChessPieceAbstract tempChesspiece = null;
@@ -164,8 +199,11 @@ public class GameLogic {
         //call movecheck here. if all true then make move
         validMove = moveCheck(y_or,y_tr,x_or,x_tr,gamemap,tempChesspiece);
 
-        if(validMove){
+        //if(validMove){
             System.out.println("valid!");
+            //inverseMapArray();
+            squarePanel[y_tr][x_tr].revalidate(); // new
+            squarePanel[y_tr][x_tr].repaint(); // new
 
             gamemap[y_or][x_or] = null;
             gamemap[y_tr][x_tr] = tempChesspiece;
@@ -173,27 +211,84 @@ public class GameLogic {
             //inverseMapArray();
 
             drawMap();
+        //}
+
+    }
+
+    public void highlightMovementPattern(int srcY,int srcX){
+        int YCord = srcY;
+        int XCord = srcX;
+
+        ChessPieceAbstract[][] gamemap = model.getMap().getMap();
+        ChessPiece cp = (ChessPiece) gamemap[YCord][XCord];
+        int[][] moveset = cp.getMoveset();
+        BoardView.SquarePanel[][] squarePanel = model.getBoardView().getBoardPanel().getSquares();
+
+        int YOffset = 0;
+        int XOffset = 0;
+
+        try {
+            //get offsets from moveset
+            for(int row = 0; row < moveset.length; row ++){
+                for (int col = 0; col < moveset[row].length; col++){
+
+                    if(moveset[row][col] == 0){
+                        YOffset = row;
+                        XOffset = col;
+                        break;
+                    }
+                }
+            }
+            System.out.println((YCord-YOffset) + " " + (XCord-XOffset));
+
+            System.out.println(moveset.length);
+
+        } catch (Exception e) {
+            e.printStackTrace();
         }
+
+            for(int y = (YCord - YOffset); y < (YCord-YOffset+moveset.length); y++){
+                for(int x = (XCord - XOffset); x < (XCord-XOffset+moveset.length);x++){
+
+                    if(moveset[y-(YCord-YOffset)][x-(XCord-YOffset)] == 1){
+                        try{
+                            squarePanel[y][x].toggleHighlight();
+                        } catch (Exception e) {
+                            continue;
+                        }
+                    }
+
+
+                }
+            }
+
+
 
     }
 
     public boolean moveCheck(int y_or, int y_tr, int x_or, int x_tr,ChessPieceAbstract[][] gamemap,ChessPieceAbstract chesspiece){
         //call all check methods in here
-        boolean ValidMoveSet = validMoveSet(y_or,y_tr,x_or,x_tr,gamemap,chesspiece);
-        boolean samepos = checkSamePos(y_or,y_tr,x_or,x_tr);
 
+        boolean samepos = checkSamePos(y_or,y_tr,x_or,x_tr);
+        boolean withinMoveset = validFromMoveset();
         //check all booleans are negative
         if(!samepos){
-            return true;
+            return false;
         }
-        return false;
+        return true;
     }
 
-    public boolean moveInBounds(){
+
+
+    public boolean validFromMoveset(){
+
+
 
         return true;
     }
 
+
+    //debug further
     public boolean checkSamePos(int y_or, int y_tr, int x_or, int x_tr){
 
         if(y_or == y_tr && x_or == x_tr){
@@ -202,6 +297,7 @@ public class GameLogic {
         return false;
     }
 
+    /*
     public boolean validMoveSet(int y_or, int y_tr, int x_or, int x_tr,ChessPieceAbstract[][] gamemap,ChessPieceAbstract chesspiece){
         ChessPiece cp = (ChessPiece) chesspiece;
         int[][] moveset = cp.getMoveset();
@@ -217,7 +313,7 @@ public class GameLogic {
         }
 
         return true;
-    }
+    }*/
 
     public void checkObstruction(){
 
