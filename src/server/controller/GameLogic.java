@@ -361,9 +361,6 @@ public class GameLogic {
                     }
                 }
             }
-            //System.out.println((YCord-YOffset) + " " + (XCord-XOffset)); //print offset for debugging
-
-            //System.out.println(moveset.length);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -386,10 +383,9 @@ public class GameLogic {
 
                 }
             }
-
     }
 
-    //todo things to check. clicks on same spot(done), moves within moveset(done), does tile contain friendly or enemy, is checkmate?, is castling
+    //todo things to check. clicks on same spot(done), moves within moveset(done), does tile contain friendly or enemy(done), is checkmate?, is castling
     public boolean moveValid(int sourceRow, int sourceCol, int targetRow, int targetCol){
         ChessPieceAbstract[][] gamemap = model.getMap().getMap();
         ChessPiece cp = (ChessPiece) gamemap[sourceRow][sourceCol];
@@ -469,5 +465,7 @@ public class GameLogic {
         }
         return false;
     }
+
+    //todo method used to switch movement pattern on pawns
 
 }
