@@ -22,8 +22,8 @@ public class GameLogic {
 
         //all game code runs here
         model.setMap(new GameMap(8));
-        //initializeMap();
-        debugChesspieces();
+        initializeMap();
+        //debugChesspieces();
         //inverseMapArray();
 
         drawMap();
@@ -74,17 +74,90 @@ public class GameLogic {
                     ChessPieceType type = chessPiece.getChessPieceType();
 
                     if(type.equals(ChessPieceType.KING)){
-                        chessPiece.setMoveset(new int[][]{{1,1,1},
-                                                          {1,0,1},
-                                                          {1,1,1}});
+                        chessPiece.setMoveset(new int[][]{
+                                {1,1,1},
+                                {1,0,1},
+                                {1,1,1}});
                     }
-                    if(type.equals(ChessPieceType.QUEEN)){
-                        chessPiece.setMoveset(new int[][]{});
+                    else if(type.equals(ChessPieceType.QUEEN)){
+                        chessPiece.setMoveset(new int[][]{
+                                {1,2,2,2,2,2,2,1,2,2,2,2,2,2,1},
+                                {2,1,2,2,2,2,2,1,2,2,2,2,2,1,2},
+                                {2,2,1,2,2,2,2,1,2,2,2,2,1,2,2},
+                                {2,2,2,1,2,2,2,1,2,2,2,1,2,2,2},
+                                {2,2,2,2,1,2,2,1,2,2,1,2,2,2,2},
+                                {2,2,2,2,2,1,2,1,2,1,2,2,2,2,2},
+                                {2,2,2,2,2,2,1,1,1,2,2,2,2,2,2},
+                                {1,1,1,1,1,1,1,0,1,1,1,1,1,1,1},
+                                {2,2,2,2,2,2,1,1,1,2,2,2,2,2,2},
+                                {2,2,2,2,2,1,2,1,2,1,2,2,2,2,2},
+                                {2,2,2,2,1,2,2,1,2,2,1,2,2,2,2},
+                                {2,2,2,1,2,2,2,1,2,2,2,1,2,2,2},
+                                {2,2,1,2,2,2,2,1,2,2,2,2,1,2,2},
+                                {2,1,2,2,2,2,2,1,2,2,2,2,2,1,2},
+                                {1,2,2,2,2,2,2,1,2,2,2,2,2,2,1}});
                     }
-                    if(type.equals(ChessPieceType.KNIGHT)){
-                        chessPiece.setMoveset(new int[][]{});
+                    else if(type.equals(ChessPieceType.KNIGHT)){
+                        chessPiece.setMoveset(new int[][]{
+                                {2,1,2,1,2},
+                                {1,2,2,2,1},
+                                {2,2,0,2,2},
+                                {1,2,2,2,1},
+                                {2,1,2,1,2}});
                     }
+                    else if(type.equals(ChessPieceType.BISHOP)){
+                        chessPiece.setMoveset(new int[][]{
+                                {1,2,2,2,2,2,2,2,2,2,2,2,2,2,1},
+                                {2,1,2,2,2,2,2,2,2,2,2,2,2,1,2},
+                                {2,2,1,2,2,2,2,2,2,2,2,2,1,2,2},
+                                {2,2,2,1,2,2,2,2,2,2,2,1,2,2,2},
+                                {2,2,2,2,1,2,2,2,2,2,1,2,2,2,2},
+                                {2,2,2,2,2,1,2,2,2,1,2,2,2,2,2},
+                                {2,2,2,2,2,2,1,2,1,2,2,2,2,2,2},
+                                {2,2,2,2,2,2,2,0,2,2,2,2,2,2,2},
+                                {2,2,2,2,2,2,1,2,1,2,2,2,2,2,2},
+                                {2,2,2,2,2,1,2,2,2,1,2,2,2,2,2},
+                                {2,2,2,2,1,2,2,2,2,2,1,2,2,2,2},
+                                {2,2,2,1,2,2,2,2,2,2,2,1,2,2,2},
+                                {2,2,1,2,2,2,2,2,2,2,2,2,1,2,2},
+                                {2,1,2,2,2,2,2,2,2,2,2,2,2,1,2},
+                                {1,2,2,2,2,2,2,2,2,2,2,2,2,2,1},
+                        });
+                    }
+                    else if(type.equals(ChessPieceType.ROOK)){
+                        chessPiece.setMoveset(new int[][]{
+                                {2,2,2,2,2,2,2,1,2,2,2,2,2,2,2},
+                                {2,2,2,2,2,2,2,1,2,2,2,2,2,2,2},
+                                {2,2,2,2,2,2,2,1,2,2,2,2,2,2,2},
+                                {2,2,2,2,2,2,2,1,2,2,2,2,2,2,2},
+                                {2,2,2,2,2,2,2,1,2,2,2,2,2,2,2},
+                                {2,2,2,2,2,2,2,1,2,2,2,2,2,2,2},
+                                {2,2,2,2,2,2,2,1,2,2,2,2,2,2,2},
+                                {1,1,1,1,1,1,1,0,1,1,1,1,1,1,1},
+                                {2,2,2,2,2,2,2,1,2,2,2,2,2,2,2},
+                                {2,2,2,2,2,2,2,1,2,2,2,2,2,2,2},
+                                {2,2,2,2,2,2,2,1,2,2,2,2,2,2,2},
+                                {2,2,2,2,2,2,2,1,2,2,2,2,2,2,2},
+                                {2,2,2,2,2,2,2,1,2,2,2,2,2,2,2},
+                                {2,2,2,2,2,2,2,1,2,2,2,2,2,2,2},
+                                {2,2,2,2,2,2,2,1,2,2,2,2,2,2,2},
+                        });
+                    }
+                    else if(type.equals(ChessPieceType.PAWN)){
+                        if(chessPiece.getColor() == ChessPieceColor.WHITE){
+                            chessPiece.setMoveset(new int[][]{
+                                    {2,1,2},
+                                    {2,0,2},
+                            });
+                        }
+                        else{
+                            chessPiece.setMoveset(new int[][]{
+                                    {2,0,2},
+                                    {2,1,2},
+                            });
+                        }
 
+                    }
 
                 }
             }
@@ -125,6 +198,7 @@ public class GameLogic {
     }
 
 
+    //todo change so it doesnt draw picture on picture
     //draws player-one game map
     public void drawMap(){
         int mapDim = model.getMap().getMapDimension();
@@ -148,7 +222,7 @@ public class GameLogic {
         ChessPieceAbstract[][] gamemap = model.getMap().getMap();
         HashMap<Integer, ChessPieceAbstract> chesspieces = model.getChesspieces();
 
-        gamemap[4][4] = chesspieces.get(9);
+        gamemap[4][4] = chesspieces.get(7);
         //9 is knight
 
         for(int r = 0; r < gamemap.length; r++){
@@ -158,27 +232,80 @@ public class GameLogic {
                     ChessPieceType type = chessPiece.getChessPieceType();
 
                     if(type.equals(ChessPieceType.KING)){
-                        chessPiece.setMoveset(new int[][]{{1,1,1},
-                                                          {1,0,1},
-                                                          {1,1,1}});
+                        chessPiece.setMoveset(new int[][]{
+                                {1,1,1},
+                                {1,0,1},
+                                {1,1,1}});
                     }
-                    if(type.equals(ChessPieceType.QUEEN)){
-                        chessPiece.setMoveset(new int[][]{{1, 2, 2, 2, 1, 2, 2, 2, 1},
-                                                          {2, 1, 2, 2, 1, 2, 2, 1, 2},
-                                                          {2, 2, 1, 2, 1, 2, 1, 2, 2},
-                                                          {2, 2, 2, 1, 1, 1, 2, 2, 2},
-                                                          {1, 1, 1, 1, 0, 1, 1, 1, 1},
-                                                          {2, 2, 2, 1, 1, 1, 2, 2, 2},
-                                                          {2, 2, 1, 2, 1, 2, 1, 2, 2},
-                                                          {2, 1, 2, 2, 1, 2, 2, 1, 2},
-                                                          {1, 2, 2, 2, 1, 2, 2, 2, 1}});
+                    else if(type.equals(ChessPieceType.QUEEN)){
+                        chessPiece.setMoveset(new int[][]{
+                                {1,2,2,2,2,2,2,1,2,2,2,2,2,2,1},
+                                {2,1,2,2,2,2,2,1,2,2,2,2,2,1,2},
+                                {2,2,1,2,2,2,2,1,2,2,2,2,1,2,2},
+                                {2,2,2,1,2,2,2,1,2,2,2,1,2,2,2},
+                                {2,2,2,2,1,2,2,1,2,2,1,2,2,2,2},
+                                {2,2,2,2,2,1,2,1,2,1,2,2,2,2,2},
+                                {2,2,2,2,2,2,1,1,1,2,2,2,2,2,2},
+                                {1,1,1,1,1,1,1,0,1,1,1,1,1,1,1},
+                                {2,2,2,2,2,2,1,1,1,2,2,2,2,2,2},
+                                {2,2,2,2,2,1,2,1,2,1,2,2,2,2,2},
+                                {2,2,2,2,1,2,2,1,2,2,1,2,2,2,2},
+                                {2,2,2,1,2,2,2,1,2,2,2,1,2,2,2},
+                                {2,2,1,2,2,2,2,1,2,2,2,2,1,2,2},
+                                {2,1,2,2,2,2,2,1,2,2,2,2,2,1,2},
+                                {1,2,2,2,2,2,2,1,2,2,2,2,2,2,1}});
                     }
-                    if(type.equals(ChessPieceType.KNIGHT)){
-                        chessPiece.setMoveset(new int[][]{{2,1,2,1,2},
-                                                          {1,2,2,2,1},
-                                                          {2,2,0,2,2},
-                                                          {1,2,2,2,1},
-                                                          {2,1,2,1,2}});
+                    else if(type.equals(ChessPieceType.KNIGHT)){
+                        chessPiece.setMoveset(new int[][]{
+                                {2,1,2,1,2},
+                                {1,2,2,2,1},
+                                {2,2,0,2,2},
+                                {1,2,2,2,1},
+                                {2,1,2,1,2}});
+                    }
+                    else if(type.equals(ChessPieceType.BISHOP)){
+                        chessPiece.setMoveset(new int[][]{
+                                {1,2,2,2,2,2,2,2,2,2,2,2,2,2,1},
+                                {2,1,2,2,2,2,2,2,2,2,2,2,2,1,2},
+                                {2,2,1,2,2,2,2,2,2,2,2,2,1,2,2},
+                                {2,2,2,1,2,2,2,2,2,2,2,1,2,2,2},
+                                {2,2,2,2,1,2,2,2,2,2,1,2,2,2,2},
+                                {2,2,2,2,2,1,2,2,2,1,2,2,2,2,2},
+                                {2,2,2,2,2,2,1,2,1,2,2,2,2,2,2},
+                                {2,2,2,2,2,2,2,0,2,2,2,2,2,2,2},
+                                {2,2,2,2,2,2,1,2,1,2,2,2,2,2,2},
+                                {2,2,2,2,2,1,2,2,2,1,2,2,2,2,2},
+                                {2,2,2,2,1,2,2,2,2,2,1,2,2,2,2},
+                                {2,2,2,1,2,2,2,2,2,2,2,1,2,2,2},
+                                {2,2,1,2,2,2,2,2,2,2,2,2,1,2,2},
+                                {2,1,2,2,2,2,2,2,2,2,2,2,2,1,2},
+                                {1,2,2,2,2,2,2,2,2,2,2,2,2,2,1},
+                        });
+                    }
+                    else if(type.equals(ChessPieceType.ROOK)){
+                        chessPiece.setMoveset(new int[][]{
+                                {2,2,2,2,2,2,2,1,2,2,2,2,2,2,2},
+                                {2,2,2,2,2,2,2,1,2,2,2,2,2,2,2},
+                                {2,2,2,2,2,2,2,1,2,2,2,2,2,2,2},
+                                {2,2,2,2,2,2,2,1,2,2,2,2,2,2,2},
+                                {2,2,2,2,2,2,2,1,2,2,2,2,2,2,2},
+                                {2,2,2,2,2,2,2,1,2,2,2,2,2,2,2},
+                                {2,2,2,2,2,2,2,1,2,2,2,2,2,2,2},
+                                {1,1,1,1,1,1,1,0,1,1,1,1,1,1,1},
+                                {2,2,2,2,2,2,2,1,2,2,2,2,2,2,2},
+                                {2,2,2,2,2,2,2,1,2,2,2,2,2,2,2},
+                                {2,2,2,2,2,2,2,1,2,2,2,2,2,2,2},
+                                {2,2,2,2,2,2,2,1,2,2,2,2,2,2,2},
+                                {2,2,2,2,2,2,2,1,2,2,2,2,2,2,2},
+                                {2,2,2,2,2,2,2,1,2,2,2,2,2,2,2},
+                                {2,2,2,2,2,2,2,1,2,2,2,2,2,2,2},
+                        });
+                    }
+                    else if(type.equals(ChessPieceType.PAWN)){
+                        chessPiece.setMoveset(new int[][]{
+                                {2,1,2},
+                                {2,0,2},
+                        });
                     }
 
                 }
@@ -191,16 +318,15 @@ public class GameLogic {
     public void update(int y_or, int x_or, int y_tr, int x_tr){ //called when chesspiece is moved
         ChessPieceAbstract[][] gamemap = model.getMap().getMap();
         BoardView.SquarePanel[][] squarePanel = model.getBoardView().getBoardPanel().getSquares();
-        boolean validMove = false;
 
         ChessPieceAbstract tempChesspiece = null;
         tempChesspiece = gamemap[y_or][x_or];
 
         //call movecheck here. if all true then make move
-        validMove = moveCheck(y_or,y_tr,x_or,x_tr,gamemap,tempChesspiece);
+        //validMove = moveValid();
 
         //if(validMove){
-            System.out.println("valid!");
+
             //inverseMapArray();
             squarePanel[y_tr][x_tr].revalidate(); // new
             squarePanel[y_tr][x_tr].repaint(); // new
@@ -215,108 +341,125 @@ public class GameLogic {
 
     }
 
+    //todo block highlighting if chesspieces in the way
     public void highlightMovementPattern(int srcY,int srcX){
-        int YCord = srcY;
+
+        int YCord = srcY; //get y/x cordinate of piece
         int XCord = srcX;
 
         ChessPieceAbstract[][] gamemap = model.getMap().getMap();
-        ChessPiece cp = (ChessPiece) gamemap[YCord][XCord];
-        int[][] moveset = cp.getMoveset();
-        BoardView.SquarePanel[][] squarePanel = model.getBoardView().getBoardPanel().getSquares();
+        ChessPiece cp = (ChessPiece) gamemap[YCord][XCord]; //get piece at cordinate
+        int[][] moveset = cp.getMoveset(); //get moveset of piece
+        BoardView.SquarePanel[][] squarePanel = model.getBoardView().getBoardPanel().getSquares(); //get GUI panel
 
-        int YOffset = 0;
+        int YOffset = 0; //initialize offsets
         int XOffset = 0;
 
         try {
             //get offsets from moveset
             for(int row = 0; row < moveset.length; row ++){
                 for (int col = 0; col < moveset[row].length; col++){
-
-                    if(moveset[row][col] == 0){
+                    if(moveset[row][col] == 0){ //find number 0 in moveset array to get offsets
                         YOffset = row;
                         XOffset = col;
                         break;
                     }
                 }
             }
-            System.out.println((YCord-YOffset) + " " + (XCord-XOffset));
+            //System.out.println((YCord-YOffset) + " " + (XCord-XOffset)); //print offset for debugging
 
-            System.out.println(moveset.length);
+            //System.out.println(moveset.length);
 
         } catch (Exception e) {
             e.printStackTrace();
         }
 
+            //y/x = cordinate - offset.
             for(int y = (YCord - YOffset); y < (YCord-YOffset+moveset.length); y++){
                 for(int x = (XCord - XOffset); x < (XCord-XOffset+moveset.length);x++){
 
-                    if(moveset[y-(YCord-YOffset)][x-(XCord-YOffset)] == 1){
-                        try{
+                    try{
+                        if(moveset[y-(YCord-YOffset)][x-(XCord-XOffset)] == 1 && gamemap[y][x] == null){ //if there is a 1 in moveset then highlight tile
                             squarePanel[y][x].toggleHighlight();
-                        } catch (Exception e) {
-                            continue;
                         }
+                        else if(moveset[y-(YCord-YOffset)][x-(XCord-XOffset)] == 1 && ((ChessPiece) gamemap[YCord][XCord]).getColor() != ((ChessPiece)gamemap[y][x]).getColor()){ //highlights position if chesspiece is not of same color
+                            squarePanel[y][x].toggleHighlight();
+                        }
+                    } catch (Exception e) {
+                        continue;
                     }
 
-
                 }
             }
 
-
-
     }
 
-    public boolean moveCheck(int y_or, int y_tr, int x_or, int x_tr,ChessPieceAbstract[][] gamemap,ChessPieceAbstract chesspiece){
-        //call all check methods in here
-
-        boolean samepos = checkSamePos(y_or,y_tr,x_or,x_tr);
-        boolean withinMoveset = validFromMoveset();
-        //check all booleans are negative
-        if(!samepos){
-            return false;
-        }
-        return true;
-    }
-
-
-
-    public boolean validFromMoveset(){
-
-
-
-        return true;
-    }
-
-
-    //debug further
-    public boolean checkSamePos(int y_or, int y_tr, int x_or, int x_tr){
-
-        if(y_or == y_tr && x_or == x_tr){
-            return true;
-        }
-        return false;
-    }
-
-    /*
-    public boolean validMoveSet(int y_or, int y_tr, int x_or, int x_tr,ChessPieceAbstract[][] gamemap,ChessPieceAbstract chesspiece){
-        ChessPiece cp = (ChessPiece) chesspiece;
+    //todo things to check. clicks on same spot(done), moves within moveset(done), does tile contain friendly or enemy, is checkmate?, is castling
+    public boolean moveValid(int sourceRow, int sourceCol, int targetRow, int targetCol){
+        ChessPieceAbstract[][] gamemap = model.getMap().getMap();
+        ChessPiece cp = (ChessPiece) gamemap[sourceRow][sourceCol];
         int[][] moveset = cp.getMoveset();
 
-        for(int row = 0; row < moveset.length; row ++){
-            for(int col = 0; col < moveset[row].length; col++){
+        boolean samespot = false;
+        boolean withinMoveset = false;
 
-                if(moveset[row][col] == 1){
+        samespot = samecpspot(sourceRow,sourceCol,targetRow,targetCol);
+        withinMoveset = moveWithinCPMoveset(sourceRow,sourceCol,targetRow,targetCol,gamemap,cp,moveset);
 
-                }
-
-            }
+        if(!samespot && !withinMoveset){ //if errorchecks are negative make move valid
+            return true; //move is valid
+        }
+        else{
+            return false;
         }
 
+    }
+
+    public boolean samecpspot(int sR, int sC, int tR, int tC){
+        if(sR == tR && sC == tC){
+            //System.out.println("same position!"); debugging
+            return true;
+        }
+        else{
+            return false;
+        }
+    }
+
+    public boolean moveWithinCPMoveset(int sR, int sC, int tR, int tC, ChessPieceAbstract[][] gamemap, ChessPiece cp, int[][] moveset){
+
+        int movesetOffsetY = -1;
+        int movesetOffsetX = -1;
+
+        try {
+            //get offsets from moveset
+            for(int row = 0; row < moveset.length; row ++){
+                for (int col = 0; col < moveset[row].length; col++){
+                    if(moveset[row][col] == 0){ //find number 0 in moveset array to get offsets
+                        movesetOffsetY = row;
+                        movesetOffsetX = col;
+                        break;
+                    }
+                }
+            }
+
+        } catch (Exception e) {
+
+        }
+
+        int yTrOffset = sR-tR;
+        int xTrOffset = sC-tC;
+
+        try{
+            if(moveset[movesetOffsetY-yTrOffset][movesetOffsetX-xTrOffset] != 1){
+                return true;
+            }
+            else{
+                return false;
+            }
+        } catch (Exception e) {
+
+        }
         return true;
-    }*/
-
-    public void checkObstruction(){
-
     }
 
 }

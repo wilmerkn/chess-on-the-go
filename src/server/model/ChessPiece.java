@@ -12,11 +12,13 @@ public class ChessPiece extends ChessPieceAbstract {
     private int[][] moveset; //check best way to go about it
     private int[] attackMoveset;
     private boolean alive;
+    private boolean moved;
     private String spriteName;
 
     //constructor color will be null
     public ChessPiece(){
         this.alive = true;
+        this.moved = false;
         this.chessPieceType = ChessPieceType.BISHOP;
         this.color = ChessPieceColor.WHITE;
     }
@@ -24,6 +26,7 @@ public class ChessPiece extends ChessPieceAbstract {
     //constructor to give chesspiece color
     public ChessPiece(ChessPieceColor color, ChessPieceType chessPieceType, String spriteName){
         this.alive = true;
+        this.moved = false;
         this.chessPieceType = chessPieceType;
         this.color = color;
         this.spriteName = spriteName;

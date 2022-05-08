@@ -142,6 +142,7 @@ public class BoardView {
 
                 @Override
                 public void mousePressed(MouseEvent e) {
+                    boolean valid;
 
                     if(SwingUtilities.isLeftMouseButton(e))  {
                         if(!mouseListenerEnabled) return;
@@ -158,11 +159,17 @@ public class BoardView {
                         } else {
                             targetRow = squarePanel.getRow();
                             targetCol = squarePanel.getCol();
-                            movePiece(squares[sourceRow][sourceCol], squares[targetRow][targetCol]);
-                            squares[sourceRow][sourceCol].toggleHighlight();
-                            gameLogic.highlightMovementPattern(sourceRow,sourceCol);
-                            gameLogic.update(sourceRow,sourceCol,targetRow,targetCol);
-                            sourceRow = sourceCol = targetRow = targetCol = -1;
+
+                            valid = gameLogic.moveValid(sourceRow,sourceCol,targetRow,targetCol);
+                            if(valid){
+                                movePiece(squares[sourceRow][sourceCol], squares[targetRow][targetCol]);
+                                squares[sourceRow][sourceCol].toggleHighlight();
+                                gameLogic.highlightMovementPattern(sourceRow,sourceCol); //turns off highlights
+                                gameLogic.update(sourceRow,sourceCol,targetRow,targetCol); //update view
+                                sourceRow = sourceCol = targetRow = targetCol = -1;
+                                //todo make next turn if this runs
+                            }
+
 
                             /*
                             //if the chess piece is a white pawn
