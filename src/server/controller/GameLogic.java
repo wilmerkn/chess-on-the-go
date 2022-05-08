@@ -322,11 +322,6 @@ public class GameLogic {
         ChessPieceAbstract tempChesspiece = null;
         tempChesspiece = gamemap[y_or][x_or];
 
-        //call movecheck here. if all true then make move
-        //validMove = moveValid();
-
-        //if(validMove){
-
             //inverseMapArray();
             squarePanel[y_tr][x_tr].revalidate(); // new
             squarePanel[y_tr][x_tr].repaint(); // new
@@ -337,7 +332,7 @@ public class GameLogic {
             //inverseMapArray();
 
             drawMap();
-        //}
+
 
     }
 
@@ -402,11 +397,13 @@ public class GameLogic {
 
         boolean samespot = false;
         boolean withinMoveset = false;
+        boolean friendlyObstruction = false;
 
         samespot = samecpspot(sourceRow,sourceCol,targetRow,targetCol);
-        withinMoveset = moveWithinCPMoveset(sourceRow,sourceCol,targetRow,targetCol,gamemap,cp,moveset);
+        withinMoveset = moveWithinCPMoveset(sourceRow,sourceCol,targetRow,targetCol,moveset);
+        friendlyObstruction = friendlyCPObstruction(targetRow,targetCol,gamemap,cp);
 
-        if(!samespot && !withinMoveset){ //if errorchecks are negative make move valid
+        if(!samespot && !withinMoveset && !friendlyObstruction){ //if errorchecks are negative make move valid
             return true; //move is valid
         }
         else{
@@ -425,7 +422,7 @@ public class GameLogic {
         }
     }
 
-    public boolean moveWithinCPMoveset(int sR, int sC, int tR, int tC, ChessPieceAbstract[][] gamemap, ChessPiece cp, int[][] moveset){
+    public boolean moveWithinCPMoveset(int sR, int sC, int tR, int tC, int[][] moveset){
 
         int movesetOffsetY = -1;
         int movesetOffsetX = -1;
@@ -460,6 +457,17 @@ public class GameLogic {
 
         }
         return true;
+    }
+
+    //checks if obstruction is of same chesspiece color
+    public boolean friendlyCPObstruction(int targetRow, int targetCol, ChessPieceAbstract[][] gamemap,ChessPiece cp){
+        if(gamemap[targetRow][targetCol] != null){
+            ChessPieceColor obstructionColor = ((ChessPiece)gamemap[targetRow][targetCol]).getColor();
+            if(cp.getColor() == obstructionColor){
+                return true;
+            }
+        }
+        return false;
     }
 
 }
