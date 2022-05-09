@@ -1,8 +1,9 @@
 package server.controller;
 
 import client.board.BoardView;
+import client.gameview.BoardPanel;
+import client.gameview.GameView;
 import server.model.*;
-import client.GameView;
 
 import javax.swing.*;
 import java.util.HashMap;
@@ -13,15 +14,18 @@ import java.util.HashMap;
 
 public class GameLogic {
 
-    private GameView view;
+
     private GameModel model;
+    private GameView view;
 
     public GameLogic() {
-        this.model = new GameModel(this);
         this.view = new GameView(this);
+        this.model = new GameModel();
+
 
         //all game code runs here
         model.setMap(new GameMap(8));
+
         initializeMap();
         //debugChesspieces();
         //inverseMapArray();
@@ -202,9 +206,9 @@ public class GameLogic {
     //draws player-one game map
     public void drawMap(){
         int mapDim = model.getMap().getMapDimension();
-        HashMap<String, JLabel> notationLbl = model.getBoardView().getNotationToJLMap();
+        HashMap<String, JLabel> notationLbl = view.getBoardPanel().getNotationToJLMap(); //todo get board panel
         ChessPieceAbstract[][] gamemap = model.getMap().getMap();
-        BoardView.SquarePanel[][] squarePanel = model.getBoardView().getBoardPanel().getSquares();
+        BoardPanel.SquarePanel[][] squarePanel = view.getBoardPanel().getSquares();
         GameMap map = model.getMap();
 
         for(int row = 0; row < mapDim; row++){
@@ -317,7 +321,7 @@ public class GameLogic {
     //method used to update logical game map with chesspieces new position
     public void update(int y_or, int x_or, int y_tr, int x_tr){ //called when chesspiece is moved
         ChessPieceAbstract[][] gamemap = model.getMap().getMap();
-        BoardView.SquarePanel[][] squarePanel = model.getBoardView().getBoardPanel().getSquares();
+        BoardPanel.SquarePanel[][] squarePanel = view.getBoardPanel().getSquares();
 
         ChessPieceAbstract tempChesspiece = null;
         tempChesspiece = gamemap[y_or][x_or];
@@ -345,7 +349,7 @@ public class GameLogic {
         ChessPieceAbstract[][] gamemap = model.getMap().getMap();
         ChessPiece cp = (ChessPiece) gamemap[YCord][XCord]; //get piece at cordinate
         int[][] moveset = cp.getMoveset(); //get moveset of piece
-        BoardView.SquarePanel[][] squarePanel = model.getBoardView().getBoardPanel().getSquares(); //get GUI panel
+        BoardPanel.SquarePanel[][] squarePanel = view.getBoardPanel().getSquares(); //get GUI panel
 
         int YOffset = 0; //initialize offsets
         int XOffset = 0;

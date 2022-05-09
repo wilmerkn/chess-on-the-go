@@ -1,7 +1,5 @@
 package server.model;
 
-import client.GameView;
-
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 
@@ -9,7 +7,7 @@ import java.text.NumberFormat;
 public class GameTimerTask implements Runnable{
 
     private boolean stopFlag; //stop flag for while loop
-    private GameView view; //access to view to change text in components
+    //private GameView view; //access to view to change text in components
 
     private int hours;
     private int minutes;
@@ -20,11 +18,7 @@ public class GameTimerTask implements Runnable{
     private static final int N = 60;
 
     public GameTimerTask(){
-        this.view = null;
-        stopFlag = false;
-    }
-    public GameTimerTask(GameView view){
-        this.view = view;
+        //this.view = null;
         stopFlag = false;
     }
 

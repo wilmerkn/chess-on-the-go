@@ -11,8 +11,10 @@ import java.util.HashMap;
 
 public class GameView {
     private final static Dimension CLIENT_DIMENSION = new Dimension(1000, 800);
+    private BoardPanel boardPanel;
+    private ChatPanel chatPanel;
 
-    public GameView() {
+    public GameView(GameLogic gameLogic) {
         JFrame frame = new JFrame();
         frame.setTitle("Chess On The Go");
         frame.setSize(CLIENT_DIMENSION);
@@ -23,14 +25,18 @@ public class GameView {
         frame.setLayout(null);
         //frame.getContentPane().setBackground(new Color(35,35,35));
 
-        BoardPanel boardPanel = new BoardPanel();
+        boardPanel = new BoardPanel(gameLogic);
         boardPanel.setBounds(7, 25, 650, 650);
-        ChatPanel chatPanel = new ChatPanel();
+        chatPanel = new ChatPanel();
         chatPanel.setBounds(810, 7, 175, 700);
 
         frame.add(boardPanel);
         frame.add(chatPanel);
         frame.setVisible(true);
 
+    }
+
+    public BoardPanel getBoardPanel() {
+        return boardPanel;
     }
 }
