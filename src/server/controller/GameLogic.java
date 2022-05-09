@@ -13,6 +13,9 @@ import java.util.HashMap;
 
 //todo way to get every moveset from chesspieces for valid move checks
 
+//todo complete all chess peices to fully functioning.
+// currently complete: knight,king
+// left to fix: pawn, rook, bishop, queen.
 public class GameLogic {
 
     private GameView view;
@@ -415,7 +418,6 @@ public class GameLogic {
 
     public boolean samecpspot(int sR, int sC, int tR, int tC){
         if(sR == tR && sC == tC){
-            //System.out.println("same position!"); debugging
             return true;
         }
         else{
@@ -474,6 +476,7 @@ public class GameLogic {
     //notes:
     //todo method used to switch movement pattern on pawns after first move, cleans board slate of chesspieces for redraw
     // .
+    // Kolla på hur logik ska skjötas på server medans clienter skickar moves.
     // Castling requirements:
     // Your king has not moved in the game yet.
     // Your king is not in check.
