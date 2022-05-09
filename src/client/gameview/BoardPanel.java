@@ -43,9 +43,9 @@ public class BoardPanel extends JPanel {
         }
         setVisible(true);
         validate();
-        populateBoard();
+        //populateBoard();
     }
-
+    /*
     private void populateBoard() {
         squares[0][0].placePiece(notationToJLMap.get("BR"));
         squares[0][1].placePiece(notationToJLMap.get("BN"));
@@ -68,6 +68,8 @@ public class BoardPanel extends JPanel {
         squares[7][6].placePiece(notationToJLMap.get("WN"));
         squares[7][7].placePiece(notationToJLMap.get("WR"));
     }
+
+     */
 
     private void movePiece(SquarePanel source, SquarePanel target) {
         if (!source.isOccupied()) return;
