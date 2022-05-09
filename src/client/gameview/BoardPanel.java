@@ -98,6 +98,7 @@ public class BoardPanel extends JPanel {
                         if (!squarePanel.isOccupied()) return;
                         sourceRow = squarePanel.getRow();
                         sourceCol = squarePanel.getCol();
+                        //gameLogic.highlightMovementPattern(sourceRow,sourceCol);
                         squares[sourceRow][sourceCol].toggleHighlight();
                         targetRow = targetCol = -1;
 

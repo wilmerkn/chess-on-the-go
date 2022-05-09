@@ -466,6 +466,14 @@ public class GameLogic {
         return false;
     }
 
-    //todo method used to switch movement pattern on pawns
+    //notes:
+    //todo method used to switch movement pattern on pawns after first move, cleans board slate of chesspieces for redraw
+    // .
+    // Castling requirements:
+    // Your king has not moved in the game yet.
+    // Your king is not in check.
+    // The king does not castle through a square which is controlled by an opponent’s piece.
+    // The king is not in check after castling.
+    // The rook has not been moved in the game yet.
 
 }
