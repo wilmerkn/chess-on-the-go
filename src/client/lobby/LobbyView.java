@@ -3,6 +3,7 @@ package client.lobby;
 import client.board.BoardView;
 import client.gameview.GameView;
 import client.register.RegisterView;
+import server.controller.GameLogic;
 import server.controller.LoginController;
 import server.controller.RegisterController;
 
@@ -53,7 +54,8 @@ public class LobbyView extends JFrame implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == gameButton) {
-            GameView gameView = new GameView();
+            //GameView gameView = new GameView();
+            GameLogic gameLogic = new GameLogic();
         }
 
 

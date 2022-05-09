@@ -1,6 +1,7 @@
 package server.model;
 
 import client.board.BoardView;
+import client.gameview.BoardPanel;
 import server.controller.GameLogic;
 
 import java.util.HashMap;
@@ -16,13 +17,12 @@ public class GameModel {
 
     private ChessPiece chessPiece;
 
-    private BoardView boardView;
-
     private HashMap<Integer,ChessPieceAbstract> chesspieces = new HashMap<Integer,ChessPieceAbstract>();
 
-    public GameModel(GameLogic gameLogic){
+    public GameModel(){
+
         gameTimer = new GameTimer();
-        boardView = new BoardView(gameLogic); // model should not have view
+        //boardView = new BoardView(gameLogic); // model should not have view
         map = new GameMap(8);
 
         chesspieces.put(1, new ChessPiece(ChessPieceColor.WHITE, ChessPieceType.PAWN, "WP")); //white Pawn
@@ -69,14 +69,6 @@ public class GameModel {
 
     public void setChesspieces(HashMap<Integer, ChessPieceAbstract> chesspieces) {
         this.chesspieces = chesspieces;
-    }
-
-    public BoardView getBoardView() {
-        return boardView;
-    }
-
-    public void setBoardView(BoardView boardView) {
-        this.boardView = boardView;
     }
 
     public ChessPiece getChessPiece() {

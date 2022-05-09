@@ -9,14 +9,16 @@ import java.io.IOException;
 public class ChessPiece extends ChessPieceAbstract {
     private ChessPieceType chessPieceType; //enum for type
     private ChessPieceColor color; //color of a chesspiece (white/black)
-    private int[] moveset; //check best way to go about it
+    private int[][] moveset; //check best way to go about it
     private int[] attackMoveset;
     private boolean alive;
+    private boolean moved;
     private String spriteName;
 
     //constructor color will be null
     public ChessPiece(){
         this.alive = true;
+        this.moved = false;
         this.chessPieceType = ChessPieceType.BISHOP;
         this.color = ChessPieceColor.WHITE;
     }
@@ -24,6 +26,7 @@ public class ChessPiece extends ChessPieceAbstract {
     //constructor to give chesspiece color
     public ChessPiece(ChessPieceColor color, ChessPieceType chessPieceType, String spriteName){
         this.alive = true;
+        this.moved = false;
         this.chessPieceType = chessPieceType;
         this.color = color;
         this.spriteName = spriteName;
@@ -38,7 +41,7 @@ public class ChessPiece extends ChessPieceAbstract {
         this.attackMoveset = attackMoveset;
     }
 
-    public int[] getMoveset() {
+    public int[][] getMoveset() {
         return moveset;
     }
 
@@ -46,9 +49,10 @@ public class ChessPiece extends ChessPieceAbstract {
         return chessPieceType;
     }
 
-    public void setMoveset(int[] moveset) {
+    public void setMoveset(int[][] moveset) {
         this.moveset = moveset;
     }
+
 
     public void setChessPieceType(ChessPieceType chessPieceType) {
         this.chessPieceType = chessPieceType;
