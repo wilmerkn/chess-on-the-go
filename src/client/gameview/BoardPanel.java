@@ -68,7 +68,7 @@ public class BoardPanel extends JPanel {
 
     private void movePiece(SquarePanel source, SquarePanel target) {
         if (!source.isOccupied()) return;
-        else if (target.isOccupied()) target.removePiece();
+        else target.removePiece();
         target.placePiece(source.getPiece());
         source.removePiece();
     }
@@ -104,7 +104,9 @@ public class BoardPanel extends JPanel {
                     } else {
                         targetRow = squarePanel.getRow();
                         targetCol = squarePanel.getCol();
-                        movePiece(squares[sourceRow][sourceCol], squares[targetRow][targetCol]);
+                        if(sourceRow != targetRow || sourceCol != targetCol) {
+                            movePiece(squares[sourceRow][sourceCol], squares[targetRow][targetCol]);
+                        }
                         squares[sourceRow][sourceCol].toggleHighlight();
                         //gameLogic.update(sourceRow,sourceCol,targetRow,targetCol);
                         sourceRow = sourceCol = targetRow = targetCol = -1;
