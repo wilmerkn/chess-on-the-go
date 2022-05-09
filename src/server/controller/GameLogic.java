@@ -1,8 +1,8 @@
 package server.controller;
 
 import client.board.BoardView;
+import client.gameview.GameView;
 import server.model.*;
-import client.GameView;
 
 import javax.swing.*;
 import java.util.HashMap;
@@ -16,7 +16,7 @@ public class GameLogic {
 
     public GameLogic() {
         this.model = new GameModel(this);
-        this.view = new GameView(this);
+        this.view = new GameView();
 
         //all game code runs here
         model.setMap(new GameMap(8));

@@ -1,7 +1,6 @@
 package server.controller;
 
-import client.LoginView;
-import client.RegisterView;
+import client.register.RegisterView;
 import server.model.DatabaseConnection;
 import server.model.Register;
 

@@ -1,4 +1,4 @@
-package client;
+package client.register;
 
 import server.controller.RegisterController;
 import server.model.Register;

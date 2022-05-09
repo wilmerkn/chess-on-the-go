@@ -1,7 +1,7 @@
 package server.controller;
 
-import client.LoginView;
-import client.board.BoardView;
+import client.lobby.LobbyView;
+import client.login.LoginView;
 import server.model.DatabaseConnection;
 import server.model.Login;
 
@@ -25,7 +25,7 @@ public class LoginController {
 
         if (loginOk) {
             loginView.closeLoginWindow();
-            BoardView gw = new BoardView();
+            LobbyView lobbyView = new LobbyView();
         }
     }
 }
