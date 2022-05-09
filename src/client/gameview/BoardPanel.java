@@ -22,12 +22,15 @@ public class BoardPanel extends JPanel {
 
     private boolean mouseListenerEnabled = true;
 
+    private GameLogic gameLogic;
+
     private HashMap<String, JLabel> notationToJLMap = BoardUtils.pieceNotationToJL();
 
-    public BoardPanel() {
+    public BoardPanel(GameLogic gameLogic) {
         super(new GridLayout(8, 8));
         setSize(BOARD_DIMENSION);
 
+        this.gameLogic = gameLogic;
 
         this.sourceRow = this.sourceCol = this.targetRow = this.targetCol = -1;
         for (int row = 0; row < 8; row++) {
@@ -81,6 +84,9 @@ public class BoardPanel extends JPanel {
         mouseListenerEnabled = false;
     }
 
+    public HashMap<String, JLabel> getNotationToJLMap() {
+        return notationToJLMap;
+    }
 
     //fix this later
     private MouseListener createMouselistener(SquarePanel squarePanel) {
@@ -91,6 +97,7 @@ public class BoardPanel extends JPanel {
 
             @Override
             public void mousePressed(MouseEvent e) {
+                boolean valid;
 
                 if (SwingUtilities.isLeftMouseButton(e)) {
                     if (!mouseListenerEnabled) return;
@@ -98,16 +105,24 @@ public class BoardPanel extends JPanel {
                         if (!squarePanel.isOccupied()) return;
                         sourceRow = squarePanel.getRow();
                         sourceCol = squarePanel.getCol();
+                        gameLogic.highlightMovementPattern(sourceRow,sourceCol);
                         squares[sourceRow][sourceCol].toggleHighlight();
                         targetRow = targetCol = -1;
 
                     } else {
                         targetRow = squarePanel.getRow();
                         targetCol = squarePanel.getCol();
-                        movePiece(squares[sourceRow][sourceCol], squares[targetRow][targetCol]);
-                        squares[sourceRow][sourceCol].toggleHighlight();
-                        //gameLogic.update(sourceRow,sourceCol,targetRow,targetCol);
-                        sourceRow = sourceCol = targetRow = targetCol = -1;
+
+                        valid = gameLogic.moveValid(sourceRow,sourceCol,targetRow,targetCol);
+                        if(valid){
+                            movePiece(squares[sourceRow][sourceCol], squares[targetRow][targetCol]);
+                            squares[sourceRow][sourceCol].toggleHighlight();
+                            gameLogic.highlightMovementPattern(sourceRow,sourceCol); //turns off highlights
+                            gameLogic.update(sourceRow,sourceCol,targetRow,targetCol); //update view
+                            sourceRow = sourceCol = targetRow = targetCol = -1;
+                            //todo make next turn if this runs
+                        }
+
                     }
                 } else if (SwingUtilities.isRightMouseButton(e) && !(sourceRow == -1 && sourceCol == -1)) {
                     squares[sourceRow][sourceCol].toggleHighlight();
@@ -133,7 +148,7 @@ public class BoardPanel extends JPanel {
         return squares;
     }
 
-    private static class SquarePanel extends JPanel {
+    public static class SquarePanel extends JPanel {
         private final int row;
         private final int col;
         private JLabel piece;
@@ -196,7 +211,7 @@ public class BoardPanel extends JPanel {
             return piece != null;
         }
 
-        private void toggleHighlight() {
+        public void toggleHighlight() {
             if(this.getBorder() != null) this.setBorder(null);
             else this.setBorder(HIGHLIGHTER);
         }

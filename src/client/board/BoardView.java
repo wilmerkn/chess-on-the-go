@@ -142,6 +142,7 @@ public class BoardView {
 
                 @Override
                 public void mousePressed(MouseEvent e) {
+                    boolean valid;
 
                     if(SwingUtilities.isLeftMouseButton(e))  {
                         if(!mouseListenerEnabled) return;
@@ -149,6 +150,7 @@ public class BoardView {
                             if(!squarePanel.isOccupied()) return;
                             sourceRow = squarePanel.getRow();
                             sourceCol = squarePanel.getCol();
+                            gameLogic.highlightMovementPattern(sourceRow,sourceCol);
                             squares[sourceRow][sourceCol].toggleHighlight();
                             targetRow = targetCol = -1;
                             //System.out.println("row "+sourceRow);
@@ -157,10 +159,17 @@ public class BoardView {
                         } else {
                             targetRow = squarePanel.getRow();
                             targetCol = squarePanel.getCol();
-                            movePiece(squares[sourceRow][sourceCol], squares[targetRow][targetCol]);
-                            squares[sourceRow][sourceCol].toggleHighlight();
-                            gameLogic.update(sourceRow,sourceCol,targetRow,targetCol);
-                            sourceRow = sourceCol = targetRow = targetCol = -1;
+
+                            valid = gameLogic.moveValid(sourceRow,sourceCol,targetRow,targetCol);
+                            if(valid){
+                                movePiece(squares[sourceRow][sourceCol], squares[targetRow][targetCol]);
+                                squares[sourceRow][sourceCol].toggleHighlight();
+                                gameLogic.highlightMovementPattern(sourceRow,sourceCol); //turns off highlights
+                                gameLogic.update(sourceRow,sourceCol,targetRow,targetCol); //update view
+                                sourceRow = sourceCol = targetRow = targetCol = -1;
+                                //todo make next turn if this runs
+                            }
+
 
                             /*
                             //if the chess piece is a white pawn
@@ -491,7 +500,7 @@ public class BoardView {
             return piece != null;
         }
 
-        private void toggleHighlight() {
+        public void toggleHighlight() {
             if(this.getBorder() != null) this.setBorder(null);
             else this.setBorder(HIGHLIGHTER);
         }
