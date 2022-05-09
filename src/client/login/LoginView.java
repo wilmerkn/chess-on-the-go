@@ -1,4 +1,4 @@
-package client;
+package client.login;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -8,8 +8,8 @@ import java.awt.event.ActionListener;
 import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.util.Objects;
 
+import client.register.RegisterView;
 import server.controller.LoginController;
 import server.controller.RegisterController;
 
@@ -24,7 +24,6 @@ public class LoginView extends JFrame implements ActionListener {
     JButton loginButton;
     JButton registerButton;
     JLabel pictureLabel;
-    ImageIcon image;
     ImageIcon resizedImage;
     Image scaledImage;
     private final JTextField userText;
@@ -109,9 +108,8 @@ public class LoginView extends JFrame implements ActionListener {
 
     }
     public void closeLoginWindow(){
-        //funkar inte atm, kanske för att det är det första som startas, ska kolla på d
-        this.dispose();
-        //kör en fuskis istället
+        //fix so that this disposes of window, not just hides it
+       // this.dispose();
         this.setVisible(false);
     }
 }

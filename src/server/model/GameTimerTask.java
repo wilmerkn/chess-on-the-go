@@ -1,6 +1,6 @@
 package server.model;
 
-import client.GameView;
+import client.gameview.GameView;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
