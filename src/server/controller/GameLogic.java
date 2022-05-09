@@ -15,14 +15,14 @@ import java.util.HashMap;
 
 public class GameLogic {
 
-
-    private GameModel model;
     private GameView view;
+    private GameModel model;
+
 
     public GameLogic() {
+
         this.view = new GameView(this);
         this.model = new GameModel();
-
 
         //all game code runs here
         model.setMap(new GameMap(8));
