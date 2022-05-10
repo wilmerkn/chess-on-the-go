@@ -9,6 +9,7 @@ import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.io.File;
 
+import client.Client;
 import client.register.RegisterView;
 import server.controller.LoginController;
 import server.controller.RegisterController;
@@ -30,12 +31,14 @@ public class LoginView extends JFrame implements ActionListener {
     private final JPasswordField passText;
     private final JLabel userLabel;
     private final JLabel passLabel;
-    private final LoginController loginController;
-    private RegisterController registerController;
+    //private final LoginController loginController;
+    private RegisterController registerController = new RegisterController();
+
+    private final Client client;
 
 
-    public LoginView(LoginController loginController, RegisterController registerController){
-        this.loginController = loginController;
+    public LoginView(Client client){
+        this.client = client;
 
 
         loginFrame = new JFrame("Chess On The Go - Login");
@@ -99,9 +102,9 @@ public class LoginView extends JFrame implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == loginButton) {
-            loginController.checkLogin(userText.getText(),String.valueOf(passText.getPassword()));
-        }
-        if (e.getSource() == registerButton) {
+            client.login(userText.getText(),String.valueOf(passText.getPassword()));
+            // loginController.checkLogin(userText.getText(),String.valueOf(passText.getPassword()));
+        }else if (e.getSource() == registerButton) {
             registerController = new RegisterController();
             RegisterView register = new RegisterView(registerController);
         }

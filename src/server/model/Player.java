@@ -1,6 +1,9 @@
 package server.model;
 
-public class Player {
+import java.io.Serializable;
+
+public class Player implements Serializable {
+
     private String usrName;
     private String passW;
     private int gamesplayed;
