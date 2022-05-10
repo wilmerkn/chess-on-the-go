@@ -1,11 +1,14 @@
 package client;
 
+import client.lobby.LobbyView;
 import client.login.LoginView;
 import server.controller.LoginController;
 import server.model.Challenge;
+import server.model.LoginRequest;
 import server.model.Message;
 import server.model.Player;
 
+import javax.swing.*;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -16,12 +19,13 @@ import java.net.UnknownHostException;
 public class Client {
     private static final String HOST = "127.0.0.1";
     private static final int PORT = 1234;
-
     private Socket socket;
     private ObjectInputStream ois;
     private ObjectOutputStream oos;
 
     LoginView loginView;
+    LobbyView lobbyView;
+
 
 
     public Client() {
@@ -33,10 +37,9 @@ public class Client {
 
     // public??
     public void login(String username, String password) {
-        Player player = new Player(username);
-        player.setPassW(password);
+        LoginRequest loginRequest = new LoginRequest(username, password);
         try {
-            oos.writeObject(player);
+            oos.writeObject(loginRequest);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -66,9 +69,23 @@ public class Client {
             while(true) {
                 try {
                     Object obj = ois.readObject();
-                    if(obj instanceof Challenge) {
-                        // accept eller decline
-                    } else if (obj instanceof Message) {
+                    if(obj instanceof LoginRequest) {
+                        LoginRequest request = (LoginRequest) obj;
+                        if(!request.isAccepted()) {
+                            JOptionPane.showMessageDialog(null, "Login failed");
+                            System.out.println("Login failed");
+                        } else {
+                            System.out.println("Login ok");
+                            loginView.dispose();
+                            lobbyView = new LobbyView();
+                            // skicka lista med online användare
+                        }
+                    } else if(obj instanceof Player) {
+                        Player p = (Player) obj;
+                        System.out.println("Player:" + p.getUsrName());
+                        // Lägg till namn i Users online
+
+                    }else if (obj instanceof Message) {
                         // Lägg message i textArea
                     }
                 } catch (IOException | ClassNotFoundException e) {
