@@ -12,7 +12,6 @@ public class RegisterController {
     }
     public void registerUser(String username, String password, String country){
         Register.register(dbCon.getConnection(), username, password,country);
-
     }
     public void showRegisterWindow(){
         this.registerView = new RegisterView(this);
