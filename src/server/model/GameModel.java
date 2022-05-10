@@ -19,13 +19,14 @@ public class GameModel {
 
     private HashMap<Integer,ChessPieceAbstract> chesspieces = new HashMap<Integer,ChessPieceAbstract>();
 
-    public GameModel(){
+    public GameModel() {
 
         gameTimer = new GameTimer();
         //boardView = new BoardView(gameLogic); // model should not have view
         map = new GameMap(8);
 
-        chesspieces.put(1, new ChessPiece(ChessPieceColor.WHITE, ChessPieceType.PAWN, "WP")); //white Pawn
+        /*
+        chesspieces.put(1, ChessPieceColor.WHITE, ChessPieceType.PAWN, "WP"); //white Pawn
         chesspieces.put(2, new ChessPiece(ChessPieceColor.WHITE, ChessPieceType.ROOK, "WR")); //white Tower
         chesspieces.put(3, new ChessPiece(ChessPieceColor.WHITE, ChessPieceType.KNIGHT, "WN")); //white Runner
         chesspieces.put(4, new ChessPiece(ChessPieceColor.WHITE, ChessPieceType.BISHOP, "WB")); //white Bishop
@@ -37,6 +38,7 @@ public class GameModel {
         chesspieces.put(10, new ChessPiece(ChessPieceColor.BLACK, ChessPieceType.BISHOP, "BB")); //black Bishop
         chesspieces.put(11, new ChessPiece(ChessPieceColor.BLACK, ChessPieceType.QUEEN, "BQ")); //black Queen
         chesspieces.put(12, new ChessPiece(ChessPieceColor.BLACK, ChessPieceType.KING, "BK")); //black King
+         */
     }
 
     public Player[] getPlayers() {

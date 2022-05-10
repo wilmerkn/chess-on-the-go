@@ -115,16 +115,22 @@ public class BoardPanel extends JPanel {
                         targetRow = squarePanel.getRow();
                         targetCol = squarePanel.getCol();
 
-                        valid = gameLogic.moveValid(sourceRow,sourceCol,targetRow,targetCol);
-                        if(valid){
-                            movePiece(squares[sourceRow][sourceCol], squares[targetRow][targetCol]);
+                        if(sourceRow == targetRow && sourceCol == targetCol){
+                            gameLogic.highlightMovementPattern(sourceRow,sourceCol);
                             squares[sourceRow][sourceCol].toggleHighlight();
-                            gameLogic.highlightMovementPattern(sourceRow,sourceCol); //turns off highlights
-                            gameLogic.update(sourceRow,sourceCol,targetRow,targetCol); //update view
                             sourceRow = sourceCol = targetRow = targetCol = -1;
-                            //todo make next turn if this runs
+                            return;
                         }
+                            valid = gameLogic.moveValid(sourceRow,sourceCol,targetRow,targetCol);
 
+                            if(valid){
+                                movePiece(squares[sourceRow][sourceCol], squares[targetRow][targetCol]);
+                                squares[sourceRow][sourceCol].toggleHighlight();
+                                gameLogic.highlightMovementPattern(sourceRow,sourceCol); //turns off highlights
+                                gameLogic.update(sourceRow,sourceCol,targetRow,targetCol); //update view
+                                sourceRow = sourceCol = targetRow = targetCol = -1;
+                                //todo make next turn if this runs
+                            }
                     }
                 } else if (SwingUtilities.isRightMouseButton(e) && !(sourceRow == -1 && sourceCol == -1)) {
                     squares[sourceRow][sourceCol].toggleHighlight();
@@ -196,7 +202,7 @@ public class BoardPanel extends JPanel {
             validate();
         }
 
-        private void removePiece() {
+        public void removePiece() {
             if(piece != null) {
                 this.remove(piece);
                 piece = null;
