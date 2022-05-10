@@ -20,7 +20,6 @@ public class LobbyView extends JFrame implements ActionListener {
 
     public LobbyView(){
 
-
         lobbyFrame = new JFrame("Chess On The Go - Login");
 
         lobbyFrame.add(pairingPanel);
