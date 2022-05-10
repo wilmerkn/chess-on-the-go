@@ -14,9 +14,16 @@ import java.util.HashMap;
 
 //todo way to get every moveset from chesspieces for valid move checks
 
+//todo switch moveset when array inversed,
+
+//todo only initialize playable side with moves
+
 //todo complete all chess peices to fully functioning.
 // currently complete: knight,king
 // left to fix: pawn, rook, bishop, queen.
+
+//todo check for check mate every draw.
+
 public class GameLogic {
 
     private GameView view;
@@ -73,8 +80,6 @@ public class GameLogic {
         gamemap[7][5] = chesspieces.get(4);
         gamemap[7][6] = chesspieces.get(3);
         gamemap[7][7] = chesspieces.get(2);
-
-        //todo iterate all chess pieces and add movesets
 
         for(int r = 0; r < gamemap.length; r++){
             for(int c = 0; c < gamemap[r].length;c++){
@@ -156,6 +161,7 @@ public class GameLogic {
                         if(chessPiece.getColor() == ChessPieceColor.WHITE){
                             chessPiece.setMoveset(new int[][]{
                                     {2,1,2},
+                                    {2,1,2},
                                     {2,0,2},
                             });
                         }
@@ -163,6 +169,7 @@ public class GameLogic {
                             chessPiece.setMoveset(new int[][]{
                                     {2,0,2},
                                     {2,1,2},
+                                    {2,1,2}
                             });
                         }
 
@@ -206,12 +213,10 @@ public class GameLogic {
         model.getMap().setMap(tempArray);
     }
 
-
-    //todo change so it doesnt draw picture on picture
     //draws player-one game map
     public void drawMap(){
         int mapDim = model.getMap().getMapDimension();
-        HashMap<String, JLabel> notationLbl = view.getBoardPanel().getNotationToJLMap(); //todo get board panel
+        HashMap<String, JLabel> notationLbl = view.getBoardPanel().getNotationToJLMap();
         ChessPieceAbstract[][] gamemap = model.getMap().getMap();
         BoardPanel.SquarePanel[][] squarePanel = view.getBoardPanel().getSquares();
         GameMap map = model.getMap();
@@ -340,7 +345,7 @@ public class GameLogic {
             gamemap[y_or][x_or] = null;
             gamemap[y_tr][x_tr] = tempChesspiece;
 
-            inverseMapArray();
+            //inverseMapArray();
 
             drawMap();
 
@@ -476,6 +481,7 @@ public class GameLogic {
         return false;
     }
 
+    //cleans board of chesspiece sprites
     public void cleanBoard(){
         BoardPanel.SquarePanel[][] squarePanel = view.getBoardPanel().getSquares();
         for(int row = 0; row < squarePanel.length; row++){
@@ -486,7 +492,7 @@ public class GameLogic {
     }
 
     //notes:
-    //todo method used to switch movement pattern on pawns after first move, cleans board slate of chesspieces for redraw
+    //todo method used to switch movement pattern on pawns after first move, cleans board slate of chesspieces for redraw(done)
     // .
     // Kolla på hur logik ska skjötas på server medans clienter skickar moves.
     // Castling requirements:
