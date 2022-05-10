@@ -7,6 +7,7 @@ import client.gameview.GameView;
 import server.model.*;
 
 import javax.swing.*;
+import java.awt.*;
 import java.util.HashMap;
 
 //functionality: Map generation, ingame timer (count up).
@@ -215,6 +216,8 @@ public class GameLogic {
         BoardPanel.SquarePanel[][] squarePanel = view.getBoardPanel().getSquares();
         GameMap map = model.getMap();
 
+        cleanBoard();
+
         for(int row = 0; row < mapDim; row++){
             for(int col = 0; col < mapDim; col++){
                 if(gamemap[row][col] != null){
@@ -337,7 +340,7 @@ public class GameLogic {
             gamemap[y_or][x_or] = null;
             gamemap[y_tr][x_tr] = tempChesspiece;
 
-            //inverseMapArray();
+            inverseMapArray();
 
             drawMap();
 
@@ -471,6 +474,15 @@ public class GameLogic {
             }
         }
         return false;
+    }
+
+    public void cleanBoard(){
+        BoardPanel.SquarePanel[][] squarePanel = view.getBoardPanel().getSquares();
+        for(int row = 0; row < squarePanel.length; row++){
+            for(int col = 0; col < squarePanel[row].length; col++){
+                squarePanel[row][col].removePiece();
+            }
+        }
     }
 
     //notes:

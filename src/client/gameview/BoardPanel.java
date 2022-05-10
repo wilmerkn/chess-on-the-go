@@ -202,7 +202,7 @@ public class BoardPanel extends JPanel {
             validate();
         }
 
-        private void removePiece() {
+        public void removePiece() {
             if(piece != null) {
                 this.remove(piece);
                 piece = null;
