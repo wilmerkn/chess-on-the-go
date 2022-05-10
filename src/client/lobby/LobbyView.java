@@ -55,7 +55,8 @@ public class LobbyView extends JFrame implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == gameButton) {
             //GameView gameView = new GameView();
-            GameLogic gameLogic = new GameLogic();
+                GameLogic gameLogic = new GameLogic();
+
         }
 
 

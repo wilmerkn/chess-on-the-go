@@ -10,19 +10,17 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.HashMap;
 
-//functionality: Map generation, ingame timer (count up).
-
-//todo way to get every moveset from chesspieces for valid move checks
-
 //todo switch moveset when array inversed,
 
 //todo only initialize playable side with moves
 
 //todo complete all chess peices to fully functioning.
 // currently complete: knight,king
-// left to fix: pawn, rook, bishop, queen.
+// left to fix: pawn(doing), rook, bishop, queen.
 
 //todo check for check mate every draw.
+
+//todo remove left click toggle highlight
 
 public class GameLogic {
 
@@ -30,7 +28,7 @@ public class GameLogic {
     private GameModel model;
 
 
-    public GameLogic() {
+    public GameLogic(){
 
         this.view = new GameView(this);
         this.model = new GameModel();
@@ -45,41 +43,42 @@ public class GameLogic {
         drawMap();
     }
 
-    public void initializeMap(){
+    public void initializeMap() {
         int mapDim = model.getMap().getMapDimension();
         ChessPieceAbstract[][] gamemap = model.getMap().getMap();
         HashMap<Integer, ChessPieceAbstract> chesspieces = model.getChesspieces();
         //load black chesspieces
-        gamemap[0][0] = chesspieces.get(8);
-        gamemap[0][1] = chesspieces.get(9);
-        gamemap[0][2] = chesspieces.get(10);
-        gamemap[0][3] = chesspieces.get(11);
-        gamemap[0][4] = chesspieces.get(12);
-        gamemap[0][5] = chesspieces.get(10);
-        gamemap[0][6] = chesspieces.get(9);
-        gamemap[0][7] = chesspieces.get(8);
+
+        gamemap[0][0] = new ChessPiece(ChessPieceColor.BLACK, ChessPieceType.ROOK, "BR");// 8
+        gamemap[0][1] = new ChessPiece(ChessPieceColor.BLACK, ChessPieceType.KNIGHT, "BN");
+        gamemap[0][2] = new ChessPiece(ChessPieceColor.BLACK, ChessPieceType.BISHOP, "BB");
+        gamemap[0][3] = new ChessPiece(ChessPieceColor.BLACK, ChessPieceType.QUEEN, "BQ");
+        gamemap[0][4] = new ChessPiece(ChessPieceColor.BLACK, ChessPieceType.KING, "BK");
+        gamemap[0][5] = new ChessPiece(ChessPieceColor.BLACK, ChessPieceType.BISHOP, "BB");
+        gamemap[0][6] = new ChessPiece(ChessPieceColor.BLACK, ChessPieceType.KNIGHT, "BN");
+        gamemap[0][7] = new ChessPiece(ChessPieceColor.BLACK, ChessPieceType.ROOK, "BR");
 
         //loads black Pawns
         int row = 1;
         for(int col = 0; col < mapDim; col++){
-            gamemap[row][col] = chesspieces.get(7);
+            gamemap[row][col] = new ChessPiece(ChessPieceColor.BLACK, ChessPieceType.PAWN, "BP");
         }
 
         //load white Pawns
         row = 6;
         for(int col = 0; col < mapDim; col++){
-            gamemap[row][col] = chesspieces.get(1);
+            gamemap[row][col] = new ChessPiece(ChessPieceColor.WHITE, ChessPieceType.PAWN, "WP");
         }
 
         //load white chesspieces
-        gamemap[7][0] = chesspieces.get(2);
-        gamemap[7][1] = chesspieces.get(3);
-        gamemap[7][2] = chesspieces.get(4);
-        gamemap[7][3] = chesspieces.get(5);
-        gamemap[7][4] = chesspieces.get(6);
-        gamemap[7][5] = chesspieces.get(4);
-        gamemap[7][6] = chesspieces.get(3);
-        gamemap[7][7] = chesspieces.get(2);
+        gamemap[7][0] = new ChessPiece(ChessPieceColor.WHITE, ChessPieceType.ROOK, "WR");
+        gamemap[7][1] = new ChessPiece(ChessPieceColor.WHITE, ChessPieceType.KNIGHT, "WN");
+        gamemap[7][2] = new ChessPiece(ChessPieceColor.WHITE, ChessPieceType.BISHOP, "WB");
+        gamemap[7][3] = new ChessPiece(ChessPieceColor.WHITE, ChessPieceType.QUEEN, "WQ");
+        gamemap[7][4] = new ChessPiece(ChessPieceColor.WHITE, ChessPieceType.KING, "WK");
+        gamemap[7][5] = new ChessPiece(ChessPieceColor.WHITE, ChessPieceType.BISHOP, "WB");
+        gamemap[7][6] = new ChessPiece(ChessPieceColor.WHITE, ChessPieceType.KNIGHT, "WN");
+        gamemap[7][7] = new ChessPiece(ChessPieceColor.WHITE, ChessPieceType.ROOK, "WR");
 
         for(int r = 0; r < gamemap.length; r++){
             for(int c = 0; c < gamemap[r].length;c++){
@@ -158,23 +157,12 @@ public class GameLogic {
                         });
                     }
                     else if(type.equals(ChessPieceType.PAWN)){
-                        if(chessPiece.getColor() == ChessPieceColor.WHITE){
                             chessPiece.setMoveset(new int[][]{
                                     {2,1,2},
-                                    {2,1,2},
+                                    {3,1,3},
                                     {2,0,2},
                             });
-                        }
-                        else{
-                            chessPiece.setMoveset(new int[][]{
-                                    {2,0,2},
-                                    {2,1,2},
-                                    {2,1,2}
-                            });
-                        }
-
                     }
-
                 }
             }
         }
@@ -335,21 +323,24 @@ public class GameLogic {
         ChessPieceAbstract[][] gamemap = model.getMap().getMap();
         BoardPanel.SquarePanel[][] squarePanel = view.getBoardPanel().getSquares();
 
-        ChessPieceAbstract tempChesspiece = null;
-        tempChesspiece = gamemap[y_or][x_or];
+        ChessPiece tempChesspiece = null;
+        tempChesspiece = ((ChessPiece) gamemap[y_or][x_or]);
 
-            //inverseMapArray();
             squarePanel[y_tr][x_tr].revalidate(); // new
             squarePanel[y_tr][x_tr].repaint(); // new
 
-            gamemap[y_or][x_or] = null;
             gamemap[y_tr][x_tr] = tempChesspiece;
+            gamemap[y_or][x_or] = null;
 
-            //inverseMapArray();
-
+            if( tempChesspiece.getChessPieceType() == ChessPieceType.PAWN && tempChesspiece.getMoved() == 0 ){
+                tempChesspiece.setMoved(1);
+                tempChesspiece.setMoveset(new int[][]{
+                        {3,1,3},
+                        {2,0,2}
+                });
+            }
+            inverseMapArray();
             drawMap();
-
-
     }
 
     //todo block highlighting if chesspieces in the way
@@ -401,18 +392,20 @@ public class GameLogic {
             }
     }
 
-    //todo things to check. clicks on same spot(done), moves within moveset(done), does tile contain friendly or enemy(done), is checkmate?, is castling
+    //todo things to check. clicks on same spot(done), moves within moveset(done), does tile contain friendly or enemy(done), is checkmate?, is castling, cant move on enemy king only put in chess/checkmate
     public boolean moveValid(int sourceRow, int sourceCol, int targetRow, int targetCol){
         ChessPieceAbstract[][] gamemap = model.getMap().getMap();
         ChessPiece cp = (ChessPiece) gamemap[sourceRow][sourceCol];
         int[][] moveset = cp.getMoveset();
+        ChessPieceType chessPieceType = cp.getChessPieceType();
 
         boolean samespot = false;
         boolean withinMoveset = false;
         boolean friendlyObstruction = false;
+        boolean pawnAttack = false;
 
         samespot = samecpspot(sourceRow,sourceCol,targetRow,targetCol);
-        withinMoveset = moveWithinCPMoveset(sourceRow,sourceCol,targetRow,targetCol,moveset);
+        withinMoveset = moveWithinCPMoveset(sourceRow,sourceCol,targetRow,targetCol,moveset,cp,gamemap);
         friendlyObstruction = friendlyCPObstruction(targetRow,targetCol,gamemap,cp);
 
         if(!samespot && !withinMoveset && !friendlyObstruction){ //if errorchecks are negative make move valid
@@ -433,7 +426,7 @@ public class GameLogic {
         }
     }
 
-    public boolean moveWithinCPMoveset(int sR, int sC, int tR, int tC, int[][] moveset){
+    public boolean moveWithinCPMoveset(int sR, int sC, int tR, int tC, int[][] moveset, ChessPiece cp,ChessPieceAbstract[][] gamemap){
 
         int movesetOffsetY = -1;
         int movesetOffsetX = -1;
