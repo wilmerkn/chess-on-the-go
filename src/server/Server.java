@@ -1,5 +1,6 @@
 package server;
 
+import server.controller.GameLogic;
 import server.model.Challenge;
 import server.model.Message;
 import server.model.Move;
@@ -10,6 +11,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
 
@@ -17,7 +19,8 @@ public class Server implements Runnable {
 
     private int port;
 
-    private Hashtable<Player, ClientHandler> playerClientMap;
+    private Hashtable<Player, ClientHandler> playerClientMap; // Testa concurrentHashmap
+    private List<GameLogic> games = new ArrayList<>();
 
     public Server(int port) {
         this.port = port;
@@ -56,7 +59,6 @@ public class Server implements Runnable {
         private Socket socket;
         private ObjectInputStream ois;
         private ObjectOutputStream oos;
-
         private Player player;
 
         public ClientHandler(Socket socket) {
@@ -97,13 +99,20 @@ public class Server implements Runnable {
                             }
                         } else if(challenge.isAccepted()) {
                             System.out.println("Challenge accepted");
+                            GameLogic gl = new GameLogic();
+                            Player player1; // Ta från challenge
+                            Player player2; // Ta från challenge
+
+                            //gl.addPlayers() ?
+                            games.add(gl);
                         }
 
-
                     } else if(object instanceof Message) {
+                        Message msg = (Message) object;
+                        // Inte viktigt nu
 
-
-                    } else if(object instanceof Move mv) {
+                    } else if(object instanceof Move) {
+                        //Move mv = (Move) object;
                         // If move legal make move
                         // If not return null
                     }
