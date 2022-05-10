@@ -17,13 +17,12 @@ import java.util.List;
 
 public class Server implements Runnable {
 
-    private int port;
+    private static final int PORT = 1234;
 
     private Hashtable<Player, ClientHandler> playerClientMap; // Testa concurrentHashmap
     private List<GameLogic> games = new ArrayList<>();
 
-    public Server(int port) {
-        this.port = port;
+    public Server() {
         playerClientMap = new Hashtable<>();
         new Thread(this).start();
     }
@@ -32,7 +31,7 @@ public class Server implements Runnable {
     public void run() {
         System.out.println("Server started");
 
-        try(ServerSocket serverSocket = new ServerSocket(port)) {
+        try(ServerSocket serverSocket = new ServerSocket(PORT)) {
             while(true) {
                 Socket socket = serverSocket.accept();
                 System.out.println("New client connected");
@@ -47,11 +46,7 @@ public class Server implements Runnable {
 
     private void broadcastPlayers() {
         for(ClientHandler client: playerClientMap.values()) {
-            try {
-                client.getOos().writeObject(playerClientMap.keySet());
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            //client.getOos().writeObject(playerClientMap.keySet());
         }
     }
 
@@ -77,8 +72,9 @@ public class Server implements Runnable {
             try {
                 player = (Player) ois.readObject();
                 playerClientMap.put(player, this);
-                broadcastPlayers();
-                System.out.println(player.getUsrName() + "connected.");
+                //checkLogin();
+                //broadcastPlayers();
+                System.out.println(player.getUsrName() + " connected.");
             } catch (IOException | ClassNotFoundException e) {
                 e.printStackTrace();
             }
@@ -141,6 +137,6 @@ public class Server implements Runnable {
 
     public static void main(String[] args) {
         System.out.println("Server starting");
-        new Server(112);
+        new Server();
     }
 }

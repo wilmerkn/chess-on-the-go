@@ -1,25 +1,46 @@
 package client;
 
+import client.login.LoginView;
 import server.controller.LoginController;
 import server.model.Challenge;
 import server.model.Message;
+import server.model.Player;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
 public class Client {
-    private static String HOST = "123.123.23.231";
-    private static int PORT = 1234;
+    private static final String HOST = "127.0.0.1";
+    private static final int PORT = 1234;
 
     private Socket socket;
     private ObjectInputStream ois;
     private ObjectOutputStream oos;
 
+    LoginView loginView;
+
+
     public Client() {
-        LoginController loginController = new LoginController();
+        //LoginController loginController = new LoginController();
+        loginView = new LoginView(this);
+        connect();
+        new ServerListener().start();
+    }
+
+    // public??
+    public void login(String username, String password) {
+        Player player = new Player(username);
+        player.setPassW(password);
+        try {
+            oos.writeObject(player);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
     }
 
     private void connect() {
@@ -27,7 +48,6 @@ public class Client {
             socket = new Socket(HOST, PORT);
             oos = new ObjectOutputStream(socket.getOutputStream());
             ois = new ObjectInputStream(socket.getInputStream());
-
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -36,11 +56,6 @@ public class Client {
 
     private void disconnect() {
 
-    }
-    public static void main(String[] args) {
-        //testkör här för att komma in via login etc /wilmer
-        //För er som testar, är lite osäker på om det kommer funka med databasconnection i och med att det är localhost för mig
-        new Client();
     }
 
     private class ServerListener extends Thread {
@@ -61,5 +76,8 @@ public class Client {
                 }
             }
         }
+    }
+    public static void main(String[] args) {
+        new Client();
     }
 }
