@@ -25,8 +25,8 @@ public class Client {
 
 
     public Client() {
-        //LoginController loginController = new LoginController();
-        loginView = new LoginView(this);
+        LoginController loginController = new LoginController();
+        loginView = new LoginView(loginController);
         connect();
         new ServerListener().start();
     }

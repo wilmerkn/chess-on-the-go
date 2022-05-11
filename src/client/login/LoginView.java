@@ -31,15 +31,14 @@ public class LoginView extends JFrame implements ActionListener {
     private final JPasswordField passText;
     private final JLabel userLabel;
     private final JLabel passLabel;
-    //private final LoginController loginController;
+    private final LoginController loginController;
     private RegisterController registerController = new RegisterController();
 
-    private final Client client;
+    //private final Client client;
 
 
-    public LoginView(Client client){
-        this.client = client;
-
+    public LoginView(LoginController loginController){
+        this.loginController = loginController;
 
         loginFrame = new JFrame("Chess On The Go - Login");
 
@@ -102,8 +101,8 @@ public class LoginView extends JFrame implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == loginButton) {
-            client.login(userText.getText(),String.valueOf(passText.getPassword()));
-            // loginController.checkLogin(userText.getText(),String.valueOf(passText.getPassword()));
+            //client.login(userText.getText(),String.valueOf(passText.getPassword()));
+            loginController.checkLogin(userText.getText(),String.valueOf(passText.getPassword()));
         }else if (e.getSource() == registerButton) {
             registerController = new RegisterController();
             RegisterView register = new RegisterView(registerController);
