@@ -16,7 +16,7 @@ import java.util.HashMap;
 
 //todo complete all chess peices to fully functioning.
 // currently complete: knight,king,Pawn,
-// left to fix:rook, bishop, queen.
+// left to fix:rook(doing), bishop, queen.
 
 //todo check for check mate every draw.
 
@@ -201,103 +201,6 @@ public class GameLogic {
         map.displayMap();
     }
 
-    /*
-    public void debugChesspieces(){
-        ChessPieceAbstract[][] gamemap = model.getMap().getMap();
-        HashMap<Integer, ChessPieceAbstract> chesspieces = model.getChesspieces();
-
-        gamemap[4][4] = chesspieces.get(7);
-        //9 is knight
-
-        for(int r = 0; r < gamemap.length; r++){
-            for(int c = 0; c < gamemap[r].length;c++){
-                if(gamemap[r][c] != null){
-                    ChessPiece chessPiece = (ChessPiece) gamemap[r][c];
-                    ChessPieceType type = chessPiece.getChessPieceType();
-
-                    if(type.equals(ChessPieceType.KING)){
-                        chessPiece.setMoveset(new int[][]{
-                                {1,1,1},
-                                {1,0,1},
-                                {1,1,1}});
-                    }
-                    else if(type.equals(ChessPieceType.QUEEN)){
-                        chessPiece.setMoveset(new int[][]{
-                                {1,2,2,2,2,2,2,1,2,2,2,2,2,2,1},
-                                {2,1,2,2,2,2,2,1,2,2,2,2,2,1,2},
-                                {2,2,1,2,2,2,2,1,2,2,2,2,1,2,2},
-                                {2,2,2,1,2,2,2,1,2,2,2,1,2,2,2},
-                                {2,2,2,2,1,2,2,1,2,2,1,2,2,2,2},
-                                {2,2,2,2,2,1,2,1,2,1,2,2,2,2,2},
-                                {2,2,2,2,2,2,1,1,1,2,2,2,2,2,2},
-                                {1,1,1,1,1,1,1,0,1,1,1,1,1,1,1},
-                                {2,2,2,2,2,2,1,1,1,2,2,2,2,2,2},
-                                {2,2,2,2,2,1,2,1,2,1,2,2,2,2,2},
-                                {2,2,2,2,1,2,2,1,2,2,1,2,2,2,2},
-                                {2,2,2,1,2,2,2,1,2,2,2,1,2,2,2},
-                                {2,2,1,2,2,2,2,1,2,2,2,2,1,2,2},
-                                {2,1,2,2,2,2,2,1,2,2,2,2,2,1,2},
-                                {1,2,2,2,2,2,2,1,2,2,2,2,2,2,1}});
-                    }
-                    else if(type.equals(ChessPieceType.KNIGHT)){
-                        chessPiece.setMoveset(new int[][]{
-                                {2,1,2,1,2},
-                                {1,2,2,2,1},
-                                {2,2,0,2,2},
-                                {1,2,2,2,1},
-                                {2,1,2,1,2}});
-                    }
-                    else if(type.equals(ChessPieceType.BISHOP)){
-                        chessPiece.setMoveset(new int[][]{
-                                {1,2,2,2,2,2,2,2,2,2,2,2,2,2,1},
-                                {2,1,2,2,2,2,2,2,2,2,2,2,2,1,2},
-                                {2,2,1,2,2,2,2,2,2,2,2,2,1,2,2},
-                                {2,2,2,1,2,2,2,2,2,2,2,1,2,2,2},
-                                {2,2,2,2,1,2,2,2,2,2,1,2,2,2,2},
-                                {2,2,2,2,2,1,2,2,2,1,2,2,2,2,2},
-                                {2,2,2,2,2,2,1,2,1,2,2,2,2,2,2},
-                                {2,2,2,2,2,2,2,0,2,2,2,2,2,2,2},
-                                {2,2,2,2,2,2,1,2,1,2,2,2,2,2,2},
-                                {2,2,2,2,2,1,2,2,2,1,2,2,2,2,2},
-                                {2,2,2,2,1,2,2,2,2,2,1,2,2,2,2},
-                                {2,2,2,1,2,2,2,2,2,2,2,1,2,2,2},
-                                {2,2,1,2,2,2,2,2,2,2,2,2,1,2,2},
-                                {2,1,2,2,2,2,2,2,2,2,2,2,2,1,2},
-                                {1,2,2,2,2,2,2,2,2,2,2,2,2,2,1},
-                        });
-                    }
-                    else if(type.equals(ChessPieceType.ROOK)){
-                        chessPiece.setMoveset(new int[][]{
-                                {2,2,2,2,2,2,2,1,2,2,2,2,2,2,2},
-                                {2,2,2,2,2,2,2,1,2,2,2,2,2,2,2},
-                                {2,2,2,2,2,2,2,1,2,2,2,2,2,2,2},
-                                {2,2,2,2,2,2,2,1,2,2,2,2,2,2,2},
-                                {2,2,2,2,2,2,2,1,2,2,2,2,2,2,2},
-                                {2,2,2,2,2,2,2,1,2,2,2,2,2,2,2},
-                                {2,2,2,2,2,2,2,1,2,2,2,2,2,2,2},
-                                {1,1,1,1,1,1,1,0,1,1,1,1,1,1,1},
-                                {2,2,2,2,2,2,2,1,2,2,2,2,2,2,2},
-                                {2,2,2,2,2,2,2,1,2,2,2,2,2,2,2},
-                                {2,2,2,2,2,2,2,1,2,2,2,2,2,2,2},
-                                {2,2,2,2,2,2,2,1,2,2,2,2,2,2,2},
-                                {2,2,2,2,2,2,2,1,2,2,2,2,2,2,2},
-                                {2,2,2,2,2,2,2,1,2,2,2,2,2,2,2},
-                                {2,2,2,2,2,2,2,1,2,2,2,2,2,2,2},
-                        });
-                    }
-                    else if(type.equals(ChessPieceType.PAWN)){
-                        chessPiece.setMoveset(new int[][]{
-                                {2,1,2},
-                                {2,0,2},
-                        });
-                    }
-
-                }
-            }
-        }
-
-    }*/
-
     //method used to update logical game map with chesspieces new position
     public void update(int y_or, int x_or, int y_tr, int x_tr){ //called when chesspiece is moved
         ChessPieceAbstract[][] gamemap = model.getMap().getMap();
@@ -361,26 +264,45 @@ public class GameLogic {
             for(int y = (YCord - YOffset); y < (YCord-YOffset+moveset.length); y++){
                 for(int x = (XCord - XOffset); x < (XCord-XOffset+moveset.length);x++){
                     try{
+
                         if(moveset[y-(YCord-YOffset)][x-(XCord-XOffset)] == 1 && gamemap[y][x] == null){ //if there is a 1 in moveset then highlight tile
                             squarePanel[y][x].toggleHighlight();
                         }
+
                         if(moveset[y-(YCord-YOffset)][x-(XCord-XOffset)] == 1 && gamemap[YCord-1][XCord] !=null && cp.getChessPieceType() == ChessPieceType.PAWN && cp.getMoved() ==0){ // if pawn has 2 moves with enemy obstruction, dehighlight tile behind enemy peice
                             if(!runOnce){
                                 runOnce = true;
                                 squarePanel[y][x].toggleHighlight();
                             }
                         }
+
                         if(moveset[y-(YCord-YOffset)][x-(XCord-XOffset)] == 3 && cp.getChessPieceType() == ChessPieceType.PAWN && ((ChessPiece)gamemap[y][x]).getColor() != cp.getColor()){ //highlight if within pawn attack pattern
                             squarePanel[y][x].toggleHighlight();
                         }
 
                         if(moveset[y-(YCord-YOffset)][x-(XCord-XOffset)] == 1 && cp.getColor() != ((ChessPiece)gamemap[y][x]).getColor() && cp.getChessPieceType() != ChessPieceType.PAWN){ //highlights position if chesspiece is not of same color
-                            squarePanel[y][x].toggleHighlight();
+                             squarePanel[y][x].toggleHighlight();
                         }
+
                     } catch (Exception e) {
                         continue;
                     }
 
+                }
+            }
+
+            if(cp.getChessPieceType() == ChessPieceType.ROOK){
+                //iterate all sides
+                //first chess peice block rest of tiles from highlighting.
+
+                //checks obstruction upside
+                for(int yc = (YCord-1);yc >= 0; yc--){
+                    if(gamemap[yc][XCord] != null){
+                        for (int i = (yc); i > 0; i--){
+                            squarePanel[i-1][XCord].toggleHighlight();
+                        }
+                        break;
+                    }
                 }
             }
     }
