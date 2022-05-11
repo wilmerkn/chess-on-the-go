@@ -15,8 +15,8 @@ import java.util.HashMap;
 //todo only initialize playable side with moves
 
 //todo complete all chess peices to fully functioning.
-// currently complete: knight,king, pawn
-// left to fix: rook, bishop, queen.
+// currently complete: knight,king,
+// left to fix: pawn(can jump over alies if has 2 move tiles),rook, bishop, queen.
 
 //todo check for check mate every draw.
 
