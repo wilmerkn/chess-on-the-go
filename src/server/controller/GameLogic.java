@@ -15,8 +15,8 @@ import java.util.HashMap;
 //todo only initialize playable side with moves
 
 //todo complete all chess peices to fully functioning.
-// currently complete: knight,king,
-// left to fix: pawn(can jump over alies if has 2 move tiles),rook, bishop, queen.
+// currently complete: knight,king,Pawn,
+// left to fix:rook, bishop, queen.
 
 //todo check for check mate every draw.
 
@@ -26,7 +26,6 @@ public class GameLogic {
 
     private GameView view;
     private GameModel model;
-
 
     public GameLogic(){
 
@@ -167,26 +166,6 @@ public class GameLogic {
             }
         }
     }
-
-    //draws player two map upside down
-    /*
-    public void drawPlayerTwoMap(){
-        int mapDim = model.getMap().getMapDimension();
-        HashMap<String, JLabel> notationLbl = model.getBoardView().getNotationToJLMap();
-        ChessPieceAbstract[][] gamemap = model.getMap().getMap();
-        BoardView.SquarePanel[][] squarePanel = model.getBoardView().getBoardPanel().getSquares();
-        GameMap map = model.getMap();
-
-        for(int row = 0; row < mapDim; row++){
-            for(int col = 0; col < mapDim; col++){
-                if(gamemap[row][col] != null){
-                    ChessPiece chessPiece = (ChessPiece) gamemap[row][col];
-                    squarePanel[(mapDim-1)-row][(mapDim-1)-col].placePiece(notationLbl.get(chessPiece.getSpriteName()));
-                }
-            }
-        }
-        map.displayMap();
-    }*/
 
     //inverses map array
     public void inverseMapArray(){
@@ -378,6 +357,7 @@ public class GameLogic {
         }
 
             //y/x = cordinate - offset.
+            boolean runOnce = false;
             for(int y = (YCord - YOffset); y < (YCord-YOffset+moveset.length); y++){
                 for(int x = (XCord - XOffset); x < (XCord-XOffset+moveset.length);x++){
 
@@ -385,8 +365,14 @@ public class GameLogic {
                         if(moveset[y-(YCord-YOffset)][x-(XCord-XOffset)] == 1 && gamemap[y][x] == null){ //if there is a 1 in moveset then highlight tile
                             squarePanel[y][x].toggleHighlight();
                         }
+                        if(moveset[y-(YCord-YOffset)][x-(XCord-XOffset)] == 1 && gamemap[YCord-1][XCord] !=null && cp.getChessPieceType() == ChessPieceType.PAWN && cp.getMoved() ==0){ // if pawn has 2 moves with enemy obstruction, dehighlight tile behind enemy peice
+                            if(!runOnce){
+                                runOnce = true;
+                                squarePanel[y][x].toggleHighlight();
+                            }
 
-                        if(moveset[y-(YCord-YOffset)][x-(XCord-XOffset)] == 3 && cp.getChessPieceType() == ChessPieceType.PAWN && ((ChessPiece)gamemap[y][x]).getColor() != cp.getColor()){
+                        }
+                        if(moveset[y-(YCord-YOffset)][x-(XCord-XOffset)] == 3 && cp.getChessPieceType() == ChessPieceType.PAWN && ((ChessPiece)gamemap[y][x]).getColor() != cp.getColor()){ //highlight if within pawn attack pattern
                             squarePanel[y][x].toggleHighlight();
                         }
 
@@ -436,20 +422,23 @@ public class GameLogic {
         boolean friendlyObstruction = false;
         boolean pawnobstruct = false;
         boolean pawnattacks = false;
+        boolean pawnTwoMoveObstruct = false;
 
         samespot = samecpspot(sourceRow,sourceCol,targetRow,targetCol);
         withinMoveset = moveWithinCPMoveset(sourceRow,sourceCol,targetRow,targetCol,movesetOffsetY,movesetOffsetX,yTrOffset,xTrOffset,moveset,cp,gamemap);
         friendlyObstruction = friendlyCPObstruction(targetRow,targetCol,gamemap,cp);
         pawnattacks = pawnAttack(targetRow,targetCol,movesetOffsetY,movesetOffsetX,yTrOffset,xTrOffset,moveset,cp,gamemap);
         pawnobstruct = pawnObstruct(targetRow,targetCol,gamemap,cp);
+        pawnTwoMoveObstruct = pawnTwoMoves(targetRow,sourceRow,sourceCol,gamemap,cp);
 
         System.out.println("samespot: " + samespot);
         System.out.println("witinmoveset: " + withinMoveset);
         System.out.println("friendlyObstruction: " + friendlyObstruction);
         System.out.println("pawnObstruction: " + pawnobstruct);
         System.out.println("PawnAttack: " + pawnattacks);
+        System.out.println("PawnTwoMovesObstruct: " + pawnTwoMoveObstruct);
 
-        if( (!samespot && !withinMoveset && !friendlyObstruction) && !pawnobstruct || (pawnattacks) ){//if errorchecks are negative make move valid
+        if( (!samespot && !withinMoveset && !friendlyObstruction) && !pawnobstruct && !pawnTwoMoveObstruct || (pawnattacks) ){//if errorchecks are negative make move valid
             return true; //move is valid
         }
         else{
@@ -497,9 +486,16 @@ public class GameLogic {
     //is pawn obstruct by enemy
     public boolean pawnObstruct(int targetRow, int targetCol, ChessPieceAbstract[][] gamemap, ChessPiece cp){
         if(cp.getChessPieceType() == ChessPieceType.PAWN && gamemap[targetRow][targetCol] != null){
-            if( ((ChessPiece)gamemap[targetRow][targetCol]).getColor() != cp.getColor() ){
+            if(((ChessPiece)gamemap[targetRow][targetCol]).getColor() != cp.getColor()){
                 return true;
             }
+        }
+        return false;
+    }
+
+    public boolean pawnTwoMoves(int targetRow, int sourceRow, int sourceCol, ChessPieceAbstract[][] gamemap, ChessPiece cp){
+        if(cp.getChessPieceType() == ChessPieceType.PAWN && cp.getMoved() == 0 && gamemap[sourceRow-1][sourceCol] != null && targetRow == sourceRow-2){
+            return true;
         }
         return false;
     }
