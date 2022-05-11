@@ -360,7 +360,6 @@ public class GameLogic {
             boolean runOnce = false;
             for(int y = (YCord - YOffset); y < (YCord-YOffset+moveset.length); y++){
                 for(int x = (XCord - XOffset); x < (XCord-XOffset+moveset.length);x++){
-
                     try{
                         if(moveset[y-(YCord-YOffset)][x-(XCord-XOffset)] == 1 && gamemap[y][x] == null){ //if there is a 1 in moveset then highlight tile
                             squarePanel[y][x].toggleHighlight();
@@ -370,7 +369,6 @@ public class GameLogic {
                                 runOnce = true;
                                 squarePanel[y][x].toggleHighlight();
                             }
-
                         }
                         if(moveset[y-(YCord-YOffset)][x-(XCord-XOffset)] == 3 && cp.getChessPieceType() == ChessPieceType.PAWN && ((ChessPiece)gamemap[y][x]).getColor() != cp.getColor()){ //highlight if within pawn attack pattern
                             squarePanel[y][x].toggleHighlight();
@@ -493,6 +491,7 @@ public class GameLogic {
         return false;
     }
 
+    //checks if pawn can move 2 steps ahead if no obstruction is in the way
     public boolean pawnTwoMoves(int targetRow, int sourceRow, int sourceCol, ChessPieceAbstract[][] gamemap, ChessPiece cp){
         if(cp.getChessPieceType() == ChessPieceType.PAWN && cp.getMoved() == 0 && gamemap[sourceRow-1][sourceCol] != null && targetRow == sourceRow-2){
             return true;
