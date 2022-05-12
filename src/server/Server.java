@@ -87,7 +87,7 @@ public class Server implements Runnable {
                         }
                     }
 
-                    if (object instanceof Challenge challenge) {
+                    if (object instanceof ChallengeRequest challenge) {
 
                         if(!challenge.isAccepted() && !challenge.isDeclined()) {
                             for (Player player: playerClientMap.keySet()) {
