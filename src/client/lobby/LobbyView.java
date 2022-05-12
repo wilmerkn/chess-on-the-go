@@ -34,6 +34,10 @@ public class LobbyView extends JFrame {
         return pairingPanel.getTimeIndex();
     }
 
+    public UserPanel getUserPanel() {
+        return userPanel;
+    }
+
     private void init() {
         lobbyFrame.setLayout(null);
         lobbyFrame.getContentPane().setSize(CLIENT_DIMENSION);

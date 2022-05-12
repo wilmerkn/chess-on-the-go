@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.util.ArrayList;
 
 public class Client {
     private static final String HOST = "127.0.0.1";
@@ -23,7 +24,7 @@ public class Client {
     LobbyView lobbyView;
     public Client() {
         LoginController loginController = new LoginController();
-        loginView = new LoginView(loginController);
+        loginView = new LoginView(loginController, this);
         connect();
         new ServerListener().start();
     }
@@ -75,8 +76,9 @@ public class Client {
                             System.out.println("Login failed");
                         } else {
                             System.out.println("Login ok");
-                            loginView.dispose();
                             lobbyView = new LobbyView();
+                            loginView.closeLoginWindow();
+
                             // skicka lista med online användare
                         }
                     } else if(obj instanceof ChallengeRequest) {
@@ -101,6 +103,13 @@ public class Client {
 
                     }else if (obj instanceof Message) {
                         // Lägg message i textArea
+                    } else if(obj instanceof ArrayList) {
+                        ArrayList<String> players = (ArrayList<String>) obj; // No problem
+                        System.out.println("CLIENT: players length" + players.size());
+
+                        lobbyView.getUserPanel().setOnlinePlayers(players);
+
+
                     }
                 } catch (IOException | ClassNotFoundException e) {
                     throw new RuntimeException(e);

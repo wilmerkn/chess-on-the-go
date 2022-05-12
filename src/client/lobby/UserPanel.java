@@ -7,6 +7,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 
 public class UserPanel extends JPanel implements ActionListener {
     JLabel userLabel;
@@ -14,6 +15,8 @@ public class UserPanel extends JPanel implements ActionListener {
     JButton challengeButton;
     JButton profileButton;
     LobbyView lobbyView;
+
+    DefaultListModel listModel;
 
     public UserPanel(LobbyView lobbyView) {
         this.lobbyView = lobbyView;
@@ -60,5 +63,24 @@ public class UserPanel extends JPanel implements ActionListener {
             //should check selected profile, maybe pop up with stats? waiting for JList with users to have some testdata
         }
 
+    }
+
+    public JList getUserList() {
+        return userList;
+    }
+
+    public void setOnlinePlayers(ArrayList<String> players) {
+        System.out.println("New playersOnlineList " + players.size());
+        userList.removeAll();
+        System.out.println("Length " + players.size());
+        listModel = new DefaultListModel();
+        for (int i = 0; i < players.size(); i++)
+        {
+            listModel.addElement(players.get(i));
+        }
+
+        userList.setModel(listModel);
+        repaint();
+        //userList.add(players.toArray());
     }
 }

@@ -1,6 +1,7 @@
 package server;
 
 import server.controller.GameLogic;
+import server.controller.LoginController;
 import server.model.*;
 
 import java.io.IOException;
@@ -19,9 +20,16 @@ public class Server implements Runnable {
     private Hashtable<Player, ClientHandler> playerClientMap; // Testa concurrentHashmap
     private List<GameLogic> games = new ArrayList<>();
 
+    private LoginController loginController = new LoginController();
+
+    private ArrayList<String> playerList = new ArrayList<>();
+
+
+
     public Server() {
         playerClientMap = new Hashtable<>();
         new Thread(this).start();
+
     }
 
     @Override
@@ -40,15 +48,7 @@ public class Server implements Runnable {
         }
     }
 
-    private void broadcastPlayer(Player p) {
-        for(ClientHandler client: playerClientMap.values()) {
-            try {
-                client.getOos().writeObject(p);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        }
-    }
+
 
     private class ClientHandler extends Thread {
         private Socket socket;
@@ -74,12 +74,23 @@ public class Server implements Runnable {
 
                     if(object instanceof LoginRequest) {
                         LoginRequest loginReq = (LoginRequest) ois.readObject();
-                        if(loginReq.getUsername().equals("user1") && loginReq.getPassword().equals("pass1")) {
+                        System.out.println("#¤%&/!#(");
+                        boolean loginOk = loginController.checkLogin(loginReq.getUsername(), loginReq.getPassword());
+                        System.out.println("loginOk:" + loginOk);
+
+                        if(loginOk) {
                             loginReq.setAccepted(true);
+                            System.out.println("Server: login true");
                             oos.writeObject(loginReq);
+
                             player = new Player(loginReq.getUsername());
                             playerClientMap.put(player, this);
-                            broadcastPlayer(player);
+                            playerList.add(player.getUsrName());
+
+                            Thread.sleep(1000);
+
+                            broadcastPlayers();
+
                             System.out.println(player.getUsrName() + " connected.");
                         } else {
                             oos.writeObject(loginReq);
@@ -117,8 +128,10 @@ public class Server implements Runnable {
                     }
                 }
             } catch (IOException | ClassNotFoundException e) {
-                disconnect();
+                //disconnect();
                 e.printStackTrace();
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
             }
         }
 
@@ -135,6 +148,21 @@ public class Server implements Runnable {
 
         public ObjectOutputStream getOos() {
             return oos;
+        }
+
+        private void broadcastPlayers() {
+
+            for(ClientHandler client: playerClientMap.values()) {
+                try {
+                    System.out.println("broadcastPlayers " + playerList.size());
+                    client.getOos().reset();
+                    client.getOos().writeObject(playerList);
+                    client.getOos().flush();
+
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
         }
     }
 
