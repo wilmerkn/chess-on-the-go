@@ -14,7 +14,6 @@ public class UserPanel extends JPanel implements ActionListener {
     JButton challengeButton;
     JButton profileButton;
     LobbyView lobbyView;
-    GameLogic gameLogic = new GameLogic();
 
     public UserPanel(LobbyView lobbyView) {
         this.lobbyView = lobbyView;
