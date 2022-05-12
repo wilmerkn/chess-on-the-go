@@ -319,7 +319,6 @@ public class GameLogic {
                 }
 
                 //checks obstruction right side
-
                 for(;xc <= gamemap.length-1; xc++){
 
                     if(gamemap[YCord][xc] == null){
@@ -494,6 +493,7 @@ public class GameLogic {
         }
     }
 
+    //highlight Rook path until obstruction
     public boolean rookObstruction(int sourceRow, int sourceCol, int targetRow, int targetCol, ChessPieceAbstract[][] gamemap, ChessPiece cp){
 
         if(cp.getChessPieceType() == ChessPieceType.ROOK){
@@ -534,9 +534,7 @@ public class GameLogic {
                     }
                 }
             }
-
         }
-
         return false;
     }
 
