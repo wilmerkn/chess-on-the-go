@@ -31,15 +31,12 @@ public class LoginView extends JFrame implements ActionListener {
     private final JPasswordField passText;
     private final JLabel userLabel;
     private final JLabel passLabel;
-    //private final LoginController loginController;
+    private final LoginController loginController;
     private RegisterController registerController = new RegisterController();
 
-    private final Client client;
 
-
-    public LoginView(Client client){
-        this.client = client;
-
+    public LoginView(LoginController loginController) {
+        this.loginController = loginController;
 
         loginFrame = new JFrame("Chess On The Go - Login");
 
@@ -52,14 +49,14 @@ public class LoginView extends JFrame implements ActionListener {
         loginFrame.add(buttonPanel);
         buttonPanel.setBackground(Color.LIGHT_GRAY);
 
-        try{
+        try {
             BufferedImage knightImage = ImageIO.read(new File("sprites/Chess-Knight.png"));
-            scaledImage = knightImage.getScaledInstance(100,100,Image.SCALE_DEFAULT);
+            scaledImage = knightImage.getScaledInstance(100, 100, Image.SCALE_DEFAULT);
             resizedImage = new ImageIcon(scaledImage);
             pictureLabel = new JLabel(resizedImage);
             picturePanel.add(pictureLabel);
 
-        } catch(Exception e){
+        } catch (Exception e) {
             System.out.println("Can't find image for login");
         }
         textPanel.setLayout(new FlowLayout());
@@ -85,9 +82,9 @@ public class LoginView extends JFrame implements ActionListener {
         initListeners();
     }
 
-    private void init(){
-        loginFrame.setLayout(new GridLayout(3,1));
-        loginFrame.setSize(300,400);
+    private void init() {
+        loginFrame.setLayout(new GridLayout(3, 1));
+        loginFrame.setSize(300, 400);
         loginFrame.setDefaultCloseOperation(EXIT_ON_CLOSE);
         loginFrame.setResizable(false);
         loginFrame.setLocationRelativeTo(null);
@@ -102,17 +99,18 @@ public class LoginView extends JFrame implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == loginButton) {
-            client.login(userText.getText(),String.valueOf(passText.getPassword()));
-            // loginController.checkLogin(userText.getText(),String.valueOf(passText.getPassword()));
-        }else if (e.getSource() == registerButton) {
+            //client.login(userText.getText(),String.valueOf(passText.getPassword()));
+            loginController.checkLogin(userText.getText(), String.valueOf(passText.getPassword()));
+        } else if (e.getSource() == registerButton) {
             registerController = new RegisterController();
             RegisterView register = new RegisterView(registerController);
         }
 
     }
-    public void closeLoginWindow(){
+
+    public void closeLoginWindow() {
         //fix so that this disposes of window, not just hides it
-       // this.dispose();
+        // this.dispose();
         this.setVisible(false);
     }
 }

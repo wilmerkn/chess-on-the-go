@@ -25,8 +25,8 @@ public class Client {
 
 
     public Client() {
-        //LoginController loginController = new LoginController();
-        loginView = new LoginView(this);
+        LoginController loginController = new LoginController();
+        loginView = new LoginView(loginController);
         connect();
         new ServerListener().start();
     }
@@ -51,7 +51,7 @@ public class Client {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        // Skicka player till server
+        // Send player to server
     }
 
     private void disconnect() {
@@ -67,9 +67,9 @@ public class Client {
                 try {
                     Object obj = ois.readObject();
                     if(obj instanceof Challenge) {
-                        // accept eller decline
+                        // accept or decline
                     } else if (obj instanceof Message) {
-                        // Lägg message i textArea
+                        // Put message in textarea
                     }
                 } catch (IOException | ClassNotFoundException e) {
                     throw new RuntimeException(e);
