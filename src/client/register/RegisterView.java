@@ -28,7 +28,6 @@ public class RegisterView extends JFrame implements ActionListener {
     JButton registerButton;
     JButton cancelButton;
 
-    ImageIcon image;
     ImageIcon resizedImage;
     Image scaledImage;
     private final RegisterController registerController;
