@@ -1,63 +1,47 @@
 package client.lobby;
 
-import client.board.BoardView;
-import client.gameview.GameView;
-import client.register.RegisterView;
-import server.controller.GameLogic;
-import server.controller.LoginController;
-import server.controller.RegisterController;
-
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
-public class LobbyView extends JFrame implements ActionListener {
+public class LobbyView extends JFrame {
+    private static final Dimension CLIENT_DIMENSION = new Dimension(1000, 800);
     JFrame lobbyFrame;
-    JPanel pairingPanel = new JPanel();
-    JPanel userPanel = new JPanel();
-    JButton gameButton;
+    private static PairingPanel pairingPanel;
+    private final UserPanel userPanel;
 
-    public LobbyView(){
 
-        lobbyFrame = new JFrame("Chess On The Go - Login");
+    public LobbyView() {
 
-        lobbyFrame.add(pairingPanel);
+        lobbyFrame = new JFrame("Chess On The Go - Lobby");
+        init();
+
+        pairingPanel = new PairingPanel(this);
+        pairingPanel.setBounds(7, 25, 650, 650);
         pairingPanel.setBackground(Color.LIGHT_GRAY);
 
-        lobbyFrame.add(userPanel);
+        userPanel = new UserPanel(this);
+        userPanel.setBounds(680, 25, 300, 650);
         userPanel.setBackground(Color.LIGHT_GRAY);
 
-        this.gameButton = new JButton("Play Game");
-        pairingPanel.add(gameButton);
+        lobbyFrame.add(pairingPanel);
+        lobbyFrame.add(userPanel);
 
-        init();
-        initListeners();
+        lobbyFrame.setVisible(true);
+
     }
 
-    private void init(){
-        lobbyFrame.setLayout(new GridLayout(2,2));
-        lobbyFrame.setSize(600,600);
+    public static int getTimeControl() {
+        return pairingPanel.getTimeIndex();
+    }
+
+    private void init() {
+        lobbyFrame.setLayout(null);
+        lobbyFrame.getContentPane().setSize(CLIENT_DIMENSION);
+        lobbyFrame.setBounds(new Rectangle(CLIENT_DIMENSION));
         lobbyFrame.setDefaultCloseOperation(EXIT_ON_CLOSE);
         lobbyFrame.setResizable(false);
         lobbyFrame.setLocationRelativeTo(null);
-        lobbyFrame.setVisible(true);
     }
 
-    private void initListeners() {
-        this.gameButton.addActionListener(this);
-        //this.*******.addActionListener(this);
-        //this.*******.addActionListener(this);
-        //this.*******.addActionListener(this);
-    }
-    @Override
-    public void actionPerformed(ActionEvent e) {
-        if (e.getSource() == gameButton) {
-            //GameView gameView = new GameView();
-            GameLogic gameLogic = new GameLogic();
-        }
-
-
-    }
 
 }
