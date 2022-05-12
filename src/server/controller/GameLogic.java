@@ -428,7 +428,6 @@ public class GameLogic {
         else{
             return false;
         }
-
     }
 
     //did user click the same spot
