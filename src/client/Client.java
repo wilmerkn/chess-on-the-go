@@ -1,29 +1,26 @@
 package client;
 
+import client.lobby.LobbyView;
 import client.login.LoginView;
 import server.controller.LoginController;
-import server.model.Challenge;
+import server.model.ChallengeRequest;
+import server.model.LoginRequest;
 import server.model.Message;
-import server.model.Player;
 
+import javax.swing.*;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.net.InetAddress;
 import java.net.Socket;
-import java.net.UnknownHostException;
 
 public class Client {
     private static final String HOST = "127.0.0.1";
     private static final int PORT = 1234;
-
     private Socket socket;
     private ObjectInputStream ois;
     private ObjectOutputStream oos;
-
     LoginView loginView;
-
-
+    LobbyView lobbyView;
     public Client() {
         LoginController loginController = new LoginController();
         loginView = new LoginView(loginController);
@@ -33,14 +30,12 @@ public class Client {
 
     // public??
     public void login(String username, String password) {
-        Player player = new Player(username);
-        player.setPassW(password);
+        LoginRequest loginRequest = new LoginRequest(username, password);
         try {
-            oos.writeObject(player);
+            oos.writeObject(loginRequest);
         } catch (IOException e) {
             e.printStackTrace();
         }
-
     }
 
     private void connect() {
@@ -55,7 +50,14 @@ public class Client {
     }
 
     private void disconnect() {
-
+        try {
+            if (ois != null) ois.close();
+            if (oos != null) oos.close();
+            if (socket != null) socket.close();
+        } catch (IOException e) {
+            System.out.println("Client disconnected");
+            e.printStackTrace();
+        }
     }
 
     private class ServerListener extends Thread {
@@ -66,10 +68,39 @@ public class Client {
             while(true) {
                 try {
                     Object obj = ois.readObject();
-                    if(obj instanceof Challenge) {
-                        // accept or decline
-                    } else if (obj instanceof Message) {
-                        // Put message in textarea
+                    if(obj instanceof LoginRequest) {
+                        LoginRequest request = (LoginRequest) obj;
+                        if(!request.isAccepted()) {
+                            JOptionPane.showMessageDialog(null, "Login failed");
+                            System.out.println("Login failed");
+                        } else {
+                            System.out.println("Login ok");
+                            loginView.dispose();
+                            lobbyView = new LobbyView();
+                            // skicka lista med online användare
+                        }
+                    } else if(obj instanceof ChallengeRequest) {
+                        ChallengeRequest challenge = (ChallengeRequest) obj;
+                        String challengerName = challenge.getChallengeSender().getUsrName();
+                        int answer = JOptionPane.showConfirmDialog(
+                                null,
+                                "Incoming challenge",
+                                String.format("Do you want to accept incoming challenge from %s?", challengerName),
+                                JOptionPane.YES_NO_OPTION
+                        );
+
+                        if(answer == 0) { // Challenge accepted
+                            challenge.setAccepted(true);
+
+                        } else if (answer == 1) { // Challenge declined
+
+                        }
+
+                        System.out.println("Challenge");
+                        // Lägg till namn i Users online
+
+                    }else if (obj instanceof Message) {
+                        // Lägg message i textArea
                     }
                 } catch (IOException | ClassNotFoundException e) {
                     throw new RuntimeException(e);

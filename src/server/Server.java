@@ -1,10 +1,7 @@
 package server;
 
 import server.controller.GameLogic;
-import server.model.Challenge;
-import server.model.Message;
-import server.model.Move;
-import server.model.Player;
+import server.model.*;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -41,12 +38,15 @@ public class Server implements Runnable {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
     }
 
-    private void broadcastPlayers() {
+    private void broadcastPlayer(Player p) {
         for(ClientHandler client: playerClientMap.values()) {
-            //client.getOos().writeObject(playerClientMap.keySet());
+            try {
+                client.getOos().writeObject(p);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
         }
     }
 
@@ -68,23 +68,26 @@ public class Server implements Runnable {
 
         @Override
         public void run() {
-            // Lyssnar efter objekt från klient
-            try {
-                player = (Player) ois.readObject();
-                playerClientMap.put(player, this);
-                //checkLogin();
-                //broadcastPlayers();
-                System.out.println(player.getUsrName() + " connected.");
-            } catch (IOException | ClassNotFoundException e) {
-                e.printStackTrace();
-            }
             try {
                 while(true) {
-                    // Ta emot ChessPieceAbstract[][], Challenge, List<Players>, Message
-                    // Move
                     Object object = ois.readObject();
 
-                    if (object instanceof Challenge challenge) {
+                    if(object instanceof LoginRequest) {
+                        LoginRequest loginReq = (LoginRequest) ois.readObject();
+                        if(loginReq.getUsername().equals("user1") && loginReq.getPassword().equals("pass1")) {
+                            loginReq.setAccepted(true);
+                            oos.writeObject(loginReq);
+                            player = new Player(loginReq.getUsername());
+                            playerClientMap.put(player, this);
+                            broadcastPlayer(player);
+                            System.out.println(player.getUsrName() + " connected.");
+                        } else {
+                            oos.writeObject(loginReq);
+                            System.out.println("Login failed");
+                        }
+                    }
+
+                    if (object instanceof ChallengeRequest challenge) {
 
                         if(!challenge.isAccepted() && !challenge.isDeclined()) {
                             for (Player player: playerClientMap.keySet()) {

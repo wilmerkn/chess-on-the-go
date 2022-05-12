@@ -1,6 +1,6 @@
 package server.model;
 
-public class Challenge {
+public class ChallengeRequest {
     private Player challengeSender;
     private Player challengeReceiver;
     private String receiverName;
@@ -8,11 +8,15 @@ public class Challenge {
     private boolean accepted = false;
     private boolean declined = false;
 
-    public Challenge(Player challengeSender, String receiverName) {
+    public ChallengeRequest(Player challengeSender, String receiverName) {
         this.challengeSender = challengeSender;
         this.receiverName = receiverName;
         this.accepted = false;
         this.declined = false;
+    }
+
+    public Player getChallengeSender() {
+        return challengeSender;
     }
 
     public void setAccepted(boolean accepted) {
