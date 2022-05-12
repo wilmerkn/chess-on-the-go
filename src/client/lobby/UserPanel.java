@@ -25,28 +25,30 @@ public class UserPanel extends JPanel implements ActionListener {
         challengeButton = new JButton("Challenge");
         profileButton = new JButton("View profile");
 
-        userLabel.setBounds(85,20,150,100);
+        userLabel.setBounds(85, 20, 150, 100);
         userLabel.setFont(new Font("Helvetica", Font.BOLD, 20));
         this.add(userLabel);
 
-        userList.setBounds(50,100,200, 400);
+        userList.setBounds(50, 100, 200, 400);
         add(userList);
 
-        challengeButton.setBounds(85,530,150,40);
+        challengeButton.setBounds(85, 530, 150, 40);
         add(challengeButton);
         challengeButton.setFont(new Font("Helvetica", Font.BOLD, 15));
 
-        profileButton.setBounds(85,570,150,40);
+        profileButton.setBounds(85, 570, 150, 40);
         add(profileButton);
         profileButton.setFont(new Font("Helvetica", Font.BOLD, 15));
 
         initListeners();
         this.setVisible(true);
     }
+
     private void initListeners() {
         this.challengeButton.addActionListener(this);
         this.profileButton.addActionListener(this);
     }
+
     //these buttons should start a game, but with a correct constructor that sends in an int, which is time and both players.
     // Right now the selected time is printed, need to add the users. Need the game constructor to have both those requirements first.
     @Override

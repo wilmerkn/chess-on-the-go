@@ -3,14 +3,14 @@ package client.lobby;
 import javax.swing.*;
 import java.awt.*;
 
-public class LobbyView extends JFrame{
+public class LobbyView extends JFrame {
     private static final Dimension CLIENT_DIMENSION = new Dimension(1000, 800);
     JFrame lobbyFrame;
     private static PairingPanel pairingPanel;
-    private UserPanel userPanel;
+    private final UserPanel userPanel;
 
 
-    public LobbyView(){
+    public LobbyView() {
 
         lobbyFrame = new JFrame("Chess On The Go - Lobby");
         init();
@@ -29,11 +29,12 @@ public class LobbyView extends JFrame{
         lobbyFrame.setVisible(true);
 
     }
-    public static int getTimeControl(){
+
+    public static int getTimeControl() {
         return pairingPanel.getTimeIndex();
     }
 
-    private void init(){
+    private void init() {
         lobbyFrame.setLayout(null);
         lobbyFrame.getContentPane().setSize(CLIENT_DIMENSION);
         lobbyFrame.setBounds(new Rectangle(CLIENT_DIMENSION));
@@ -41,7 +42,6 @@ public class LobbyView extends JFrame{
         lobbyFrame.setResizable(false);
         lobbyFrame.setLocationRelativeTo(null);
     }
-
 
 
 }

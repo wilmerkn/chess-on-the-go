@@ -13,7 +13,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 
 
-public class RegisterView extends JFrame implements ActionListener{
+public class RegisterView extends JFrame implements ActionListener {
     JFrame registerFrame;
     JPanel registerPanel = new JPanel();
     JPanel picturePanel = new JPanel();
@@ -34,19 +34,18 @@ public class RegisterView extends JFrame implements ActionListener{
     private final RegisterController registerController;
 
 
-
-    public RegisterView(RegisterController registerController){
+    public RegisterView(RegisterController registerController) {
         registerFrame = new JFrame("Chess On The Go - Registration");
 
         this.registerController = registerController;
-        try{
+        try {
             BufferedImage knightImage = ImageIO.read(new File("sprites/Chess-Knight.png"));
-            scaledImage = knightImage.getScaledInstance(100,100,Image.SCALE_DEFAULT);
+            scaledImage = knightImage.getScaledInstance(100, 100, Image.SCALE_DEFAULT);
             resizedImage = new ImageIcon(scaledImage);
             pictureLabel = new JLabel(resizedImage);
             picturePanel.add(pictureLabel);
 
-        } catch(Exception e){
+        } catch (Exception e) {
             System.out.println("Can't find image for login");
         }
 
@@ -90,9 +89,9 @@ public class RegisterView extends JFrame implements ActionListener{
 
     }
 
-    private void init(){
-        registerFrame.setLayout(new GridLayout(3,1));
-        registerFrame.setSize(300,500);
+    private void init() {
+        registerFrame.setLayout(new GridLayout(3, 1));
+        registerFrame.setSize(300, 500);
         registerFrame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         registerFrame.setResizable(false);
         registerFrame.setLocationRelativeTo(null);
@@ -109,7 +108,7 @@ public class RegisterView extends JFrame implements ActionListener{
     public void actionPerformed(ActionEvent e) {
 
         if (e.getSource() == registerButton) {
-            this.registerController.registerUser(userText.getText(),String.valueOf(passText.getPassword()), countryText.getText());
+            this.registerController.registerUser(userText.getText(), String.valueOf(passText.getPassword()), countryText.getText());
             this.closeRegisterWindow();
             System.out.println("New user registered");
 
@@ -120,7 +119,8 @@ public class RegisterView extends JFrame implements ActionListener{
             System.out.println("Going back to login-screen");
         }
     }
-    public void closeRegisterWindow(){
+
+    public void closeRegisterWindow() {
         registerFrame.dispose();
     }
 

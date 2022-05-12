@@ -7,13 +7,16 @@ import server.model.Register;
 public class RegisterController {
     private final DatabaseConnection dbCon;
     private RegisterView registerView;
+
     public RegisterController() {
         this.dbCon = new DatabaseConnection();
     }
-    public void registerUser(String username, String password, String country){
-        Register.register(dbCon.getConnection(), username, password,country);
+
+    public void registerUser(String username, String password, String country) {
+        Register.register(dbCon.getConnection(), username, password, country);
     }
-    public void showRegisterWindow(){
+
+    public void showRegisterWindow() {
         this.registerView = new RegisterView(this);
     }
 
