@@ -15,10 +15,12 @@ import java.util.HashMap;
 //todo only initialize playable side with moves
 
 //todo complete all chess peices to fully functioning.
-// currently complete: knight,king
-// left to fix: pawn(doing), rook, bishop, queen.
+// currently complete: knight,king,Pawn,rook
+// left to fix: bishop, queen.
 
 //todo check for check mate every draw.
+
+//todo inverse squarepanel in inverse array method
 
 //todo remove left click toggle highlight
 
@@ -26,7 +28,6 @@ public class GameLogic {
 
     private GameView view;
     private GameModel model;
-
 
     public GameLogic(){
 
@@ -49,7 +50,7 @@ public class GameLogic {
         HashMap<Integer, ChessPieceAbstract> chesspieces = model.getChesspieces();
         //load black chesspieces
 
-        gamemap[0][0] = new ChessPiece(ChessPieceColor.BLACK, ChessPieceType.ROOK, "BR");// 8
+        gamemap[0][0] = new ChessPiece(ChessPieceColor.BLACK, ChessPieceType.ROOK, "BR");
         gamemap[0][1] = new ChessPiece(ChessPieceColor.BLACK, ChessPieceType.KNIGHT, "BN");
         gamemap[0][2] = new ChessPiece(ChessPieceColor.BLACK, ChessPieceType.BISHOP, "BB");
         gamemap[0][3] = new ChessPiece(ChessPieceColor.BLACK, ChessPieceType.QUEEN, "BQ");
@@ -168,37 +169,18 @@ public class GameLogic {
         }
     }
 
-    //draws player two map upside down
-    /*
-    public void drawPlayerTwoMap(){
-        int mapDim = model.getMap().getMapDimension();
-        HashMap<String, JLabel> notationLbl = model.getBoardView().getNotationToJLMap();
-        ChessPieceAbstract[][] gamemap = model.getMap().getMap();
-        BoardView.SquarePanel[][] squarePanel = model.getBoardView().getBoardPanel().getSquares();
-        GameMap map = model.getMap();
-
-        for(int row = 0; row < mapDim; row++){
-            for(int col = 0; col < mapDim; col++){
-                if(gamemap[row][col] != null){
-                    ChessPiece chessPiece = (ChessPiece) gamemap[row][col];
-                    squarePanel[(mapDim-1)-row][(mapDim-1)-col].placePiece(notationLbl.get(chessPiece.getSpriteName()));
-                }
-            }
-        }
-        map.displayMap();
-    }*/
-
     //inverses map array
     public void inverseMapArray(){
         int mapDim = model.getMap().getMapDimension();
         ChessPieceAbstract[][] gamemap = model.getMap().getMap();
-        ChessPieceAbstract[][] tempArray = new ChessPieceAbstract[mapDim][mapDim];
+        ChessPieceAbstract[][] tempChessArray = new ChessPieceAbstract[mapDim][mapDim];
 
         for (int row = mapDim - 1; row >= 0; row--) {
-            for (int col = mapDim - 1; col >= 0; col--)
-                tempArray[(mapDim-1)-row][(mapDim-1)-col] = gamemap[row][col];
+            for (int col = mapDim - 1; col >= 0; col--) {
+                tempChessArray[(mapDim - 1) - row][(mapDim - 1) - col] = gamemap[row][col];
+            }
         }
-        model.getMap().setMap(tempArray);
+        model.getMap().setMap(tempChessArray);
     }
 
     //draws up Gui Map from map array
@@ -221,103 +203,6 @@ public class GameLogic {
         }
         map.displayMap();
     }
-
-    /*
-    public void debugChesspieces(){
-        ChessPieceAbstract[][] gamemap = model.getMap().getMap();
-        HashMap<Integer, ChessPieceAbstract> chesspieces = model.getChesspieces();
-
-        gamemap[4][4] = chesspieces.get(7);
-        //9 is knight
-
-        for(int r = 0; r < gamemap.length; r++){
-            for(int c = 0; c < gamemap[r].length;c++){
-                if(gamemap[r][c] != null){
-                    ChessPiece chessPiece = (ChessPiece) gamemap[r][c];
-                    ChessPieceType type = chessPiece.getChessPieceType();
-
-                    if(type.equals(ChessPieceType.KING)){
-                        chessPiece.setMoveset(new int[][]{
-                                {1,1,1},
-                                {1,0,1},
-                                {1,1,1}});
-                    }
-                    else if(type.equals(ChessPieceType.QUEEN)){
-                        chessPiece.setMoveset(new int[][]{
-                                {1,2,2,2,2,2,2,1,2,2,2,2,2,2,1},
-                                {2,1,2,2,2,2,2,1,2,2,2,2,2,1,2},
-                                {2,2,1,2,2,2,2,1,2,2,2,2,1,2,2},
-                                {2,2,2,1,2,2,2,1,2,2,2,1,2,2,2},
-                                {2,2,2,2,1,2,2,1,2,2,1,2,2,2,2},
-                                {2,2,2,2,2,1,2,1,2,1,2,2,2,2,2},
-                                {2,2,2,2,2,2,1,1,1,2,2,2,2,2,2},
-                                {1,1,1,1,1,1,1,0,1,1,1,1,1,1,1},
-                                {2,2,2,2,2,2,1,1,1,2,2,2,2,2,2},
-                                {2,2,2,2,2,1,2,1,2,1,2,2,2,2,2},
-                                {2,2,2,2,1,2,2,1,2,2,1,2,2,2,2},
-                                {2,2,2,1,2,2,2,1,2,2,2,1,2,2,2},
-                                {2,2,1,2,2,2,2,1,2,2,2,2,1,2,2},
-                                {2,1,2,2,2,2,2,1,2,2,2,2,2,1,2},
-                                {1,2,2,2,2,2,2,1,2,2,2,2,2,2,1}});
-                    }
-                    else if(type.equals(ChessPieceType.KNIGHT)){
-                        chessPiece.setMoveset(new int[][]{
-                                {2,1,2,1,2},
-                                {1,2,2,2,1},
-                                {2,2,0,2,2},
-                                {1,2,2,2,1},
-                                {2,1,2,1,2}});
-                    }
-                    else if(type.equals(ChessPieceType.BISHOP)){
-                        chessPiece.setMoveset(new int[][]{
-                                {1,2,2,2,2,2,2,2,2,2,2,2,2,2,1},
-                                {2,1,2,2,2,2,2,2,2,2,2,2,2,1,2},
-                                {2,2,1,2,2,2,2,2,2,2,2,2,1,2,2},
-                                {2,2,2,1,2,2,2,2,2,2,2,1,2,2,2},
-                                {2,2,2,2,1,2,2,2,2,2,1,2,2,2,2},
-                                {2,2,2,2,2,1,2,2,2,1,2,2,2,2,2},
-                                {2,2,2,2,2,2,1,2,1,2,2,2,2,2,2},
-                                {2,2,2,2,2,2,2,0,2,2,2,2,2,2,2},
-                                {2,2,2,2,2,2,1,2,1,2,2,2,2,2,2},
-                                {2,2,2,2,2,1,2,2,2,1,2,2,2,2,2},
-                                {2,2,2,2,1,2,2,2,2,2,1,2,2,2,2},
-                                {2,2,2,1,2,2,2,2,2,2,2,1,2,2,2},
-                                {2,2,1,2,2,2,2,2,2,2,2,2,1,2,2},
-                                {2,1,2,2,2,2,2,2,2,2,2,2,2,1,2},
-                                {1,2,2,2,2,2,2,2,2,2,2,2,2,2,1},
-                        });
-                    }
-                    else if(type.equals(ChessPieceType.ROOK)){
-                        chessPiece.setMoveset(new int[][]{
-                                {2,2,2,2,2,2,2,1,2,2,2,2,2,2,2},
-                                {2,2,2,2,2,2,2,1,2,2,2,2,2,2,2},
-                                {2,2,2,2,2,2,2,1,2,2,2,2,2,2,2},
-                                {2,2,2,2,2,2,2,1,2,2,2,2,2,2,2},
-                                {2,2,2,2,2,2,2,1,2,2,2,2,2,2,2},
-                                {2,2,2,2,2,2,2,1,2,2,2,2,2,2,2},
-                                {2,2,2,2,2,2,2,1,2,2,2,2,2,2,2},
-                                {1,1,1,1,1,1,1,0,1,1,1,1,1,1,1},
-                                {2,2,2,2,2,2,2,1,2,2,2,2,2,2,2},
-                                {2,2,2,2,2,2,2,1,2,2,2,2,2,2,2},
-                                {2,2,2,2,2,2,2,1,2,2,2,2,2,2,2},
-                                {2,2,2,2,2,2,2,1,2,2,2,2,2,2,2},
-                                {2,2,2,2,2,2,2,1,2,2,2,2,2,2,2},
-                                {2,2,2,2,2,2,2,1,2,2,2,2,2,2,2},
-                                {2,2,2,2,2,2,2,1,2,2,2,2,2,2,2},
-                        });
-                    }
-                    else if(type.equals(ChessPieceType.PAWN)){
-                        chessPiece.setMoveset(new int[][]{
-                                {2,1,2},
-                                {2,0,2},
-                        });
-                    }
-
-                }
-            }
-        }
-
-    }*/
 
     //method used to update logical game map with chesspieces new position
     public void update(int y_or, int x_or, int y_tr, int x_tr){ //called when chesspiece is moved
@@ -378,25 +263,107 @@ public class GameLogic {
         }
 
             //y/x = cordinate - offset.
+            boolean runOnce = false;
             for(int y = (YCord - YOffset); y < (YCord-YOffset+moveset.length); y++){
                 for(int x = (XCord - XOffset); x < (XCord-XOffset+moveset.length);x++){
-
                     try{
-                        if(moveset[y-(YCord-YOffset)][x-(XCord-XOffset)] == 1 && gamemap[y][x] == null){ //if there is a 1 in moveset then highlight tile
+
+                        if(moveset[y-(YCord-YOffset)][x-(XCord-XOffset)] == 1 && gamemap[y][x] == null && cp.getChessPieceType() != ChessPieceType.ROOK){ //if there is a 1 in moveset then highlight tile
                             squarePanel[y][x].toggleHighlight();
                         }
 
-                        if(moveset[y-(YCord-YOffset)][x-(XCord-XOffset)] == 3 && cp.getChessPieceType() == ChessPieceType.PAWN && ((ChessPiece)gamemap[y][x]).getColor() != cp.getColor()){
+                        if(moveset[y-(YCord-YOffset)][x-(XCord-XOffset)] == 1 && gamemap[YCord-1][XCord] !=null && cp.getChessPieceType() == ChessPieceType.PAWN && cp.getMoved() ==0){ // if pawn has 2 moves with enemy obstruction, dehighlight tile behind enemy peice
+                            if(!runOnce){
+                                runOnce = true;
+                                squarePanel[y][x].toggleHighlight();
+                            }
+                        }
+
+                        if(moveset[y-(YCord-YOffset)][x-(XCord-XOffset)] == 3 && cp.getChessPieceType() == ChessPieceType.PAWN && ((ChessPiece)gamemap[y][x]).getColor() != cp.getColor()){ //highlight if within pawn attack pattern
                             squarePanel[y][x].toggleHighlight();
                         }
 
-                        if(moveset[y-(YCord-YOffset)][x-(XCord-XOffset)] == 1 && cp.getColor() != ((ChessPiece)gamemap[y][x]).getColor() && cp.getChessPieceType() != ChessPieceType.PAWN){ //highlights position if chesspiece is not of same color
-                            squarePanel[y][x].toggleHighlight();
+                        if(moveset[y-(YCord-YOffset)][x-(XCord-XOffset)] == 1 && cp.getColor() != ((ChessPiece)gamemap[y][x]).getColor() && cp.getChessPieceType() != ChessPieceType.PAWN && cp.getChessPieceType() != ChessPieceType.ROOK){ //highlights position if chesspiece is not of same color
+                             squarePanel[y][x].toggleHighlight();
                         }
+
                     } catch (Exception e) {
                         continue;
                     }
 
+                }
+            }
+
+            //rook highlight logic
+            if(cp.getChessPieceType() == ChessPieceType.ROOK){
+                //iterate all sides
+                //first chess peice block rest of tiles from highlighting.
+
+                //checks obstruction upside
+                int yc = (YCord-1);
+                int xc = (XCord+1);
+
+
+                for(;yc >= 0; yc--){
+
+                    if(gamemap[yc][XCord] == null){
+                        squarePanel[yc][XCord].toggleHighlight();
+                    }
+                    if(gamemap[yc][XCord] != null && ((ChessPiece)gamemap[yc][XCord]).getColor() != cp.getColor() ){
+                        squarePanel[yc][XCord].toggleHighlight();
+                        break;
+                    }
+                    else if(gamemap[yc][XCord] != null && ((ChessPiece)gamemap[yc][XCord]).getColor() == cp.getColor() ){
+                        break;
+                    }
+                }
+
+                //checks obstruction right side
+
+                for(;xc <= gamemap.length-1; xc++){
+
+                    if(gamemap[YCord][xc] == null){
+                        squarePanel[YCord][xc].toggleHighlight();
+                    }
+                    if(gamemap[YCord][xc] != null && ((ChessPiece)gamemap[YCord][xc]).getColor() != cp.getColor() ){
+                        squarePanel[YCord][xc].toggleHighlight(); // remove this
+                        break;
+                    }
+                    else if(gamemap[YCord][xc] != null && ((ChessPiece)gamemap[YCord][xc]).getColor() == cp.getColor() ){
+                        break;
+                    }
+                }
+
+                //checks obstruction below
+                yc = (YCord+1);
+                for(;yc <= gamemap.length-1; yc++){
+
+                    if(gamemap[yc][XCord] == null){
+                        squarePanel[yc][XCord].toggleHighlight();
+                    }
+                    if(gamemap[yc][XCord] != null && ((ChessPiece)gamemap[yc][XCord]).getColor() != cp.getColor() ){
+                        squarePanel[yc][XCord].toggleHighlight(); // remove this
+                        break;
+                    }
+                    else if(gamemap[yc][XCord] != null && ((ChessPiece)gamemap[yc][XCord]).getColor() == cp.getColor() ){
+                        break;
+                    }
+                }
+
+                //checks obstruction left
+                xc = (XCord-1);
+                for(;xc >= 0; xc--){
+
+                    if(gamemap[YCord][xc] == null){
+                        squarePanel[YCord][xc].toggleHighlight();
+                    }
+                    if(gamemap[YCord][xc] != null && ((ChessPiece)gamemap[YCord][xc]).getColor() != cp.getColor() ){
+                        squarePanel[YCord][xc].toggleHighlight();
+                        break;
+                    }
+                    else if(gamemap[YCord][xc] != null && ((ChessPiece)gamemap[YCord][xc]).getColor() == cp.getColor() ){
+                        break;
+                    }
                 }
             }
     }
@@ -436,26 +403,31 @@ public class GameLogic {
         boolean friendlyObstruction = false;
         boolean pawnobstruct = false;
         boolean pawnattacks = false;
+        boolean pawnTwoMoveObstruct = false;
+        boolean rookobstruction = false;
 
         samespot = samecpspot(sourceRow,sourceCol,targetRow,targetCol);
         withinMoveset = moveWithinCPMoveset(sourceRow,sourceCol,targetRow,targetCol,movesetOffsetY,movesetOffsetX,yTrOffset,xTrOffset,moveset,cp,gamemap);
         friendlyObstruction = friendlyCPObstruction(targetRow,targetCol,gamemap,cp);
         pawnattacks = pawnAttack(targetRow,targetCol,movesetOffsetY,movesetOffsetX,yTrOffset,xTrOffset,moveset,cp,gamemap);
         pawnobstruct = pawnObstruct(targetRow,targetCol,gamemap,cp);
+        pawnTwoMoveObstruct = pawnTwoMoves(targetRow,sourceRow,sourceCol,gamemap,cp);
+        rookobstruction = rookObstruction(sourceRow,sourceCol,targetRow,targetCol,gamemap,cp);
 
-        System.out.println("samespot: " + samespot);
-        System.out.println("witinmoveset: " + withinMoveset);
-        System.out.println("friendlyObstruction: " + friendlyObstruction);
-        System.out.println("pawnObstruction: " + pawnobstruct);
+        System.out.println("Samespot error: " + samespot);
+        System.out.println("Withinmoveset error: " + withinMoveset);
+        System.out.println("FriendlyObstruction error: " + friendlyObstruction);
+        System.out.println("pawnObstruction error: " + pawnobstruct);
         System.out.println("PawnAttack: " + pawnattacks);
+        System.out.println("PawnTwoMovesObstruct error: " + pawnTwoMoveObstruct);
+        System.out.println("RookObstruction error: " + rookobstruction);
 
-        if( (!samespot && !withinMoveset && !friendlyObstruction) && !pawnobstruct || (pawnattacks) ){//if errorchecks are negative make move valid
+        if( (!samespot && !withinMoveset && !friendlyObstruction) && !pawnobstruct && !pawnTwoMoveObstruct && !rookobstruction || (pawnattacks) ){//if errorchecks are negative make move valid
             return true; //move is valid
         }
         else{
             return false;
         }
-
     }
 
     //did user click the same spot
@@ -497,9 +469,17 @@ public class GameLogic {
     //is pawn obstruct by enemy
     public boolean pawnObstruct(int targetRow, int targetCol, ChessPieceAbstract[][] gamemap, ChessPiece cp){
         if(cp.getChessPieceType() == ChessPieceType.PAWN && gamemap[targetRow][targetCol] != null){
-            if( ((ChessPiece)gamemap[targetRow][targetCol]).getColor() != cp.getColor() ){
+            if(((ChessPiece)gamemap[targetRow][targetCol]).getColor() != cp.getColor()){
                 return true;
             }
+        }
+        return false;
+    }
+
+    //checks if pawn can move 2 steps ahead if no obstruction is in the way
+    public boolean pawnTwoMoves(int targetRow, int sourceRow, int sourceCol, ChessPieceAbstract[][] gamemap, ChessPiece cp){
+        if(cp.getChessPieceType() == ChessPieceType.PAWN && cp.getMoved() == 0 && gamemap[sourceRow-1][sourceCol] != null && targetRow == sourceRow-2){
+            return true;
         }
         return false;
     }
@@ -512,6 +492,52 @@ public class GameLogic {
         else{
             return false;
         }
+    }
+
+    public boolean rookObstruction(int sourceRow, int sourceCol, int targetRow, int targetCol, ChessPieceAbstract[][] gamemap, ChessPiece cp){
+
+        if(cp.getChessPieceType() == ChessPieceType.ROOK){
+
+            if(sourceCol < targetCol){
+                for (int x = (sourceCol + 1); x < gamemap[sourceRow].length-1; x++ ){
+                    if(gamemap[sourceRow][x] != null){
+                        if(targetCol > x){
+                            return true;
+                        }
+                    }
+                }
+            }
+            if (sourceRow < targetRow){
+                for (int y = (sourceRow + 1); y < gamemap.length-1; y++ ){
+                    if(gamemap[y][sourceCol] != null){
+                        if(targetRow > y){
+                            return true;
+                        }
+                    }
+                }
+            }
+            if(sourceCol > targetCol){
+                for (int x = (sourceCol - 1); x >= 0; x--){
+                    if(gamemap[sourceRow][x] != null){
+                        if(targetCol < x){
+                            return true;
+                        }
+                    }
+                }
+            }
+            if(sourceRow > targetRow){
+                for (int y = (sourceRow - 1); y >= 0; y--){
+                    if(gamemap[y][sourceCol] != null){
+                        if(targetRow < y){
+                            return true;
+                        }
+                    }
+                }
+            }
+
+        }
+
+        return false;
     }
 
     //cleans board of chesspiece sprites
