@@ -29,8 +29,6 @@ public class Login {
                 JOptionPane.showMessageDialog(null, "Wrong password or username, try again");
                 return false;
             }
-
-
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }

@@ -110,8 +110,6 @@ public class RegisterView extends JFrame implements ActionListener {
             this.registerController.registerUser(userText.getText(), String.valueOf(passText.getPassword()), countryText.getText());
             this.closeRegisterWindow();
             System.out.println("New user registered");
-
-
         }
         if (e.getSource() == cancelButton) {
             registerFrame.dispose();

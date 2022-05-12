@@ -55,7 +55,7 @@ public class UserPanel extends JPanel implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == challengeButton) {
             System.out.println(LobbyView.getTimeControl());
-            new GameView(gameLogic);
+            GameLogic gameLogic = new GameLogic();
         }
         if (e.getSource() == profileButton) {
             //should check selected profile, maybe pop up with stats? waiting for JList with users to have some testdata
