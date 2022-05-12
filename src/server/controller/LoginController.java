@@ -12,7 +12,6 @@ public class LoginController {
     //private final LoginView loginView;
     private RegisterController registerController = new RegisterController();
 
-
     public LoginController() {
         this.dbCon = new DatabaseConnection();
         //this.loginView = new LoginView(this, registerController);

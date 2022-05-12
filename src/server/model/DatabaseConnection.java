@@ -14,7 +14,6 @@ public class DatabaseConnection {
         private final String url;
         private Connection conn;
 
-
         public DatabaseConnection() {
             this.properties = new Properties();
             properties.setProperty("user","am4039");
@@ -24,9 +23,7 @@ public class DatabaseConnection {
         }
 
         public Connection getConnection(){
-
             try {
-
                 if (conn == null || conn.isClosed() ) {
                     conn = DriverManager.getConnection(url, properties);
                 } else {
@@ -34,10 +31,7 @@ public class DatabaseConnection {
                 }
             } catch (SQLException e) {
                 e.printStackTrace();
-
             }
             return conn;
         }
-
-
 }
