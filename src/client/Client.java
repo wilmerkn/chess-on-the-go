@@ -2,6 +2,7 @@ package client;
 
 import client.lobby.LobbyView;
 import client.login.LoginView;
+import server.controller.LoginController;
 import server.model.ChallengeRequest;
 import server.model.LoginRequest;
 import server.model.Message;
@@ -18,12 +19,8 @@ public class Client {
     private Socket socket;
     private ObjectInputStream ois;
     private ObjectOutputStream oos;
-
     LoginView loginView;
     LobbyView lobbyView;
-
-
-
     public Client() {
         LoginController loginController = new LoginController();
         loginView = new LoginView(loginController);
@@ -39,7 +36,6 @@ public class Client {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
     }
 
     private void connect() {
@@ -54,7 +50,14 @@ public class Client {
     }
 
     private void disconnect() {
-
+        try {
+            if (ois != null) ois.close();
+            if (oos != null) oos.close();
+            if (socket != null) socket.close();
+        } catch (IOException e) {
+            System.out.println("Client disconnected");
+            e.printStackTrace();
+        }
     }
 
     private class ServerListener extends Thread {
