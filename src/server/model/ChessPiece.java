@@ -53,7 +53,6 @@ public class ChessPiece extends ChessPieceAbstract {
         this.moveset = moveset;
     }
 
-
     public void setChessPieceType(ChessPieceType chessPieceType) {
         this.chessPieceType = chessPieceType;
     }
