@@ -14,6 +14,14 @@ public class GameView {
     private BoardPanel boardPanel;
     private ChatPanel chatPanel;
 
+    private JLabel player1Name;
+    private JLabel player1Time;
+    private JLabel player2Name;
+    private JLabel player2Time;
+
+    private JButton resignBTN;
+    private JButton offerDrawBTN;
+
     public GameView(GameLogic gameLogic) {
                 JFrame frame = new JFrame();
                 frame.setTitle("Chess On The Go");
@@ -26,18 +34,50 @@ public class GameView {
                 //frame.getContentPane().setBackground(new Color(35,35,35));
 
                 boardPanel = new BoardPanel(gameLogic);
-                boardPanel.setBounds(7, 25, 650, 650);
+                boardPanel.setBounds(7, 50, 650, 650);
+
+                player1Name = new JLabel("Player 1");
+                player1Name.setFont(new Font("Sans Serif", Font.BOLD, 15));
+                player1Name.setBounds(15, 700, 565, 25);
+
+                player2Name = new JLabel("Player 2");
+                player2Name.setFont(new Font("Sans Serif", Font.BOLD, 15));
+                player2Name.setBounds(15, 25, 565, 25);
+
+                player1Time = new JLabel("Time: 11:11");
+                player1Time.setFont(new Font("Sans Serif", Font.BOLD, 15));
+                player1Time.setBounds(565, 700, 565, 25);
+
+                player2Time = new JLabel("Time: 22:22");
+                player2Time.setFont(new Font("Sans Serif", Font.BOLD, 15));
+                player2Time.setBounds(565, 25, 565, 25);
+
                 chatPanel = new ChatPanel();
-                chatPanel.setBounds(810, 7, 175, 700);
+                chatPanel.setBounds(700, 50, 225, 550);
+
+                resignBTN = new JButton("RESIGN");
+                resignBTN.setBounds(700, 675, 90, 25);
+
+                offerDrawBTN = new JButton("OFFER DRAW");
+                offerDrawBTN.setBounds(800, 675, 125, 25);
+
+                frame.add(player1Name);
+                frame.add(player2Name);
+
+                frame.add(player1Time);
+                frame.add(player2Time);
+
+                frame.add(resignBTN);
+                frame.add(offerDrawBTN);
 
                 frame.add(boardPanel);
                 frame.add(chatPanel);
                 frame.setVisible(true);
-                }
+    }
 
-                public BoardPanel getBoardPanel() {
-                return boardPanel;
-                }
+    public BoardPanel getBoardPanel() {
+        return boardPanel;
+    }
 }
 
 
