@@ -1,5 +1,7 @@
 package client.lobby;
 
+import client.Client;
+
 import javax.swing.*;
 import java.awt.*;
 
@@ -8,9 +10,11 @@ public class LobbyView extends JFrame {
     JFrame lobbyFrame;
     private static PairingPanel pairingPanel;
     private final UserPanel userPanel;
+    private Client client;
 
 
-    public LobbyView() {
+    public LobbyView(Client client) {
+        this.client = client;
 
         lobbyFrame = new JFrame("Chess On The Go - Lobby");
         init();
@@ -27,7 +31,6 @@ public class LobbyView extends JFrame {
         lobbyFrame.add(userPanel);
 
         lobbyFrame.setVisible(true);
-
     }
 
     public static int getTimeControl() {
@@ -36,6 +39,10 @@ public class LobbyView extends JFrame {
 
     public UserPanel getUserPanel() {
         return userPanel;
+    }
+
+    public Client getClient() {
+        return client;
     }
 
     private void init() {

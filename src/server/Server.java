@@ -19,17 +19,13 @@ public class Server implements Runnable {
 
     private Hashtable<Player, ClientHandler> playerClientMap; // Testa concurrentHashmap
     private List<GameLogic> games = new ArrayList<>();
-
     private LoginController loginController = new LoginController();
-
     private ArrayList<String> playerList = new ArrayList<>();
-
 
 
     public Server() {
         playerClientMap = new Hashtable<>();
         new Thread(this).start();
-
     }
 
     @Override
@@ -47,8 +43,6 @@ public class Server implements Runnable {
             e.printStackTrace();
         }
     }
-
-
 
     private class ClientHandler extends Thread {
         private Socket socket;
@@ -74,40 +68,32 @@ public class Server implements Runnable {
 
                     if(object instanceof LoginRequest) {
                         LoginRequest loginReq = (LoginRequest) ois.readObject();
-                        System.out.println("#¤%&/!#(");
                         boolean loginOk = loginController.checkLogin(loginReq.getUsername(), loginReq.getPassword());
-                        System.out.println("loginOk:" + loginOk);
 
                         if(loginOk) {
                             loginReq.setAccepted(true);
-                            System.out.println("Server: login true");
                             oos.writeObject(loginReq);
 
-                            player = new Player(loginReq.getUsername());
+                            player = new Player(loginReq.getUsername()); // Ska hämtas från databas
                             playerClientMap.put(player, this);
                             playerList.add(player.getUsrName());
 
-                            Thread.sleep(1000);
-
                             broadcastPlayers();
-
-                            System.out.println(player.getUsrName() + " connected.");
                         } else {
                             oos.writeObject(loginReq);
-                            System.out.println("Login failed");
                         }
                     }
 
                     if (object instanceof ChallengeRequest challenge) {
 
-                        if(!challenge.isAccepted() && !challenge.isDeclined()) {
+                        if(!challenge.isAccepted()) {
                             for (Player player: playerClientMap.keySet()) {
-                                if(player.getUsrName().equals(challenge.getReceiverName())) {
-                                    challenge.setChallengeReceiver(player);
+                                if(player.getUsrName().equals(challenge.getReceiverUsername())) {
                                     playerClientMap.get(player).getOos().writeObject(challenge);
                                 }
                             }
-                        } else if(challenge.isAccepted()) {
+                        } else {
+
                             System.out.println("Challenge accepted");
                             GameLogic gl = new GameLogic();
                             Player player1; // Ta från challenge
@@ -128,10 +114,10 @@ public class Server implements Runnable {
                     }
                 }
             } catch (IOException | ClassNotFoundException e) {
-                //disconnect();
-                e.printStackTrace();
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
+                playerList.remove(player.getUsrName());
+                playerClientMap.remove(player);
+                broadcastPlayers();
+                disconnect();
             }
         }
 
@@ -140,8 +126,8 @@ public class Server implements Runnable {
                 if (ois != null) ois.close();
                 if (oos != null) oos.close();
                 if (socket != null) socket.close();
-            } catch (IOException e) {
                 System.out.println("Client disconnected");
+            } catch (IOException e) {
                 e.printStackTrace();
             }
         }

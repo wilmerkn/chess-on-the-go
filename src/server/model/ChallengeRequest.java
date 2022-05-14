@@ -1,45 +1,41 @@
 package server.model;
 
-public class ChallengeRequest {
-    private Player challengeSender;
-    private Player challengeReceiver;
-    private String receiverName;
+import java.io.Serializable;
+
+public class ChallengeRequest implements Serializable {
+    private String senderUsername;
+    private String receiverUsername;
+    private int timeControl;
 
     private boolean accepted = false;
-    private boolean declined = false;
 
-    public ChallengeRequest(Player challengeSender, String receiverName) {
-        this.challengeSender = challengeSender;
-        this.receiverName = receiverName;
-        this.accepted = false;
-        this.declined = false;
+    public ChallengeRequest(String senderUsername, String receiverUsername, int timeControl) {
+        this.senderUsername = senderUsername;
+        this.receiverUsername = receiverUsername;
+        this.timeControl = timeControl;
     }
 
-    public Player getChallengeSender() {
-        return challengeSender;
+    public String getSenderUsername() {
+        return senderUsername;
     }
 
-    public void setAccepted(boolean accepted) {
-        this.accepted = accepted;
+    public void accept() {
+        this.accepted = true;
     }
 
     public boolean isAccepted() {
         return accepted;
     }
 
-    public void setDeclined(boolean declined) {
-        this.declined = declined;
+    public String getReceiverUsername() {
+        return receiverUsername;
     }
 
-    public boolean isDeclined() {
-        return declined;
+    public void setReceiverUsername(String receiverUsername) {
+        this.receiverUsername = receiverUsername;
     }
 
-    public String getReceiverName() {
-        return receiverName;
-    }
-
-    public void setChallengeReceiver(Player challengeReceiver) {
-        this.challengeReceiver = challengeReceiver;
+    public int getTimeControl() {
+        return timeControl;
     }
 }

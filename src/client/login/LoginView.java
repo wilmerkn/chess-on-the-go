@@ -112,8 +112,7 @@ public class LoginView extends JFrame implements ActionListener {
     }
 
     public void closeLoginWindow() {
-        //fix so that this disposes of window, not just hides it
-        this.dispose();
-        this.setVisible(false);
+        loginFrame.dispose();
+        loginFrame.setVisible(false);
     }
 }

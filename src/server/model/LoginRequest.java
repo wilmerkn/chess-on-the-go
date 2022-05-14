@@ -12,6 +12,7 @@ public class LoginRequest implements Serializable {
     public LoginRequest(String username, String password) {
         this.username = username;
         this.password = password;
+        this.accepted = false;
     }
 
     public void setAccepted(boolean accepted) {

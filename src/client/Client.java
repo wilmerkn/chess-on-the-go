@@ -1,7 +1,9 @@
 package client;
 
+import client.gameview.GameView;
 import client.lobby.LobbyView;
 import client.login.LoginView;
+import server.controller.GameLogic;
 import server.controller.LoginController;
 import server.model.ChallengeRequest;
 import server.model.LoginRequest;
@@ -20,8 +22,10 @@ public class Client {
     private Socket socket;
     private ObjectInputStream ois;
     private ObjectOutputStream oos;
-    LoginView loginView;
-    LobbyView lobbyView;
+    private LoginView loginView;
+    private LobbyView lobbyView;
+    private GameView gameView;
+
     public Client() {
         LoginController loginController = new LoginController();
         loginView = new LoginView(loginController, this);
@@ -29,7 +33,6 @@ public class Client {
         new ServerListener().start();
     }
 
-    // public??
     public void login(String username, String password) {
         LoginRequest loginRequest = new LoginRequest(username, password);
         try {
@@ -39,15 +42,23 @@ public class Client {
         }
     }
 
+    public void challenge(String receiverUsername, int timeControl) {
+        ChallengeRequest challenge = new ChallengeRequest(receiverUsername, receiverUsername, timeControl); // Rätta till
+        try {
+            oos.writeObject(challenge);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     private void connect() {
         try {
             socket = new Socket(HOST, PORT);
             oos = new ObjectOutputStream(socket.getOutputStream());
             ois = new ObjectInputStream(socket.getInputStream());
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
         }
-        // Send player to server
     }
 
     private void disconnect() {
@@ -65,43 +76,40 @@ public class Client {
 
         @Override
         public void run() {
+            try {
+                while(true) {
 
-            while(true) {
-                try {
                     Object obj = ois.readObject();
                     if(obj instanceof LoginRequest) {
                         LoginRequest request = (LoginRequest) obj;
                         if(!request.isAccepted()) {
                             JOptionPane.showMessageDialog(null, "Login failed");
-                            System.out.println("Login failed");
                         } else {
-                            System.out.println("Login ok");
-                            lobbyView = new LobbyView();
+                            lobbyView = new LobbyView(Client.this);
                             loginView.closeLoginWindow();
 
-                            // skicka lista med online användare
                         }
                     } else if(obj instanceof ChallengeRequest) {
                         ChallengeRequest challenge = (ChallengeRequest) obj;
-                        String challengerName = challenge.getChallengeSender().getUsrName();
+                        String sender = challenge.getSenderUsername();
                         int answer = JOptionPane.showConfirmDialog(
                                 null,
                                 "Incoming challenge",
-                                String.format("Do you want to accept incoming challenge from %s?", challengerName),
+                                String.format("Do you want to accept incoming challenge from %s?", sender),
                                 JOptionPane.YES_NO_OPTION
                         );
 
-                        if(answer == 0) { // Challenge accepted
-                            challenge.setAccepted(true);
-
-                        } else if (answer == 1) { // Challenge declined
+                        if(answer == 0) {
+                            challenge.accept();
+                            oos.reset();
+                            oos.writeObject(challenge);
+                            oos.flush();
+                            lobbyView.dispose();
+                            gameView = new GameView(new GameLogic()); // Gamelogic från servern?
 
                         }
 
-                        System.out.println("Challenge");
-                        // Lägg till namn i Users online
-
-                    }else if (obj instanceof Message) {
+                    } else if (obj instanceof Message) {
                         // Lägg message i textArea
                     } else if(obj instanceof ArrayList) {
                         ArrayList<String> players = (ArrayList<String>) obj; // No problem
@@ -109,11 +117,10 @@ public class Client {
 
                         lobbyView.getUserPanel().setOnlinePlayers(players);
 
-
                     }
-                } catch (IOException | ClassNotFoundException e) {
-                    throw new RuntimeException(e);
                 }
+            } catch (IOException | ClassNotFoundException e) {
+                disconnect();
             }
         }
     }
