@@ -28,11 +28,13 @@ public class GameLogic {
 
     private GameView view;
     private GameModel model;
+    private GameAudio gameAudio;
 
     public GameLogic(){
 
         this.view = new GameView(this);
         this.model = new GameModel();
+        this.gameAudio = new GameAudio();
 
         //all game code runs here
         model.setMap(new GameMap(8));
@@ -45,6 +47,8 @@ public class GameLogic {
     }
 
     public void initializeMap() {
+        gameAudio.start();
+
         int mapDim = model.getMap().getMapDimension();
         ChessPieceAbstract[][] gamemap = model.getMap().getMap();
         HashMap<Integer, ChessPieceAbstract> chesspieces = model.getChesspieces();
@@ -226,6 +230,8 @@ public class GameLogic {
                         {2,2,2}
                 });
             }
+
+            gameAudio.playSound("src\\AudioFiles\\mixkit-quick-jump-arcade-game-239.wav",0);
 
             inverseMapArray();
             drawMap();
