@@ -205,7 +205,6 @@ public class GameLogic {
                 }
             }
         }
-        //disableChesspieces();
         map.displayMap();
     }
 
@@ -235,6 +234,7 @@ public class GameLogic {
             gameAudio.playSound("src\\AudioFiles\\mixkit-quick-jump-arcade-game-239.wav",0);
 
             inverseMapArray();
+            //disableChesspieces();
             drawMap();
     }
 
@@ -505,7 +505,7 @@ public class GameLogic {
         System.out.println("BishopObstruction error: " + bishopobstruction);
         System.out.println("queenObstruction error: " + queenObstruction);
 
-        if( (!samespot && !withinMoveset && !friendlyObstruction) && !pawnobstruct && !pawnTwoMoveObstruct && !rookobstruction && !bishopobstruction || (pawnattacks) || ( (!samespot && !withinMoveset && !friendlyObstruction) && !queenObstruction ) ){//if errorchecks are negative make move valid
+        if( (!samespot && !withinMoveset && !friendlyObstruction && !pawnobstruct && !pawnTwoMoveObstruct && !rookobstruction && !bishopobstruction) || (pawnattacks) || ( (!samespot && !withinMoveset && !friendlyObstruction && !pawnobstruct && !pawnTwoMoveObstruct) && !queenObstruction ) ){//if errorchecks are negative make move valid
             return true; //move is valid
         }
         else{
@@ -684,8 +684,6 @@ public class GameLogic {
     }
 
     public boolean queenObstruction(int sourceRow,int sourceCol,int targetRow,int targetCol,ChessPieceAbstract[][] gamemap,ChessPiece cp){
-        //check if move is straight or diagonal
-        //use rook/bishop dependently
 
         boolean diagonal = false;
         boolean bishop = false;
@@ -739,15 +737,14 @@ public class GameLogic {
                     if( gamemap[row][col] != null ){
                         cp = ((ChessPiece)gamemap[row][col]);
                         if(cp.getColor() == ChessPieceColor.BLACK){
-                           JLabel lbl = notationlbls.get(cp.getSpriteName());
-                           lbl.setText("TESTING");
+                            JLabel peice = notationlbls.get(cp.getSpriteName());
+                            peice.setEnabled(false);
                         }
 
                     }
 
                 }
             }
-            playerTurn = 2;
         }
         else if(playerTurn == 2){
             for(int row = 0; row < gamemap.length; row++){

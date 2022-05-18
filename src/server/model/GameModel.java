@@ -22,12 +22,10 @@ public class GameModel {
     private HashMap<Integer,ChessPieceAbstract> chesspieces = new HashMap<Integer,ChessPieceAbstract>();
 
     public GameModel() {
-
+        gameState = new GameState();
         gameTimer = new GameTimer();
         //boardView = new BoardView(gameLogic); // model should not have view
         map = new GameMap(8);
-
-        gameState = new GameState();
     }
 
     public Player[] getPlayers() {
