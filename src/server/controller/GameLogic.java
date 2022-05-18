@@ -15,8 +15,8 @@ import java.util.HashMap;
 //todo only initialize playable side with moves
 
 //todo complete all chess peices to fully functioning.
-// currently complete: knight,king,Pawn,rook,bishop
-// left to fix: queen.
+// currently complete: knight,king,Pawn,rook,bishop,queen
+// left to fix: turnbased, checkmate, castling.
 
 //todo check for check mate every draw.
 
@@ -511,13 +511,6 @@ public class GameLogic {
             return false;
         }
 
-        /*
-        if( (!samespot && !withinMoveset && !friendlyObstruction) && !pawnobstruct && !pawnTwoMoveObstruct && !rookobstruction && !bishopobstruction || (pawnattacks) ){//if errorchecks are negative make move valid
-            return true; //move is valid
-        }
-        else{
-            return false;
-        }*/
     }
 
     //did user click the same spot
