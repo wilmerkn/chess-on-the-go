@@ -502,14 +502,22 @@ public class GameLogic {
         System.out.println("PawnTwoMovesObstruct error: " + pawnTwoMoveObstruct);
         System.out.println("RookObstruction error: " + rookobstruction);
         System.out.println("BishopObstruction error: " + bishopobstruction);
-        System.out.println("QueenObstruction error: " + queenObstruction);
+        System.out.println("queenObstruction error: " + queenObstruction);
 
-        if( (!samespot && !withinMoveset && !friendlyObstruction) && !pawnobstruct && !pawnTwoMoveObstruct && !rookobstruction && !bishopobstruction || (pawnattacks) ){//if errorchecks are negative make move valid
+        if( (!samespot && !withinMoveset && !friendlyObstruction) && !pawnobstruct && !pawnTwoMoveObstruct && !rookobstruction && !bishopobstruction || (pawnattacks) || ( (!samespot && !withinMoveset && !friendlyObstruction) && !queenObstruction ) ){//if errorchecks are negative make move valid
             return true; //move is valid
         }
         else{
             return false;
         }
+
+        /*
+        if( (!samespot && !withinMoveset && !friendlyObstruction) && !pawnobstruct && !pawnTwoMoveObstruct && !rookobstruction && !bishopobstruction || (pawnattacks) ){//if errorchecks are negative make move valid
+            return true; //move is valid
+        }
+        else{
+            return false;
+        }*/
     }
 
     //did user click the same spot
@@ -579,7 +587,7 @@ public class GameLogic {
     //highlight Rook path until obstruction
     public boolean rookObstruction(int sourceRow, int sourceCol, int targetRow, int targetCol, ChessPieceAbstract[][] gamemap, ChessPiece cp){
 
-        if(cp.getChessPieceType() == ChessPieceType.ROOK){
+        if(cp.getChessPieceType() == ChessPieceType.ROOK || cp.getChessPieceType() == ChessPieceType.QUEEN){
 
             if(sourceCol < targetCol){
                 for (int x = (sourceCol + 1); x < gamemap[sourceRow].length-1; x++ ){
@@ -626,7 +634,7 @@ public class GameLogic {
         int yc;
         int xc;
 
-        if(cp.getChessPieceType() == ChessPieceType.BISHOP){
+        if(cp.getChessPieceType() == ChessPieceType.BISHOP || cp.getChessPieceType() == ChessPieceType.QUEEN){
 
             if( (sourceRow > targetRow) && (sourceCol < targetCol) ){
                 //check top right
@@ -676,18 +684,31 @@ public class GameLogic {
         return false;
     }
 
-    public boolean queenObstruction(int sourceRow,int sourceCol,int targetRow,int targetCol,ChessPieceAbstract[][] gamemap, ChessPiece cp){
+    public boolean queenObstruction(int sourceRow,int sourceCol,int targetRow,int targetCol,ChessPieceAbstract[][] gamemap,ChessPiece cp){
+        //check if move is straight or diagonal
+        //use rook/bishop dependently
 
-        boolean rook = false;
+        boolean diagonal = false;
         boolean bishop = false;
+        boolean rook = false;
 
+        bishop = bishopObstruction(sourceRow,sourceCol,targetRow,targetCol,gamemap,cp); //use bishop and rook patterns for queen obstruction
         rook = rookObstruction(sourceRow,sourceCol,targetRow,targetCol,gamemap,cp);
-        bishop = bishopObstruction(sourceRow,sourceCol,targetRow,targetCol,gamemap,cp);
 
-        if(rook && bishop){
-            return true;
+        //checks if source cordinate and target cordinate is diagonal
+        if( (targetRow - sourceRow == targetCol - sourceCol) || (targetRow - sourceRow == sourceCol - targetCol) ) {
+            diagonal = true;
         }
 
+        System.out.println("is diagonal: " + diagonal);
+
+        //check what method to use
+        if(diagonal && bishop){
+            return true;
+        }
+        else if(!diagonal && rook){
+            return true;
+        }
         return false;
     }
 
