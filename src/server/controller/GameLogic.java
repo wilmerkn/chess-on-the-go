@@ -205,6 +205,7 @@ public class GameLogic {
                 }
             }
         }
+        //disableChesspieces();
         map.displayMap();
     }
 
@@ -569,12 +570,17 @@ public class GameLogic {
 
     //checks if pawn can attack with attack pattern
     public boolean pawnAttack(int targetRow, int targetCol, int movesetOffsetY, int movesetOffsetX, int yTrOffset, int xTrOffset, int[][] moveset, ChessPiece cp, ChessPieceAbstract[][] gamemap){
-        if(cp.getChessPieceType() == ChessPieceType.PAWN && gamemap[targetRow][targetCol] != null && ((ChessPiece)gamemap[targetRow][targetCol]).getColor() != cp.getColor() && moveset[movesetOffsetY-yTrOffset][movesetOffsetX-xTrOffset] == 3){
-            return true;
-        }
-        else{
+        try{
+            if(cp.getChessPieceType() == ChessPieceType.PAWN && gamemap[targetRow][targetCol] != null && ((ChessPiece)gamemap[targetRow][targetCol]).getColor() != cp.getColor() && moveset[movesetOffsetY-yTrOffset][movesetOffsetX-xTrOffset] == 3){
+                return true;
+            }
+            else{
+                return false;
+            }
+        } catch (Exception e) {
             return false;
         }
+
     }
 
     //highlight Rook path until obstruction
@@ -714,6 +720,44 @@ public class GameLogic {
             }
         }
     }
+
+    //todo work on this
+    /*
+    public void disableChesspieces(){
+        int playerTurn = model.getGameState().getPlayerTurn();
+        ChessPieceAbstract[][] gamemap = model.getMap().getMap();
+        BoardPanel.SquarePanel[][] squarePanel = view.getBoardPanel().getSquares();
+        HashMap<String, JLabel> notationlbls = view.getBoardPanel().getNotationToJLMap();
+        //if player turn 1, disable black and vice versa
+
+        ChessPiece cp;
+
+        if (playerTurn == 1){
+            for(int row = 0; row < gamemap.length; row++){
+                for(int col = 0; col < gamemap[row].length; col ++){
+
+                    if( gamemap[row][col] != null ){
+                        cp = ((ChessPiece)gamemap[row][col]);
+                        if(cp.getColor() == ChessPieceColor.BLACK){
+                           JLabel lbl = notationlbls.get(cp.getSpriteName());
+                           lbl.setText("TESTING");
+                        }
+
+                    }
+
+                }
+            }
+            playerTurn = 2;
+        }
+        else if(playerTurn == 2){
+            for(int row = 0; row < gamemap.length; row++){
+                for(int col = 0; col < gamemap[row].length; col ++){
+
+                }
+            }
+        }
+
+    }*/
 
     //notes:
     //todo method used to switch movement pattern on pawns after first move, cleans board slate of chesspieces for redraw(done)
