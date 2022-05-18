@@ -22,8 +22,6 @@ import java.util.HashMap;
 
 //todo inverse squarepanel in inverse array method
 
-//todo remove left click toggle highlight
-
 public class GameLogic {
 
     private GameView view;
@@ -40,7 +38,7 @@ public class GameLogic {
         model.setMap(new GameMap(8));
 
         initializeMap();
-        //debugChesspieces();
+
         //inverseMapArray();
 
         drawMap();
@@ -238,7 +236,6 @@ public class GameLogic {
             drawMap();
     }
 
-    //todo block highlighting if chesspieces in the way
     //method used to show highlighted movement pattern in GUI
     public void highlightMovementPattern(int srcY,int srcX){
 
@@ -274,26 +271,21 @@ public class GameLogic {
             for(int y = (YCord - YOffset); y < (YCord-YOffset+moveset.length); y++){
                 for(int x = (XCord - XOffset); x < (XCord-XOffset+moveset.length);x++){
                     try{
-
                         if(moveset[y-(YCord-YOffset)][x-(XCord-XOffset)] == 1 && gamemap[y][x] == null && cp.getChessPieceType() != ChessPieceType.ROOK && cp.getChessPieceType() != ChessPieceType.BISHOP && cp.getChessPieceType() != ChessPieceType.QUEEN){ //if there is a 1 in moveset then highlight tile
                             squarePanel[y][x].toggleHighlight();
                         }
-
                         if(moveset[y-(YCord-YOffset)][x-(XCord-XOffset)] == 1 && gamemap[YCord-1][XCord] !=null && cp.getChessPieceType() == ChessPieceType.PAWN && cp.getMoved() ==0){ // if pawn has 2 moves with enemy obstruction, dehighlight tile behind enemy peice
                             if(!runOnce){
                                 runOnce = true;
                                 squarePanel[y][x].toggleHighlight();
                             }
                         }
-
                         if(moveset[y-(YCord-YOffset)][x-(XCord-XOffset)] == 3 && cp.getChessPieceType() == ChessPieceType.PAWN && ((ChessPiece)gamemap[y][x]).getColor() != cp.getColor()){ //highlight if within pawn attack pattern
                             squarePanel[y][x].toggleHighlight();
                         }
-
                         if(moveset[y-(YCord-YOffset)][x-(XCord-XOffset)] == 1 && cp.getColor() != ((ChessPiece)gamemap[y][x]).getColor() && cp.getChessPieceType() != ChessPieceType.PAWN && cp.getChessPieceType() != ChessPieceType.ROOK && cp.getChessPieceType() != ChessPieceType.BISHOP && cp.getChessPieceType() != ChessPieceType.QUEEN){ //highlights position if chesspiece is not of same color
                              squarePanel[y][x].toggleHighlight();
                         }
-
                     } catch (Exception e) {
                         continue;
                     }
@@ -310,9 +302,7 @@ public class GameLogic {
                 int yc = (YCord-1);
                 int xc = (XCord+1);
 
-
                 for(;yc >= 0; yc--){
-
                     if(gamemap[yc][XCord] == null){
                         squarePanel[yc][XCord].toggleHighlight();
                     }
@@ -327,7 +317,6 @@ public class GameLogic {
 
                 //checks obstruction right side
                 for(;xc <= gamemap.length-1; xc++){
-
                     if(gamemap[YCord][xc] == null){
                         squarePanel[YCord][xc].toggleHighlight();
                     }
@@ -343,7 +332,6 @@ public class GameLogic {
                 //checks obstruction below
                 yc = (YCord+1);
                 for(;yc <= gamemap.length-1; yc++){
-
                     if(gamemap[yc][XCord] == null){
                         squarePanel[yc][XCord].toggleHighlight();
                     }
@@ -359,7 +347,6 @@ public class GameLogic {
                 //checks obstruction left
                 xc = (XCord-1);
                 for(;xc >= 0; xc--){
-
                     if(gamemap[YCord][xc] == null){
                         squarePanel[YCord][xc].toggleHighlight();
                     }
@@ -443,9 +430,6 @@ public class GameLogic {
             }
     }
 
-
-
-    //todo things to check. clicks on same spot(done), moves within moveset(done), does tile contain friendly or enemy(done), is checkmate?, is castling, cant move on enemy king only put in chess/checkmate
     //check if move input by user is a valid move in chess
     public boolean moveValid(int sourceRow, int sourceCol, int targetRow, int targetCol){
         ChessPieceAbstract[][] gamemap = model.getMap().getMap();
@@ -511,7 +495,6 @@ public class GameLogic {
         else{
             return false;
         }
-
     }
 
     //did user click the same spot
@@ -580,14 +563,11 @@ public class GameLogic {
         } catch (Exception e) {
             return false;
         }
-
     }
 
     //highlight Rook path until obstruction
     public boolean rookObstruction(int sourceRow, int sourceCol, int targetRow, int targetCol, ChessPieceAbstract[][] gamemap, ChessPiece cp){
-
         if(cp.getChessPieceType() == ChessPieceType.ROOK || cp.getChessPieceType() == ChessPieceType.QUEEN){
-
             if(sourceCol < targetCol){
                 for (int x = (sourceCol + 1); x < gamemap[sourceRow].length-1; x++ ){
                     if(gamemap[sourceRow][x] != null){
@@ -634,7 +614,6 @@ public class GameLogic {
         int xc;
 
         if(cp.getChessPieceType() == ChessPieceType.BISHOP || cp.getChessPieceType() == ChessPieceType.QUEEN){
-
             if( (sourceRow > targetRow) && (sourceCol < targetCol) ){
                 //check top right
                 yc = (sourceRow-1);
@@ -696,7 +675,6 @@ public class GameLogic {
         if( (targetRow - sourceRow == targetCol - sourceCol) || (targetRow - sourceRow == sourceCol - targetCol) ) {
             diagonal = true;
         }
-
         System.out.println("is diagonal: " + diagonal);
 
         //check what method to use

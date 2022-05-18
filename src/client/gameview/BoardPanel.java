@@ -132,9 +132,7 @@ public class BoardPanel extends JPanel {
                                 //todo make next turn if this runs
                             }
                     }
-                } else if (SwingUtilities.isRightMouseButton(e) && !(sourceRow == -1 && sourceCol == -1)) {
-                    squares[sourceRow][sourceCol].toggleHighlight();
-                    sourceRow = sourceCol = targetRow = targetCol = -1;
+
                 }
             }
 
