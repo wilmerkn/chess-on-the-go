@@ -14,14 +14,12 @@ import java.util.*;
 //todo only initialize playable side with moves
 
 //todo complete all chess peices to fully functioning.
-// currently complete: knight,king,Pawn,rook
-// left to fix: bishop, queen.
+// currently complete: knight,king,Pawn,rook,bishop,queen
+// left to fix: turnbased, checkmate, castling.
 
 //todo check for check mate every draw.
 
 //todo inverse squarepanel in inverse array method
-
-//todo remove left click toggle highlight
 
 public class GameLogic {
 
@@ -39,7 +37,7 @@ public class GameLogic {
         model.setMap(new GameMap(8));
 
         initializeMap();
-        //debugChesspieces();
+
         //inverseMapArray();
 
         drawMap();
@@ -496,35 +494,30 @@ public class GameLogic {
             for(int y = (YCord - YOffset); y < (YCord-YOffset+moveset.length); y++){
                 for(int x = (XCord - XOffset); x < (XCord-XOffset+moveset.length);x++){
                     try{
-
-                        if(moveset[y-(YCord-YOffset)][x-(XCord-XOffset)] == 1 && gamemap[y][x] == null && cp.getChessPieceType() != ChessPieceType.ROOK){ //if there is a 1 in moveset then highlight tile
+                        if(moveset[y-(YCord-YOffset)][x-(XCord-XOffset)] == 1 && gamemap[y][x] == null && cp.getChessPieceType() != ChessPieceType.ROOK && cp.getChessPieceType() != ChessPieceType.BISHOP && cp.getChessPieceType() != ChessPieceType.QUEEN){ //if there is a 1 in moveset then highlight tile
                             squarePanel[y][x].toggleHighlight();
                         }
-
                         if(moveset[y-(YCord-YOffset)][x-(XCord-XOffset)] == 1 && gamemap[YCord-1][XCord] !=null && cp.getChessPieceType() == ChessPieceType.PAWN && cp.getMoved() ==0){ // if pawn has 2 moves with enemy obstruction, dehighlight tile behind enemy peice
                             if(!runOnce){
                                 runOnce = true;
                                 squarePanel[y][x].toggleHighlight();
                             }
                         }
-
                         if(moveset[y-(YCord-YOffset)][x-(XCord-XOffset)] == 3 && cp.getChessPieceType() == ChessPieceType.PAWN && ((ChessPiece)gamemap[y][x]).getColor() != cp.getColor()){ //highlight if within pawn attack pattern
                             squarePanel[y][x].toggleHighlight();
                         }
-
-                        if(moveset[y-(YCord-YOffset)][x-(XCord-XOffset)] == 1 && cp.getColor() != ((ChessPiece)gamemap[y][x]).getColor() && cp.getChessPieceType() != ChessPieceType.PAWN && cp.getChessPieceType() != ChessPieceType.ROOK){ //highlights position if chesspiece is not of same color
+                        if(moveset[y-(YCord-YOffset)][x-(XCord-XOffset)] == 1 && cp.getColor() != ((ChessPiece)gamemap[y][x]).getColor() && cp.getChessPieceType() != ChessPieceType.PAWN && cp.getChessPieceType() != ChessPieceType.ROOK && cp.getChessPieceType() != ChessPieceType.BISHOP && cp.getChessPieceType() != ChessPieceType.QUEEN){ //highlights position if chesspiece is not of same color
                              squarePanel[y][x].toggleHighlight();
                         }
-
                     } catch (Exception e) {
                         continue;
                     }
 
                 }
             }
-
+            //todo optimize rotation of patterns
             //rook highlight logic
-            if(cp.getChessPieceType() == ChessPieceType.ROOK){
+            if(cp.getChessPieceType() == ChessPieceType.ROOK || cp.getChessPieceType() == ChessPieceType.QUEEN){
                 //iterate all sides
                 //first chess peice block rest of tiles from highlighting.
 
@@ -532,9 +525,7 @@ public class GameLogic {
                 int yc = (YCord-1);
                 int xc = (XCord+1);
 
-
                 for(;yc >= 0; yc--){
-
                     if(gamemap[yc][XCord] == null){
                         squarePanel[yc][XCord].toggleHighlight();
                     }
@@ -548,14 +539,12 @@ public class GameLogic {
                 }
 
                 //checks obstruction right side
-
                 for(;xc <= gamemap.length-1; xc++){
-
                     if(gamemap[YCord][xc] == null){
                         squarePanel[YCord][xc].toggleHighlight();
                     }
                     if(gamemap[YCord][xc] != null && ((ChessPiece)gamemap[YCord][xc]).getColor() != cp.getColor() ){
-                        squarePanel[YCord][xc].toggleHighlight(); // remove this
+                        squarePanel[YCord][xc].toggleHighlight();
                         break;
                     }
                     else if(gamemap[YCord][xc] != null && ((ChessPiece)gamemap[YCord][xc]).getColor() == cp.getColor() ){
@@ -566,12 +555,11 @@ public class GameLogic {
                 //checks obstruction below
                 yc = (YCord+1);
                 for(;yc <= gamemap.length-1; yc++){
-
                     if(gamemap[yc][XCord] == null){
                         squarePanel[yc][XCord].toggleHighlight();
                     }
                     if(gamemap[yc][XCord] != null && ((ChessPiece)gamemap[yc][XCord]).getColor() != cp.getColor() ){
-                        squarePanel[yc][XCord].toggleHighlight(); // remove this
+                        squarePanel[yc][XCord].toggleHighlight();
                         break;
                     }
                     else if(gamemap[yc][XCord] != null && ((ChessPiece)gamemap[yc][XCord]).getColor() == cp.getColor() ){
@@ -582,7 +570,6 @@ public class GameLogic {
                 //checks obstruction left
                 xc = (XCord-1);
                 for(;xc >= 0; xc--){
-
                     if(gamemap[YCord][xc] == null){
                         squarePanel[YCord][xc].toggleHighlight();
                     }
@@ -595,9 +582,77 @@ public class GameLogic {
                     }
                 }
             }
+            //iterate and highlight bishop path unless obstructed by foe or friend
+            if(cp.getChessPieceType() == ChessPieceType.BISHOP || cp.getChessPieceType() == ChessPieceType.QUEEN){
+
+                //top right
+                int xc = (XCord+1);
+                int yc = (YCord-1);
+
+                for(; (yc >= 0) && (xc < gamemap[yc].length); yc--,xc++){
+                        if(gamemap[yc][xc] == null){
+                            squarePanel[yc][xc].toggleHighlight();
+                        }
+                        if(gamemap[yc][xc] != null && ((ChessPiece)gamemap[yc][xc]).getColor() != cp.getColor() ){
+                            squarePanel[yc][xc].toggleHighlight();
+                            break;
+                        }
+                        else if(gamemap[yc][xc] != null && ((ChessPiece)gamemap[yc][xc]).getColor() == cp.getColor() ){
+                            break;
+                        }
+                }
+
+                xc = (XCord+1);
+                yc = (YCord+1);
+
+                for(; (yc < gamemap.length) && xc < gamemap[yc].length; yc++,xc++){
+                    if(gamemap[yc][xc] == null){
+                        squarePanel[yc][xc].toggleHighlight();
+                    }
+                    if(gamemap[yc][xc] != null && ((ChessPiece)gamemap[yc][xc]).getColor() != cp.getColor() ){
+                        squarePanel[yc][xc].toggleHighlight();
+                        break;
+                    }
+                    else if(gamemap[yc][xc] != null && ((ChessPiece)gamemap[yc][xc]).getColor() == cp.getColor() ){
+                        break;
+                    }
+                }
+
+                xc = (XCord-1);
+                yc = (YCord+1);
+
+                for(; (yc < gamemap.length) && xc >= 0; yc++,xc--){
+                    if(gamemap[yc][xc] == null){
+                        squarePanel[yc][xc].toggleHighlight();
+                    }
+                    if(gamemap[yc][xc] != null && ((ChessPiece)gamemap[yc][xc]).getColor() != cp.getColor() ){
+                        squarePanel[yc][xc].toggleHighlight();
+                        break;
+                    }
+                    else if(gamemap[yc][xc] != null && ((ChessPiece)gamemap[yc][xc]).getColor() == cp.getColor() ){
+                        break;
+                    }
+                }
+
+                xc= (XCord-1);
+                yc= (YCord-1);
+
+                for(; (yc >= 0) && xc >= 0; yc--,xc--){
+                    if(gamemap[yc][xc] == null){
+                        squarePanel[yc][xc].toggleHighlight();
+                    }
+                    if(gamemap[yc][xc] != null && ((ChessPiece)gamemap[yc][xc]).getColor() != cp.getColor() ){
+                        squarePanel[yc][xc].toggleHighlight();
+                        break;
+                    }
+                    else if(gamemap[yc][xc] != null && ((ChessPiece)gamemap[yc][xc]).getColor() == cp.getColor() ){
+                        break;
+                    }
+                }
+
+            }
     }
 
-    //todo things to check. clicks on same spot(done), moves within moveset(done), does tile contain friendly or enemy(done), is checkmate?, is castling, cant move on enemy king only put in chess/checkmate
     //check if move input by user is a valid move in chess
     public boolean moveValid(int sourceRow, int sourceCol, int targetRow, int targetCol){
         ChessPieceAbstract[][] gamemap = model.getMap().getMap();
@@ -634,6 +689,8 @@ public class GameLogic {
         boolean pawnattacks = false;
         boolean pawnTwoMoveObstruct = false;
         boolean rookobstruction = false;
+        boolean bishopobstruction = false;
+        boolean queenObstruction = false;
 
         samespot = samecpspot(sourceRow,sourceCol,targetRow,targetCol);
         withinMoveset = moveWithinCPMoveset(sourceRow,sourceCol,targetRow,targetCol,movesetOffsetY,movesetOffsetX,yTrOffset,xTrOffset,moveset,cp,gamemap);
@@ -642,8 +699,9 @@ public class GameLogic {
         pawnobstruct = pawnObstruct(targetRow,targetCol,gamemap,cp);
         pawnTwoMoveObstruct = pawnTwoMoves(targetRow,sourceRow,sourceCol,gamemap,cp);
         rookobstruction = rookObstruction(sourceRow,sourceCol,targetRow,targetCol,gamemap,cp);
+        bishopobstruction = bishopObstruction(sourceRow,sourceCol,targetRow,targetCol,gamemap,cp);
+        queenObstruction = queenObstruction(sourceRow,sourceCol,targetRow,targetCol,gamemap,cp);
 
-        /*
         System.out.println("Samespot error: " + samespot);
         System.out.println("Withinmoveset error: " + withinMoveset);
         System.out.println("FriendlyObstruction error: " + friendlyObstruction);
@@ -651,72 +709,10 @@ public class GameLogic {
         System.out.println("PawnAttack: " + pawnattacks);
         System.out.println("PawnTwoMovesObstruct error: " + pawnTwoMoveObstruct);
         System.out.println("RookObstruction error: " + rookobstruction);
-         */
+        System.out.println("BishopObstruction error: " + bishopobstruction);
+        System.out.println("queenObstruction error: " + queenObstruction);
 
-        if( (!samespot && !withinMoveset && !friendlyObstruction) && !pawnobstruct && !pawnTwoMoveObstruct && !rookobstruction || (pawnattacks)){//if errorchecks are negative make move valid
-            return true; //move is valid
-        }
-        else{
-            return false;
-        }
-    }
-
-
-    //same as moveValid, but with one extra parameter (remove / replace later)
-    public boolean moveValid2(int sourceRow, int sourceCol, int targetRow, int targetCol, ChessPieceAbstract[][] gamemap){
-        ChessPiece cp = (ChessPiece) gamemap[sourceRow][sourceCol];
-        int[][] moveset = cp.getMoveset();
-        ChessPieceType chessPieceType = cp.getChessPieceType();
-
-        int movesetOffsetY = -1;
-        int movesetOffsetX = -1;
-
-        try {
-            //get offsets from moveset
-            for(int row = 0; row < moveset.length; row ++){
-                for (int col = 0; col < moveset[row].length; col++){
-                    if(moveset[row][col] == 0){ //find number 0 in moveset array to get offsets
-                        movesetOffsetY = row;
-                        movesetOffsetX = col;
-                        break;
-                    }
-                }
-            }
-
-        } catch (Exception e) {
-
-        }
-
-        int yTrOffset = (sourceRow-targetRow);
-        int xTrOffset = (sourceCol-targetCol);
-
-        boolean samespot = false;
-        boolean withinMoveset = false;
-        boolean friendlyObstruction = false;
-        boolean pawnobstruct = false;
-        boolean pawnattacks = false;
-        boolean pawnTwoMoveObstruct = false;
-        boolean rookobstruction = false;
-
-        samespot = samecpspot(sourceRow,sourceCol,targetRow,targetCol);
-        withinMoveset = moveWithinCPMoveset(sourceRow,sourceCol,targetRow,targetCol,movesetOffsetY,movesetOffsetX,yTrOffset,xTrOffset,moveset,cp,gamemap);
-        friendlyObstruction = friendlyCPObstruction(targetRow,targetCol,gamemap,cp);
-        pawnattacks = pawnAttack(targetRow,targetCol,movesetOffsetY,movesetOffsetX,yTrOffset,xTrOffset,moveset,cp,gamemap);
-        pawnobstruct = pawnObstruct(targetRow,targetCol,gamemap,cp);
-        pawnTwoMoveObstruct = pawnTwoMoves(targetRow,sourceRow,sourceCol,gamemap,cp);
-        rookobstruction = rookObstruction(sourceRow,sourceCol,targetRow,targetCol,gamemap,cp);
-
-        /*
-        System.out.println("Samespot error: " + samespot);
-        System.out.println("Withinmoveset error: " + withinMoveset);
-        System.out.println("FriendlyObstruction error: " + friendlyObstruction);
-        System.out.println("pawnObstruction error: " + pawnobstruct);
-        System.out.println("PawnAttack: " + pawnattacks);
-        System.out.println("PawnTwoMovesObstruct error: " + pawnTwoMoveObstruct);
-        System.out.println("RookObstruction error: " + rookobstruction);
-         */
-
-        if( (!samespot && !withinMoveset && !friendlyObstruction) && !pawnobstruct && !pawnTwoMoveObstruct && !rookobstruction || (pawnattacks) ){//if errorchecks are negative make move valid
+        if( (!samespot && !withinMoveset && !friendlyObstruction && !pawnobstruct && !pawnTwoMoveObstruct && !rookobstruction && !bishopobstruction) || (pawnattacks) || ( (!samespot && !withinMoveset && !friendlyObstruction && !pawnobstruct && !pawnTwoMoveObstruct) && !queenObstruction ) ){//if errorchecks are negative make move valid
             return true; //move is valid
         }
         else{
@@ -780,18 +776,21 @@ public class GameLogic {
 
     //checks if pawn can attack with attack pattern
     public boolean pawnAttack(int targetRow, int targetCol, int movesetOffsetY, int movesetOffsetX, int yTrOffset, int xTrOffset, int[][] moveset, ChessPiece cp, ChessPieceAbstract[][] gamemap){
-        if(cp.getChessPieceType() == ChessPieceType.PAWN && gamemap[targetRow][targetCol] != null && ((ChessPiece)gamemap[targetRow][targetCol]).getColor() != cp.getColor() && moveset[movesetOffsetY-yTrOffset][movesetOffsetX-xTrOffset] == 3){
-            return true;
-        }
-        else{
+        try{
+            if(cp.getChessPieceType() == ChessPieceType.PAWN && gamemap[targetRow][targetCol] != null && ((ChessPiece)gamemap[targetRow][targetCol]).getColor() != cp.getColor() && moveset[movesetOffsetY-yTrOffset][movesetOffsetX-xTrOffset] == 3){
+                return true;
+            }
+            else{
+                return false;
+            }
+        } catch (Exception e) {
             return false;
         }
     }
 
+    //highlight Rook path until obstruction
     public boolean rookObstruction(int sourceRow, int sourceCol, int targetRow, int targetCol, ChessPieceAbstract[][] gamemap, ChessPiece cp){
-
-        if(cp.getChessPieceType() == ChessPieceType.ROOK){
-
+        if(cp.getChessPieceType() == ChessPieceType.ROOK || cp.getChessPieceType() == ChessPieceType.QUEEN){
             if(sourceCol < targetCol){
                 for (int x = (sourceCol + 1); x < gamemap[sourceRow].length-1; x++ ){
                     if(gamemap[sourceRow][x] != null){
@@ -828,9 +827,86 @@ public class GameLogic {
                     }
                 }
             }
-
         }
+        return false;
+    }
 
+    //method for bishop. checks if target position is obstruct by another peice.
+    public boolean bishopObstruction(int sourceRow,int sourceCol,int targetRow,int targetCol,ChessPieceAbstract[][] gamemap, ChessPiece cp){
+        int yc;
+        int xc;
+
+        if(cp.getChessPieceType() == ChessPieceType.BISHOP || cp.getChessPieceType() == ChessPieceType.QUEEN){
+            if( (sourceRow > targetRow) && (sourceCol < targetCol) ){
+                //check top right
+                yc = (sourceRow-1);
+                xc = (sourceCol+1);
+                for(; (yc >= 0) && (xc < gamemap[yc].length); yc--,xc++){
+                    if(gamemap[yc][xc] != null){
+                        if( (targetRow < yc) && (targetCol > xc) ){
+                            return true;
+                        }
+                    }
+                }
+            }
+            //check bottom right
+            yc = (sourceRow+1);
+            xc = (sourceCol+1);
+            if( (sourceRow < targetRow) && (sourceCol < targetCol) ){
+                for(; (yc < gamemap.length) && (xc < gamemap[yc].length); yc++,xc++){
+                    if(gamemap[yc][xc]!= null){
+                        if( (targetRow > yc) && (targetCol > xc) ){
+                            return true;
+                        }
+                    }
+                }
+            }
+            //check bottom left
+            yc =(sourceRow+1);
+            xc =(sourceCol-1);
+            for(; (yc < gamemap.length) && (xc >=0); yc++,xc--){
+                if(gamemap[yc][xc]!= null){
+                    if( (targetRow > yc) && (targetCol < xc) ){
+                        return true;
+                    }
+                }
+            }
+            //check top left
+            yc = (sourceRow-1);
+            xc = (sourceCol-1);
+            for(; (yc >= 0) && (xc >=0); yc--,xc--){
+                if(gamemap[yc][xc]!= null){
+                    if( (targetRow < yc) && (targetCol < xc) ){
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    public boolean queenObstruction(int sourceRow,int sourceCol,int targetRow,int targetCol,ChessPieceAbstract[][] gamemap,ChessPiece cp){
+
+        boolean diagonal = false;
+        boolean bishop = false;
+        boolean rook = false;
+
+        bishop = bishopObstruction(sourceRow,sourceCol,targetRow,targetCol,gamemap,cp); //use bishop and rook patterns for queen obstruction
+        rook = rookObstruction(sourceRow,sourceCol,targetRow,targetCol,gamemap,cp);
+
+        //checks if source cordinate and target cordinate is diagonal
+        if( (targetRow - sourceRow == targetCol - sourceCol) || (targetRow - sourceRow == sourceCol - targetCol) ) {
+            diagonal = true;
+        }
+        System.out.println("is diagonal: " + diagonal);
+
+        //check what method to use
+        if(diagonal && bishop){
+            return true;
+        }
+        else if(!diagonal && rook){
+            return true;
+        }
         return false;
     }
 
@@ -843,6 +919,43 @@ public class GameLogic {
             }
         }
     }
+
+    //todo work on this
+    /*
+    public void disableChesspieces(){
+        int playerTurn = model.getGameState().getPlayerTurn();
+        ChessPieceAbstract[][] gamemap = model.getMap().getMap();
+        BoardPanel.SquarePanel[][] squarePanel = view.getBoardPanel().getSquares();
+        HashMap<String, JLabel> notationlbls = view.getBoardPanel().getNotationToJLMap();
+        //if player turn 1, disable black and vice versa
+
+        ChessPiece cp;
+
+        if (playerTurn == 1){
+            for(int row = 0; row < gamemap.length; row++){
+                for(int col = 0; col < gamemap[row].length; col ++){
+
+                    if( gamemap[row][col] != null ){
+                        cp = ((ChessPiece)gamemap[row][col]);
+                        if(cp.getColor() == ChessPieceColor.BLACK){
+                            JLabel peice = notationlbls.get(cp.getSpriteName());
+                            peice.setEnabled(false);
+                        }
+
+                    }
+
+                }
+            }
+        }
+        else if(playerTurn == 2){
+            for(int row = 0; row < gamemap.length; row++){
+                for(int col = 0; col < gamemap[row].length; col ++){
+
+                }
+            }
+        }
+
+    }*/
 
     //notes:
     //todo method used to switch movement pattern on pawns after first move, cleans board slate of chesspieces for redraw(done)
