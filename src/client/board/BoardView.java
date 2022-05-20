@@ -160,7 +160,7 @@ public class BoardView {
                             targetRow = squarePanel.getRow();
                             targetCol = squarePanel.getCol();
 
-                            valid = gameLogic.moveValid(sourceRow,sourceCol,targetRow,targetCol);
+                            valid = gameLogic.moveValid(sourceRow,sourceCol,targetRow,targetCol, gameLogic.getModel().getMap().getMap());
                             if(valid){
                                 movePiece(squares[sourceRow][sourceCol], squares[targetRow][targetCol]);
                                 squares[sourceRow][sourceCol].toggleHighlight();
