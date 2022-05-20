@@ -323,8 +323,6 @@ public class GameLogic {
 
         }
 
-
-
         //remove this later when everything is done
         for(int i = 0; i < xKing.size(); i++) {
             System.out.println("Possible moves: " + xKing.get(i) + ", " + yKing.get(i));
