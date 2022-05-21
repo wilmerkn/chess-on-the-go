@@ -314,8 +314,15 @@ public class GameLogic {
                         ChessPiece originalCp = (ChessPiece) board[xKing.get(xy)][yKing.get(xy)];
                         if (originalCp != null) {
                             ChessPiece chessPiece = (ChessPiece) board[i][j];
-                            pieceIsProtected(chessPiece, friendlyColor, enemyColor, originalCp, board, deadlyX, deadlyY, xKing, yKing, xy);
-                        }
+                            if (chessPiece != null && chessPiece.getColor().equals(enemyColor) && chessPiece != originalCp) {
+                                //create a fake chess piece - in this case the getTheKing method is used to do that
+                                ChessPiece fakeChessPiece = getTheKing(friendlyColor, board);
+                                if (checkMove(getLocationX(chessPiece, board), getLocationY(chessPiece, board), chessPiece, getLocationX(originalCp, board), getLocationY(originalCp, board), fakeChessPiece) == true) {
+                                    deadlyX.add(xKing.get(xy));
+                                    deadlyY.add(yKing.get(xy));
+                                    System.out.println(chessPiece + " can attack the king from " + getLocationX(chessPiece, board) + ", " + getLocationY(chessPiece, board) + " if the king moves to " + xKing.get(xy) + ", " + yKing.get(xy));
+                                }
+                            }                        }
                     }
                 }
             }
@@ -352,18 +359,6 @@ public class GameLogic {
         return false;
     }
 
-
-    private void pieceIsProtected(ChessPiece chessPiece, ChessPieceColor friendlyColor, ChessPieceColor enemyColor, ChessPiece originalCp, ChessPieceAbstract[][] board, ArrayList deadlyX, ArrayList deadlyY, ArrayList xKing, ArrayList yKing, int xy){
-        if (chessPiece != null && chessPiece.getColor().equals(enemyColor) && chessPiece != originalCp) {
-            //create a fake chess piece - in this case the getTheKing method is used to do that
-            ChessPiece fakeChessPiece = getTheKing(friendlyColor, board);
-            if (checkMove(getLocationX(chessPiece, board), getLocationY(chessPiece, board), chessPiece, getLocationX(originalCp, board), getLocationY(originalCp, board), fakeChessPiece) == true) {
-                deadlyX.add(xKing.get(xy));
-                deadlyY.add(yKing.get(xy));
-                System.out.println(chessPiece + " can attack the king from " + getLocationX(chessPiece, board) + ", " + getLocationY(chessPiece, board) + " if the king moves to " + xKing.get(xy) + ", " + yKing.get(xy));
-            }
-        }
-    }
     //this method removes duplicates from an arraylist
     private <T> ArrayList<T> deleteDuplicates(ArrayList<T> arrList) {
         Set<T> newSet = new LinkedHashSet<>();
