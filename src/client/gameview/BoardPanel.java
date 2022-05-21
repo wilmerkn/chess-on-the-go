@@ -99,6 +99,7 @@ public class BoardPanel extends JPanel {
 
             @Override
             public void mousePressed(MouseEvent e) {
+                if(!mouseListenerEnabled) return;
                 boolean valid;
 
                 if (SwingUtilities.isLeftMouseButton(e)) {
