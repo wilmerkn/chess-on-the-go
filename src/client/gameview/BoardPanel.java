@@ -103,7 +103,6 @@ public class BoardPanel extends JPanel {
                 boolean valid;
 
                 if (SwingUtilities.isLeftMouseButton(e)) {
-                    if (!mouseListenerEnabled) return;
                     if (sourceRow < 0 || sourceCol < 0) {
                         if (!squarePanel.isOccupied()) return;
                         sourceRow = squarePanel.getRow();
@@ -133,7 +132,6 @@ public class BoardPanel extends JPanel {
                                 //todo make next turn if this runs
                             }
                     }
-
                 }
             }
 
