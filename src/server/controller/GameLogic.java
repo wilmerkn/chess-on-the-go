@@ -38,8 +38,7 @@ public class GameLogic {
 
         initializeMap();
 
-        //inverseMapArray();
-
+        disableChesspieces();
         drawMap();
     }
 
@@ -314,8 +313,15 @@ public class GameLogic {
                         ChessPiece originalCp = (ChessPiece) board[xKing.get(xy)][yKing.get(xy)];
                         if (originalCp != null) {
                             ChessPiece chessPiece = (ChessPiece) board[i][j];
-                            pieceIsProtected(chessPiece, friendlyColor, enemyColor, originalCp, board, deadlyX, deadlyY, xKing, yKing, xy);
-                        }
+                            if (chessPiece != null && chessPiece.getColor().equals(enemyColor) && chessPiece != originalCp) {
+                                //create a fake chess piece - in this case the getTheKing method is used to do that
+                                ChessPiece fakeChessPiece = getTheKing(friendlyColor, board);
+                                if (checkMove(getLocationX(chessPiece, board), getLocationY(chessPiece, board), chessPiece, getLocationX(originalCp, board), getLocationY(originalCp, board), fakeChessPiece) == true) {
+                                    deadlyX.add(xKing.get(xy));
+                                    deadlyY.add(yKing.get(xy));
+                                    System.out.println(chessPiece + " can attack the king from " + getLocationX(chessPiece, board) + ", " + getLocationY(chessPiece, board) + " if the king moves to " + xKing.get(xy) + ", " + yKing.get(xy));
+                                }
+                            }                        }
                     }
                 }
             }
@@ -350,18 +356,6 @@ public class GameLogic {
         return false;
     }
 
-
-    private void pieceIsProtected(ChessPiece chessPiece, ChessPieceColor friendlyColor, ChessPieceColor enemyColor, ChessPiece originalCp, ChessPieceAbstract[][] board, ArrayList deadlyX, ArrayList deadlyY, ArrayList xKing, ArrayList yKing, int xy){
-        if (chessPiece != null && chessPiece.getColor().equals(enemyColor) && chessPiece != originalCp) {
-            //create a fake chess piece - in this case the getTheKing method is used to do that
-            ChessPiece fakeChessPiece = getTheKing(friendlyColor, board);
-            if (checkMove(getLocationX(chessPiece, board), getLocationY(chessPiece, board), chessPiece, getLocationX(originalCp, board), getLocationY(originalCp, board), fakeChessPiece) == true) {
-                deadlyX.add(xKing.get(xy));
-                deadlyY.add(yKing.get(xy));
-                System.out.println(chessPiece + " can attack the king from " + getLocationX(chessPiece, board) + ", " + getLocationY(chessPiece, board) + " if the king moves to " + xKing.get(xy) + ", " + yKing.get(xy));
-            }
-        }
-    }
     //this method removes duplicates from an arraylist
     private <T> ArrayList<T> deleteDuplicates(ArrayList<T> arrList) {
         Set<T> newSet = new LinkedHashSet<>();
@@ -441,13 +435,6 @@ public class GameLogic {
         return null;
     }
 
-
-
-
-
-
-
-
     //todo block highlighting if chesspieces in the way
     //method used to show highlighted movement pattern in GUI
     public void highlightMovementPattern(int srcY,int srcX){
@@ -497,7 +484,7 @@ public class GameLogic {
                             squarePanel[y][x].toggleHighlight();
                         }
                         if(moveset[y-(YCord-YOffset)][x-(XCord-XOffset)] == 1 && cp.getColor() != ((ChessPiece)gamemap[y][x]).getColor() && cp.getChessPieceType() != ChessPieceType.PAWN && cp.getChessPieceType() != ChessPieceType.ROOK && cp.getChessPieceType() != ChessPieceType.BISHOP && cp.getChessPieceType() != ChessPieceType.QUEEN){ //highlights position if chesspiece is not of same color
-                             squarePanel[y][x].toggleHighlight();
+                            squarePanel[y][x].toggleHighlight();
                         }
                     } catch (Exception e) {
                         continue;
@@ -700,7 +687,6 @@ public class GameLogic {
         System.out.println("RookObstruction error: " + rookobstruction);
         System.out.println("BishopObstruction error: " + bishopobstruction);
         System.out.println("queenObstruction error: " + queenObstruction);
-
 
         if( (!samespot && !withinMoveset && !friendlyObstruction && !pawnobstruct && !pawnTwoMoveObstruct && !rookobstruction && !bishopobstruction) || (pawnattacks) || ( (!samespot && !withinMoveset && !friendlyObstruction && !pawnobstruct && !pawnTwoMoveObstruct) && !queenObstruction ) ){//if errorchecks are negative make move valid
             return true; //move is valid
@@ -911,12 +897,13 @@ public class GameLogic {
     }
 
     //todo work on this
-    /*
+
     public void disableChesspieces(){
         int playerTurn = model.getGameState().getPlayerTurn();
         ChessPieceAbstract[][] gamemap = model.getMap().getMap();
         BoardPanel.SquarePanel[][] squarePanel = view.getBoardPanel().getSquares();
         HashMap<String, JLabel> notationlbls = view.getBoardPanel().getNotationToJLMap();
+        BoardPanel bp = view.getBoardPanel();
         //if player turn 1, disable black and vice versa
 
         ChessPiece cp;
@@ -928,8 +915,7 @@ public class GameLogic {
                     if( gamemap[row][col] != null ){
                         cp = ((ChessPiece)gamemap[row][col]);
                         if(cp.getColor() == ChessPieceColor.BLACK){
-                            JLabel peice = notationlbls.get(cp.getSpriteName());
-                            peice.setEnabled(false);
+                            bp.setSquareMouseListenerActive(row,col,false);
                         }
 
                     }
@@ -945,7 +931,7 @@ public class GameLogic {
             }
         }
 
-    }*/
+    }
 
     public GameModel getModel() {
         return model;
