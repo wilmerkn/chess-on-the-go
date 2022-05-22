@@ -92,7 +92,7 @@ public class BoardPanel extends JPanel {
         mouseListenersEnabled = false;
     }
 
-    private void setSquareMouseListenerActive(int row, int col, boolean active) {
+    public void setSquareMouseListenerActive(int row, int col, boolean active) {
         for (SquareMouseListener ml : mouseListenerList) {
             if((row == ml.getSquarePanel().getRow()) && (col == ml.getSquarePanel().getCol())) {
                 ml.setActive(active);

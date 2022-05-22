@@ -38,8 +38,7 @@ public class GameLogic {
 
         initializeMap();
 
-        //inverseMapArray();
-
+        disableChesspieces();
         drawMap();
     }
 
@@ -438,13 +437,6 @@ public class GameLogic {
         return null;
     }
 
-
-
-
-
-
-
-
     //todo block highlighting if chesspieces in the way
     //method used to show highlighted movement pattern in GUI
     public void highlightMovementPattern(int srcY,int srcX){
@@ -494,7 +486,7 @@ public class GameLogic {
                             squarePanel[y][x].toggleHighlight();
                         }
                         if(moveset[y-(YCord-YOffset)][x-(XCord-XOffset)] == 1 && cp.getColor() != ((ChessPiece)gamemap[y][x]).getColor() && cp.getChessPieceType() != ChessPieceType.PAWN && cp.getChessPieceType() != ChessPieceType.ROOK && cp.getChessPieceType() != ChessPieceType.BISHOP && cp.getChessPieceType() != ChessPieceType.QUEEN){ //highlights position if chesspiece is not of same color
-                             squarePanel[y][x].toggleHighlight();
+                            squarePanel[y][x].toggleHighlight();
                         }
                     } catch (Exception e) {
                         continue;
@@ -697,7 +689,6 @@ public class GameLogic {
         System.out.println("RookObstruction error: " + rookobstruction);
         System.out.println("BishopObstruction error: " + bishopobstruction);
         System.out.println("queenObstruction error: " + queenObstruction);
-
 
         if( (!samespot && !withinMoveset && !friendlyObstruction && !pawnobstruct && !pawnTwoMoveObstruct && !rookobstruction && !bishopobstruction) || (pawnattacks) || ( (!samespot && !withinMoveset && !friendlyObstruction && !pawnobstruct && !pawnTwoMoveObstruct) && !queenObstruction ) ){//if errorchecks are negative make move valid
             return true; //move is valid
@@ -908,12 +899,13 @@ public class GameLogic {
     }
 
     //todo work on this
-    /*
+
     public void disableChesspieces(){
         int playerTurn = model.getGameState().getPlayerTurn();
         ChessPieceAbstract[][] gamemap = model.getMap().getMap();
         BoardPanel.SquarePanel[][] squarePanel = view.getBoardPanel().getSquares();
         HashMap<String, JLabel> notationlbls = view.getBoardPanel().getNotationToJLMap();
+        BoardPanel bp = view.getBoardPanel();
         //if player turn 1, disable black and vice versa
 
         ChessPiece cp;
@@ -925,8 +917,7 @@ public class GameLogic {
                     if( gamemap[row][col] != null ){
                         cp = ((ChessPiece)gamemap[row][col]);
                         if(cp.getColor() == ChessPieceColor.BLACK){
-                            JLabel peice = notationlbls.get(cp.getSpriteName());
-                            peice.setEnabled(false);
+                            bp.setSquareMouseListenerActive(row,col,false);
                         }
 
                     }
@@ -942,7 +933,7 @@ public class GameLogic {
             }
         }
 
-    }*/
+    }
 
     public GameModel getModel() {
         return model;
