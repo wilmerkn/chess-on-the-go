@@ -33,7 +33,7 @@ public class LobbyView extends JFrame {
         lobbyFrame.setVisible(true);
     }
 
-    public static int getTimeControl() {
+    public int getTimeControl() {
         return pairingPanel.getTimeIndex();
     }
 

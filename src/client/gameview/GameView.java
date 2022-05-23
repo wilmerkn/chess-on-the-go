@@ -80,8 +80,24 @@ public class GameView {
                 frame.setVisible(true);
     }
 
+    public void setPlayer1Name(String player1Name) {
+        this.player1Name.setText(player1Name);
+    }
+
+    public void setPlayer2Name(String player2Name) {
+        this.player2Name.setText(player2Name);
+    }
+
     public BoardPanel getBoardPanel() {
         return boardPanel;
+    }
+
+    public void setPlayer1Time(String player1Time) {
+        this.player1Time.setText(player1Time);
+    }
+
+    public void setPlayer2Time(String player2Time) {
+        this.player2Time.setText(player2Time);
     }
 }
 
