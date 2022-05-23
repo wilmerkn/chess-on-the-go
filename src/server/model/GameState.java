@@ -1,6 +1,8 @@
 package server.model;
 
+import javax.swing.*;
 import java.io.Serializable;
+import java.util.Timer;
 import java.util.UUID;
 
 public class GameState implements Serializable {
@@ -23,6 +25,8 @@ public class GameState implements Serializable {
     private Message[] messages;
 
     private ChessPieceAbstract[][] cpa;
+
+    private Timer timer = new Timer("Lucas", true);
 
     private boolean started = false;
 
