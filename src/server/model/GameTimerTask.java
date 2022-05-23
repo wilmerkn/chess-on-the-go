@@ -23,7 +23,7 @@ public class GameTimerTask implements Runnable, Serializable {
 
     public GameTimerTask(int timeControl){
         this.minutes = timeControl;
-        this.currentTime = timeControl + ":00";
+        this.currentTime = "0" + timeControl + ":00";
         //this.view = null;
         stopFlag = false;
     }
@@ -37,7 +37,7 @@ public class GameTimerTask implements Runnable, Serializable {
 
         while(!stopFlag){
             try{
-
+                Thread.sleep(1000);
                 NumberFormat formatter = new DecimalFormat("00");
                 if (seconds == N) {
                     seconds = 59; //increment minutes and reset if second = 60
@@ -52,8 +52,7 @@ public class GameTimerTask implements Runnable, Serializable {
                     stopFlag = true;
                 }
                 seconds--;
-
-                Thread.sleep(1000); //wait 1 sec
+                 //wait 1 sec
 
             } catch (Exception e) {
                 e.printStackTrace();

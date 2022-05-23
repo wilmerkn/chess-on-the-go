@@ -4,11 +4,12 @@ import client.gameview.BoardPanel;
 import client.gameview.GameView;
 import client.lobby.LobbyView;
 import client.login.LoginView;
-import server.controller.GameLogic;
 import server.controller.LoginController;
 import server.model.*;
 
 import javax.swing.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -30,8 +31,11 @@ public class Client {
     private String username;
     private String gameID;
 
-    private GameTimer timer1;
-    private GameTimer timer2;
+    private Timer timer1;
+    private int timer1Time;
+    private Timer timer2;
+    private int timer2Time;
+
 
     public Client() {
         LoginController loginController = new LoginController();
@@ -133,25 +137,38 @@ public class Client {
                         System.out.println(username + " tar emot gamestate. ID: " + gameID);
                         gameID = state.getGameID();
 
+                        timer1Time = state.getTimer1Time();
+                        timer2Time = state.getTimer2Time();
+
                         if(!state.getStarted()) {
                             gameView = new GameView(Client.this);
-                            timer1 = new GameTimer(state.getTimeControl());
-                            timer2 = new GameTimer(state.getTimeControl());
-                        }
+                            timer1 = new Timer(1000, new ActionListener() {
+                                @Override
+                                public void actionPerformed(ActionEvent e) {
+                                    timer1Time--;
+                                    gameView.setPlayer1Time((timer1Time /60) + ":" + (timer1Time %60));
+                                }
+                            });
+                            timer1.setInitialDelay(0);
 
-                        gameView.setPlayer1Time("" + state.getTimeTimer1());
-                        gameView.setPlayer2Time("" + state.getTimeTimer2());
+                            timer2 = new Timer(1000, new ActionListener() {
+                                @Override
+                                public void actionPerformed(ActionEvent e) {
+                                    timer2Time--;
+                                    gameView.setPlayer2Time((timer1Time /60) + ":" + (timer1Time %60));
+                                }
+                            });
+                            timer2.setInitialDelay(0);
+
+                            timer1.start();
+                            timer2.start();
+                        }
 
 
                         gameView.setPlayer1Name(state.getPlayer1());
                         gameView.setPlayer2Name(state.getPlayer2());
 
-                        timer1.turnOn();
-                        timer2.turnOn();
-
-
                         drawMap(state.getCpa());
-
 
                         //ToDo fixa player names labels timer etc
 
