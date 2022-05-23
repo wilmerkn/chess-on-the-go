@@ -5,8 +5,9 @@ import javax.swing.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.io.Serializable;
 
-public class ChessPiece extends ChessPieceAbstract {
+public class ChessPiece extends ChessPieceAbstract implements Serializable {
     private ChessPieceType chessPieceType; //enum for type
     private ChessPieceColor color; //color of a chesspiece (white/black)
     private int[][] moveset; //check best way to go about it

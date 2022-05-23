@@ -1,12 +1,15 @@
 package client.gameview;
 
+import client.Client;
 import server.controller.GameLogic;
+import server.model.Move;
 
 import javax.swing.*;
 import javax.swing.border.Border;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -24,17 +27,18 @@ public class BoardPanel extends JPanel {
 
     private boolean mouseListenersEnabled = true;
 
-    private GameLogic gameLogic;
-
     private HashMap<String, JLabel> notationToJLMap = BoardUtils.pieceNotationToJL();
 
     private final List<SquareMouseListener> mouseListenerList = new ArrayList<SquareMouseListener>();
 
-    public BoardPanel(GameLogic gameLogic) {
-        super(new GridLayout(8, 8));
-        setSize(BOARD_DIMENSION);
+    private Client client;
 
-        this.gameLogic = gameLogic;
+    public BoardPanel(Client client) {
+        super(new GridLayout(8, 8));
+        this.client = client;
+
+
+        setSize(BOARD_DIMENSION);
 
         this.sourceRow = this.sourceCol = this.targetRow = this.targetCol = -1;
         for (int row = 0; row < 8; row++) {
@@ -210,7 +214,7 @@ public class BoardPanel extends JPanel {
                     if (!squarePanel.isOccupied()) return;
                     sourceRow = squarePanel.getRow();
                     sourceCol = squarePanel.getCol();
-                    gameLogic.highlightMovementPattern(sourceRow,sourceCol);
+                    //gameLogic.highlightMovementPattern(sourceRow,sourceCol);
                     squares[sourceRow][sourceCol].toggleHighlight();
                     targetRow = targetCol = -1;
 
@@ -219,17 +223,23 @@ public class BoardPanel extends JPanel {
                     targetCol = squarePanel.getCol();
 
                     if(sourceRow == targetRow && sourceCol == targetCol){
-                        gameLogic.highlightMovementPattern(sourceRow,sourceCol);
+                        //gameLogic.highlightMovementPattern(sourceRow,sourceCol);
                         squares[sourceRow][sourceCol].toggleHighlight();
                         sourceRow = sourceCol = targetRow = targetCol = -1;
                         return;
                     }
-                    valid = gameLogic.moveValid(sourceRow, sourceCol, targetRow, targetCol, gameLogic.getModel().getMap().getMap());
+                    //valid = gameLogic.moveValid(sourceRow, sourceCol, targetRow, targetCol, gameLogic.getModel().getMap().getMap());
+                    //valid = någotfrånServern.isValid() ???????¤¤¤¤¤¤¤
+                    Move move = new Move(sourceRow, sourceCol, targetRow, targetCol);
+                    client.sendMove(move);
+
+
+                    valid = true;
                     if(valid){
-                        movePiece(squares[sourceRow][sourceCol], squares[targetRow][targetCol]);
+                        //movePiece(squares[sourceRow][sourceCol], squares[targetRow][targetCol]);
                         squares[sourceRow][sourceCol].toggleHighlight();
-                        gameLogic.highlightMovementPattern(sourceRow,sourceCol); //turns off highlights
-                        gameLogic.update(sourceRow,sourceCol,targetRow,targetCol); //update view
+                        //gameLogic.highlightMovementPattern(sourceRow,sourceCol); //turns off highlights
+                        //gameLogic.update(sourceRow,sourceCol,targetRow,targetCol); //update view
                         sourceRow = sourceCol = targetRow = targetCol = -1;
                         //todo make next turn if this runs
                     }

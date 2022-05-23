@@ -1,13 +1,12 @@
 package client;
 
+import client.gameview.BoardPanel;
 import client.gameview.GameView;
 import client.lobby.LobbyView;
 import client.login.LoginView;
 import server.controller.GameLogic;
 import server.controller.LoginController;
-import server.model.ChallengeRequest;
-import server.model.LoginRequest;
-import server.model.Message;
+import server.model.*;
 
 import javax.swing.*;
 import java.io.IOException;
@@ -15,16 +14,21 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class Client {
     private static final String HOST = "127.0.0.1";
     private static final int PORT = 1234;
+
     private Socket socket;
     private ObjectInputStream ois;
     private ObjectOutputStream oos;
     private LoginView loginView;
     private LobbyView lobbyView;
     private GameView gameView;
+
+    private String username;
+    private String gameID;
 
     public Client() {
         LoginController loginController = new LoginController();
@@ -43,9 +47,20 @@ public class Client {
     }
 
     public void challenge(String receiverUsername, int timeControl) {
-        ChallengeRequest challenge = new ChallengeRequest(receiverUsername, receiverUsername, timeControl); // Rätta till
+        ChallengeRequest challenge = new ChallengeRequest(username, receiverUsername, timeControl); // Rätta till
         try {
             oos.writeObject(challenge);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void sendMove(Move move) {
+        move.setGameID(gameID);
+        try {
+            oos.reset();
+            oos.writeObject(move);
+            oos.flush();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -85,6 +100,7 @@ public class Client {
                         if(!request.isAccepted()) {
                             JOptionPane.showMessageDialog(null, "Login failed");
                         } else {
+                            username = request.getUsername();
                             lobbyView = new LobbyView(Client.this);
                             loginView.closeLoginWindow();
 
@@ -94,8 +110,8 @@ public class Client {
                         String sender = challenge.getSenderUsername();
                         int answer = JOptionPane.showConfirmDialog(
                                 null,
-                                "Incoming challenge",
                                 String.format("Do you want to accept incoming challenge from %s?", sender),
+                                "Incoming challenge",
                                 JOptionPane.YES_NO_OPTION
                         );
 
@@ -105,9 +121,31 @@ public class Client {
                             oos.writeObject(challenge);
                             oos.flush();
                             lobbyView.dispose();
-                            gameView = new GameView(new GameLogic()); // Gamelogic från servern?
 
                         }
+
+                    } else if (obj instanceof GameState) {
+                        GameState state = (GameState) obj;
+
+                        System.out.println(username + " tar emot gamestate. ID: " + gameID);
+                        gameID = state.getGameID();
+
+                        if(!state.getStarted()) {
+                            gameView = new GameView(Client.this);
+                        }
+
+
+                        SwingUtilities.invokeLater(new Runnable() {
+                            @Override
+                            public void run() {
+                                drawMap(state.getCpa());
+                            }
+                        });
+
+                        System.out.println(username + " uppdaterat bräde");
+
+                        //ToDo fixa player names labels timer etc
+
 
                     } else if (obj instanceof Message) {
                         // Lägg message i textArea
@@ -124,6 +162,40 @@ public class Client {
             }
         }
     }
+
+    //ToDo Rita upp skicka över nätverk
+    public void drawMap(ChessPieceAbstract[][] cpa){
+        HashMap<String, JLabel> notationLbl = gameView.getBoardPanel().getNotationToJLMap();
+        ChessPieceAbstract[][] gamemap = cpa;
+        BoardPanel.SquarePanel[][] sqp = gameView.getBoardPanel().getSquares();
+
+        cleanBoard();
+        for(int row = 0; row < 8; row++){
+            for(int col = 0; col < 8; col++){
+                if(gamemap[row][col] != null){
+
+                    ChessPiece chessPiece = (ChessPiece) gamemap[row][col];
+                    sqp[row][col].placePiece(notationLbl.get(chessPiece.getSpriteName()));
+
+                }
+            }
+        }
+    }
+
+    public void cleanBoard(){
+        BoardPanel.SquarePanel[][] squarePanel = gameView.getBoardPanel().getSquares();
+
+        for(int row = 0; row < squarePanel.length; row++){
+            for(int col = 0; col < squarePanel[row].length; col++){
+                squarePanel[row][col].removePiece();
+            }
+        }
+    }
+
+    public ObjectOutputStream getOos() {
+        return oos;
+    }
+
     public static void main(String[] args) {
         new Client();
     }

@@ -1,6 +1,11 @@
 package server.model;
 
-public class Move {
+import java.io.Serializable;
+
+public class Move implements Serializable {
+
+    private String gameID;
+
     private int sourceRow;
     private int sourceCol;
     private int targetRow;
@@ -21,5 +26,29 @@ public class Move {
 
     private boolean isLegalMove() {
         return legalMove;
+    }
+
+    public int getSourceRow() {
+        return sourceRow;
+    }
+
+    public int getSourceCol() {
+        return sourceCol;
+    }
+
+    public int getTargetRow() {
+        return targetRow;
+    }
+
+    public int getTargetCol() {
+        return targetCol;
+    }
+
+    public String getGameID() {
+        return gameID;
+    }
+
+    public void setGameID(String gameID) {
+        this.gameID = gameID;
     }
 }
