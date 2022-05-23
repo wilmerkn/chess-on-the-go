@@ -184,7 +184,7 @@ public class BoardPanel extends JPanel {
 
         public SquareMouseListener(SquarePanel squarePanel) {
             this.squarePanel = squarePanel;
-            this.active = false;
+            this.active = true;
         }
 
         public SquarePanel getSquarePanel() {
@@ -204,6 +204,8 @@ public class BoardPanel extends JPanel {
 
             if (SwingUtilities.isLeftMouseButton(e)) {
                 if (!mouseListenersEnabled) return;
+                //if(!active) return;
+
                 if (sourceRow < 0 || sourceCol < 0) {
                     if (!squarePanel.isOccupied()) return;
                     sourceRow = squarePanel.getRow();
@@ -223,7 +225,6 @@ public class BoardPanel extends JPanel {
                         return;
                     }
                     valid = gameLogic.moveValid(sourceRow, sourceCol, targetRow, targetCol, gameLogic.getModel().getMap().getMap());
-
                     if(valid){
                         movePiece(squares[sourceRow][sourceCol], squares[targetRow][targetCol]);
                         squares[sourceRow][sourceCol].toggleHighlight();

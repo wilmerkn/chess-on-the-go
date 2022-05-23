@@ -37,8 +37,7 @@ public class GameLogic {
         model.setMap(new GameMap(8));
 
         initializeMap();
-
-        disableChesspieces();
+        //activateChesspieces();
         drawMap();
     }
 
@@ -201,6 +200,7 @@ public class GameLogic {
                 }
             }
         }
+
         map.displayMap();
     }
 
@@ -208,6 +208,8 @@ public class GameLogic {
     public void update(int y_or, int x_or, int y_tr, int x_tr){ //called when chesspiece is moved
         ChessPieceAbstract[][] gamemap = model.getMap().getMap();
         BoardPanel.SquarePanel[][] squarePanel = view.getBoardPanel().getSquares();
+        int playerTurn = model.getGameState().getPlayerTurn();
+        GameState gameState = model.getGameState();
 
         ChessPiece tempChesspiece = null;
         tempChesspiece = ((ChessPiece) gamemap[y_or][x_or]);
@@ -226,11 +228,20 @@ public class GameLogic {
                         {2,2,2}
                 });
             }
+
+            if(playerTurn == 1){
+                gameState.setPlayerTurn(2);
+            }
+            else{
+                gameState.setPlayerTurn(1);
+            }
+
         check(ChessPieceColor.BLACK, ChessPieceColor.WHITE, gamemap);
         check(ChessPieceColor.WHITE, ChessPieceColor.BLACK, gamemap);
 
         gameAudio.playSound("src\\AudioFiles\\mixkit-quick-jump-arcade-game-239.wav",0);
         inverseMapArray();
+        //activateChesspieces();
         drawMap();
     }
 
@@ -635,6 +646,7 @@ public class GameLogic {
         ChessPiece cp = (ChessPiece) gamemap[sourceRow][sourceCol];
         int[][] moveset = cp.getMoveset();
         ChessPieceType chessPieceType = cp.getChessPieceType();
+        BoardPanel bp = view.getBoardPanel();
 
         int movesetOffsetY = -1;
         int movesetOffsetX = -1;
@@ -657,6 +669,8 @@ public class GameLogic {
 
         int yTrOffset = (sourceRow-targetRow);
         int xTrOffset = (sourceCol-targetCol);
+
+        //todo make method that also checks which players turn it is
 
         boolean samespot = false;
         boolean withinMoveset = false;
@@ -897,12 +911,10 @@ public class GameLogic {
     }
 
     //todo work on this
-
-    public void disableChesspieces(){
+    /*
+    public void activateChesspieces(){
         int playerTurn = model.getGameState().getPlayerTurn();
         ChessPieceAbstract[][] gamemap = model.getMap().getMap();
-        BoardPanel.SquarePanel[][] squarePanel = view.getBoardPanel().getSquares();
-        HashMap<String, JLabel> notationlbls = view.getBoardPanel().getNotationToJLMap();
         BoardPanel bp = view.getBoardPanel();
         //if player turn 1, disable black and vice versa
 
@@ -911,27 +923,34 @@ public class GameLogic {
         if (playerTurn == 1){
             for(int row = 0; row < gamemap.length; row++){
                 for(int col = 0; col < gamemap[row].length; col ++){
-
                     if( gamemap[row][col] != null ){
                         cp = ((ChessPiece)gamemap[row][col]);
-                        if(cp.getColor() == ChessPieceColor.BLACK){
+                        if(cp.getColor() == ChessPieceColor.WHITE){
+                            bp.setSquareMouseListenerActive(row,col,true);
+                        }
+                        else{
                             bp.setSquareMouseListenerActive(row,col,false);
                         }
-
                     }
-
                 }
             }
         }
         else if(playerTurn == 2){
             for(int row = 0; row < gamemap.length; row++){
                 for(int col = 0; col < gamemap[row].length; col ++){
-
+                    if( gamemap[row][col] != null ){
+                        cp = ((ChessPiece)gamemap[row][col]);
+                        if(cp.getColor() == ChessPieceColor.BLACK){
+                            bp.setSquareMouseListenerActive(row,col,true);
+                        }
+                        else{
+                            bp.setSquareMouseListenerActive(row,col,false);
+                        }
+                    }
                 }
             }
         }
-
-    }
+    }*/
 
     public GameModel getModel() {
         return model;
