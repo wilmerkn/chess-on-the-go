@@ -137,11 +137,10 @@ public class Server implements Runnable {
 
                         //boolean validMove = moveValid(move, state.getCpa());
 
-                        state.getTimer1().turnOn();
-                        state.getTimer2().turnOn();
+                        state.startTimer1();
+                        state.startTimer2();
 
                         state.setCpa(update(move, state.getCpa()));
-                        state.updateCurrentTime();
 
                         playerClientMap.get(usernamePlayerMap.get(state.getPlayer1())).getOos().reset();
                         playerClientMap.get(usernamePlayerMap.get(state.getPlayer1())).getOos().writeObject(state);

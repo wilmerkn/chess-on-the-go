@@ -1,8 +1,9 @@
 package server.model;
 
 import javax.swing.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.Serializable;
-import java.util.Timer;
 import java.util.UUID;
 
 public class GameState implements Serializable {
@@ -17,16 +18,14 @@ public class GameState implements Serializable {
 
     private int timeControl;
 
-    private GameTimer timer1;
-    private GameTimer timer2;
-    private int timeTimer1;
-    private int timeTimer2;
+    private Timer timer1;
+    private Timer timer2;
+    private int timer1Time;
+    private int timer2Time;
 
     private Message[] messages;
 
     private ChessPieceAbstract[][] cpa;
-
-    private Timer timer = new Timer("Lucas", true);
 
     private boolean started = false;
 
@@ -36,13 +35,40 @@ public class GameState implements Serializable {
     }
 
     public void prepareTimers(int timeControl) {
-        timer1 = new GameTimer(timeControl);
-        timer2 = new GameTimer(timeControl);
+        timer1Time = timeControl*60;
+        timer2Time = timeControl*60;
+
+        timer1 = new Timer(1000, new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                timer1Time--;
+            }
+        });
+        timer1.setInitialDelay(0);
+
+        timer2 = new Timer(1000, new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                timer2Time--;
+            }
+        });
+        timer2.setInitialDelay(0);
     }
 
-    public void updateCurrentTime() {
-        timeTimer1 = Integer.parseInt(timer1.getTime().substring(3,5));
-        timeTimer2 = Integer.parseInt(timer2.getTime().substring(3,5));
+    public void startTimer1() {
+        timer1.start();
+    }
+
+    public void stopTimer1() {
+        timer1.stop();
+    }
+
+    public void startTimer2() {
+        timer2.start();
+    }
+
+    public void stopTimer2() {
+        timer2.stop();
     }
 
     public int getPlayerTurn() {
@@ -75,22 +101,6 @@ public class GameState implements Serializable {
 
     public void setPlayer2(String player2) {
         this.player2 = player2;
-    }
-
-    public GameTimer getTimer1() {
-        return timer1;
-    }
-
-    public void setTimer1(GameTimer timer1) {
-        this.timer1 = timer1;
-    }
-
-    public GameTimer getTimer2() {
-        return timer2;
-    }
-
-    public void setTimer2(GameTimer timer2) {
-        this.timer2 = timer2;
     }
 
     public Message[] getMessages() {
@@ -129,11 +139,19 @@ public class GameState implements Serializable {
         return timeControl;
     }
 
-    public int getTimeTimer1() {
-        return timeTimer1;
+    public int getTimer1Time() {
+        return timer1Time;
     }
 
-    public int getTimeTimer2() {
-        return timeTimer2;
+    public int getTimer2Time() {
+        return timer2Time;
+    }
+
+    public Timer getTimer1() {
+        return timer1;
+    }
+
+    public Timer getTimer2() {
+        return timer2;
     }
 }
