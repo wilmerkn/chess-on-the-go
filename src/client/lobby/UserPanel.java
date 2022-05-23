@@ -57,7 +57,7 @@ public class UserPanel extends JPanel implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == challengeButton) {
             String receiverUsername = (String) userList.getSelectedValue();
-            int timeControl = LobbyView.getTimeControl();
+            int timeControl = lobbyView.getTimeControl();
             lobbyView.getClient().challenge(receiverUsername, timeControl);
         }
         if (e.getSource() == profileButton) {

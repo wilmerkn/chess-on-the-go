@@ -23,7 +23,7 @@ public class GameModel {
 
     public GameModel() {
         gameState = new GameState();
-        gameTimer = new GameTimer();
+        //gameTimer = new GameTimer();
         //boardView = new BoardView(gameLogic); // model should not have view
         map = new GameMap(8);
     }

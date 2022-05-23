@@ -97,27 +97,29 @@ public class Server implements Runnable {
                         if(!challenge.isAccepted()) {
                             for (Player player: playerClientMap.keySet()) {
                                 if(player.getUsrName().equals(challenge.getReceiverUsername())) {
-                                    oos.reset();
+                                    playerClientMap.get(player).getOos().reset();
                                     playerClientMap.get(player).getOos().writeObject(challenge);
-                                    oos.flush();
+                                    playerClientMap.get(player).getOos().flush();
                                 }
                             }
                         } else {
-                            System.out.println("Challenge accepted. Creating game.");
-
                             state = new GameState();
                             idGameStateMap.put(state.getGameID(), state);
 
                             state.setPlayer1(challenge.getSenderUsername());
                             state.setPlayer2(challenge.getReceiverUsername());
+                            state.setTimeControl(challenge.getTimeControl());
+                            state.prepareTimers(challenge.getTimeControl());
                             state.setCpa(initializeMap());
 
-                            oos.reset();
+                            playerClientMap.get(usernamePlayerMap.get(challenge.getReceiverUsername())).getOos().reset();
                             playerClientMap.get(usernamePlayerMap.get(challenge.getReceiverUsername())).getOos().writeObject(state);
-                            oos.flush();
-                            oos.reset();
+                            playerClientMap.get(usernamePlayerMap.get(challenge.getReceiverUsername())).getOos().flush();
+
+                            playerClientMap.get(usernamePlayerMap.get(challenge.getSenderUsername())).getOos().reset();
                             playerClientMap.get(usernamePlayerMap.get(challenge.getSenderUsername())).getOos().writeObject(state);
-                            oos.flush();
+                            playerClientMap.get(usernamePlayerMap.get(challenge.getSenderUsername())).getOos().flush();
+
                             state.setStarted();
 
                             System.out.println("Skriver state till clienter");
@@ -135,14 +137,19 @@ public class Server implements Runnable {
 
                         //boolean validMove = moveValid(move, state.getCpa());
 
-                        state.setCpa(update(move, state.getCpa()));
+                        state.getTimer1().turnOn();
+                        state.getTimer2().turnOn();
 
-                        oos.reset();
+                        state.setCpa(update(move, state.getCpa()));
+                        state.updateCurrentTime();
+
+                        playerClientMap.get(usernamePlayerMap.get(state.getPlayer1())).getOos().reset();
                         playerClientMap.get(usernamePlayerMap.get(state.getPlayer1())).getOos().writeObject(state);
-                        oos.flush();
-                        oos.reset();
+                        playerClientMap.get(usernamePlayerMap.get(state.getPlayer1())).getOos().flush();
+
+                        playerClientMap.get(usernamePlayerMap.get(state.getPlayer2())).getOos().reset();
                         playerClientMap.get(usernamePlayerMap.get(state.getPlayer2())).getOos().writeObject(state);
-                        oos.flush();
+                        playerClientMap.get(usernamePlayerMap.get(state.getPlayer2())).getOos().flush();
 
                         System.out.println("NYTT STATE SKICKAT");
                         // If move legal make move

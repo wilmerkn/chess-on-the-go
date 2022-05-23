@@ -30,6 +30,9 @@ public class Client {
     private String username;
     private String gameID;
 
+    private GameTimer timer1;
+    private GameTimer timer2;
+
     public Client() {
         LoginController loginController = new LoginController();
         loginView = new LoginView(loginController, this);
@@ -47,7 +50,7 @@ public class Client {
     }
 
     public void challenge(String receiverUsername, int timeControl) {
-        ChallengeRequest challenge = new ChallengeRequest(username, receiverUsername, timeControl); // Rätta till
+        ChallengeRequest challenge = new ChallengeRequest(username, receiverUsername, timeControl);
         try {
             oos.writeObject(challenge);
         } catch (IOException e) {
@@ -132,17 +135,23 @@ public class Client {
 
                         if(!state.getStarted()) {
                             gameView = new GameView(Client.this);
+                            timer1 = new GameTimer(state.getTimeControl());
+                            timer2 = new GameTimer(state.getTimeControl());
                         }
 
+                        gameView.setPlayer1Time("" + state.getTimeTimer1());
+                        gameView.setPlayer2Time("" + state.getTimeTimer2());
 
-                        SwingUtilities.invokeLater(new Runnable() {
-                            @Override
-                            public void run() {
-                                drawMap(state.getCpa());
-                            }
-                        });
 
-                        System.out.println(username + " uppdaterat bräde");
+                        gameView.setPlayer1Name(state.getPlayer1());
+                        gameView.setPlayer2Name(state.getPlayer2());
+
+                        timer1.turnOn();
+                        timer2.turnOn();
+
+
+                        drawMap(state.getCpa());
+
 
                         //ToDo fixa player names labels timer etc
 
