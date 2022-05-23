@@ -1,13 +1,12 @@
 package client;
 
+import client.gameview.BoardPanel;
 import client.gameview.GameView;
 import client.lobby.LobbyView;
 import client.login.LoginView;
 import server.controller.GameLogic;
 import server.controller.LoginController;
-import server.model.ChallengeRequest;
-import server.model.LoginRequest;
-import server.model.Message;
+import server.model.*;
 
 import javax.swing.*;
 import java.io.IOException;
@@ -15,6 +14,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class Client {
     private static final String HOST = "127.0.0.1";
@@ -94,8 +94,8 @@ public class Client {
                         String sender = challenge.getSenderUsername();
                         int answer = JOptionPane.showConfirmDialog(
                                 null,
-                                "Incoming challenge",
                                 String.format("Do you want to accept incoming challenge from %s?", sender),
+                                "Incoming challenge",
                                 JOptionPane.YES_NO_OPTION
                         );
 
@@ -105,9 +105,18 @@ public class Client {
                             oos.writeObject(challenge);
                             oos.flush();
                             lobbyView.dispose();
-                            gameView = new GameView(new GameLogic()); // Gamelogic från servern?
 
                         }
+
+                    } else if (obj instanceof GameState) {
+                        System.out.println("TAGIT EMOT GAMESTATE");
+                        GameState state = (GameState) obj;
+
+                        gameView = new GameView(Client.this);
+                        drawMap(state.getCpa());
+
+                        //ToDo fixa player names labels timer etc
+
 
                     } else if (obj instanceof Message) {
                         // Lägg message i textArea
@@ -124,6 +133,25 @@ public class Client {
             }
         }
     }
+
+    //ToDo Rita upp skicka över nätverk
+    public void drawMap(ChessPieceAbstract[][] cpa){
+        HashMap<String, JLabel> notationLbl = gameView.getBoardPanel().getNotationToJLMap();
+        ChessPieceAbstract[][] gamemap = cpa;
+        BoardPanel.SquarePanel[][] sqp = gameView.getBoardPanel().getSquares();
+
+        for(int row = 0; row < 8; row++){
+            for(int col = 0; col < 8; col++){
+                if(gamemap[row][col] != null){
+
+                    ChessPiece chessPiece = (ChessPiece) gamemap[row][col];
+                    sqp[row][col].placePiece(notationLbl.get(chessPiece.getSpriteName()));
+
+                }
+            }
+        }
+    }
+
     public static void main(String[] args) {
         new Client();
     }

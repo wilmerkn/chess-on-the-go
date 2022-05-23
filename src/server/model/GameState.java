@@ -1,9 +1,22 @@
 package server.model;
 
-public class GameState {
+import java.io.Serializable;
+
+public class GameState implements Serializable {
+
 
     private int playerTurn;
-    boolean checkMate;
+    private boolean checkMate;
+
+    private String player1;
+    private String player2;
+
+    private GameTimer timer1;
+    private GameTimer timer2;
+
+    private Message[] messages;
+
+    private ChessPieceAbstract[][] cpa;
 
     public GameState(){
         playerTurn = 1;
@@ -14,11 +27,63 @@ public class GameState {
         return playerTurn;
     }
 
+    public void setPlayerTurn(int playerTurn) {
+        this.playerTurn = playerTurn;
+    }
+
+    public boolean isCheckMate() {
+        return checkMate;
+    }
+
     public void setCheckMate(boolean checkMate) {
         this.checkMate = checkMate;
     }
 
-    public void setPlayerTurn(int playerTurn) {
-        this.playerTurn = playerTurn;
+    public String getPlayer1() {
+        return player1;
+    }
+
+    public void setPlayer1(String player1) {
+        this.player1 = player1;
+    }
+
+    public String getPlayer2() {
+        return player2;
+    }
+
+    public void setPlayer2(String player2) {
+        this.player2 = player2;
+    }
+
+    public GameTimer getTimer1() {
+        return timer1;
+    }
+
+    public void setTimer1(GameTimer timer1) {
+        this.timer1 = timer1;
+    }
+
+    public GameTimer getTimer2() {
+        return timer2;
+    }
+
+    public void setTimer2(GameTimer timer2) {
+        this.timer2 = timer2;
+    }
+
+    public Message[] getMessages() {
+        return messages;
+    }
+
+    public void setMessages(Message[] messages) {
+        this.messages = messages;
+    }
+
+    public ChessPieceAbstract[][] getCpa() {
+        return cpa;
+    }
+
+    public void setCpa(ChessPieceAbstract[][] cpa) {
+        this.cpa = cpa;
     }
 }

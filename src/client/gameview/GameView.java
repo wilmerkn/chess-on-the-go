@@ -1,5 +1,6 @@
 package client.gameview;
 
+import client.Client;
 import client.board.BoardUtils;
 import client.board.BoardView;
 import server.controller.GameLogic;
@@ -22,7 +23,11 @@ public class GameView {
     private JButton resignBTN;
     private JButton offerDrawBTN;
 
-    public GameView(GameLogic gameLogic) {
+    private Client client;
+
+    public GameView(Client client) {
+                this.client = client;
+
                 JFrame frame = new JFrame();
                 frame.setTitle("Chess On The Go");
                 frame.getContentPane().setSize(CLIENT_DIMENSION);
@@ -33,7 +38,7 @@ public class GameView {
                 frame.setLayout(null);
                 //frame.getContentPane().setBackground(new Color(35,35,35));
 
-                boardPanel = new BoardPanel(gameLogic);
+                boardPanel = new BoardPanel(client);
                 boardPanel.setBounds(7, 50, 650, 650);
 
                 player1Name = new JLabel("Player 1");
