@@ -1,9 +1,11 @@
 package server.model;
 
 import java.io.Serializable;
+import java.util.UUID;
 
 public class GameState implements Serializable {
 
+    private String gameID = UUID.randomUUID().toString();
 
     private int playerTurn;
     private boolean checkMate;
@@ -17,6 +19,8 @@ public class GameState implements Serializable {
     private Message[] messages;
 
     private ChessPieceAbstract[][] cpa;
+
+    private boolean started = false;
 
     public GameState(){
         playerTurn = 1;
@@ -85,5 +89,17 @@ public class GameState implements Serializable {
 
     public void setCpa(ChessPieceAbstract[][] cpa) {
         this.cpa = cpa;
+    }
+
+    public String getGameID() {
+        return gameID;
+    }
+
+    public void setStarted() {
+        this.started = true;
+    }
+
+    public boolean getStarted() {
+        return started;
     }
 }

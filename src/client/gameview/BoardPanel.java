@@ -2,12 +2,14 @@ package client.gameview;
 
 import client.Client;
 import server.controller.GameLogic;
+import server.model.Move;
 
 import javax.swing.*;
 import javax.swing.border.Border;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -226,9 +228,13 @@ public class BoardPanel extends JPanel {
                     }
                     //valid = gameLogic.moveValid(sourceRow, sourceCol, targetRow, targetCol, gameLogic.getModel().getMap().getMap());
                     //valid = någotfrånServern.isValid() ???????¤¤¤¤¤¤¤
+                    Move move = new Move(sourceRow, sourceCol, targetRow, targetCol);
+                    client.sendMove(move);
+
+
                     valid = true;
                     if(valid){
-                        movePiece(squares[sourceRow][sourceCol], squares[targetRow][targetCol]);
+                        //movePiece(squares[sourceRow][sourceCol], squares[targetRow][targetCol]);
                         squares[sourceRow][sourceCol].toggleHighlight();
                         //gameLogic.highlightMovementPattern(sourceRow,sourceCol); //turns off highlights
                         //gameLogic.update(sourceRow,sourceCol,targetRow,targetCol); //update view

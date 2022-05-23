@@ -19,12 +19,16 @@ import java.util.HashMap;
 public class Client {
     private static final String HOST = "127.0.0.1";
     private static final int PORT = 1234;
+
     private Socket socket;
     private ObjectInputStream ois;
     private ObjectOutputStream oos;
     private LoginView loginView;
     private LobbyView lobbyView;
     private GameView gameView;
+
+    private String username;
+    private String gameID;
 
     public Client() {
         LoginController loginController = new LoginController();
@@ -43,9 +47,20 @@ public class Client {
     }
 
     public void challenge(String receiverUsername, int timeControl) {
-        ChallengeRequest challenge = new ChallengeRequest(receiverUsername, receiverUsername, timeControl); // Rätta till
+        ChallengeRequest challenge = new ChallengeRequest(username, receiverUsername, timeControl); // Rätta till
         try {
             oos.writeObject(challenge);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void sendMove(Move move) {
+        move.setGameID(gameID);
+        try {
+            oos.reset();
+            oos.writeObject(move);
+            oos.flush();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -85,6 +100,7 @@ public class Client {
                         if(!request.isAccepted()) {
                             JOptionPane.showMessageDialog(null, "Login failed");
                         } else {
+                            username = request.getUsername();
                             lobbyView = new LobbyView(Client.this);
                             loginView.closeLoginWindow();
 
@@ -109,11 +125,24 @@ public class Client {
                         }
 
                     } else if (obj instanceof GameState) {
-                        System.out.println("TAGIT EMOT GAMESTATE");
                         GameState state = (GameState) obj;
 
-                        gameView = new GameView(Client.this);
-                        drawMap(state.getCpa());
+                        System.out.println(username + " tar emot gamestate. ID: " + gameID);
+                        gameID = state.getGameID();
+
+                        if(!state.getStarted()) {
+                            gameView = new GameView(Client.this);
+                        }
+
+
+                        SwingUtilities.invokeLater(new Runnable() {
+                            @Override
+                            public void run() {
+                                drawMap(state.getCpa());
+                            }
+                        });
+
+                        System.out.println(username + " uppdaterat bräde");
 
                         //ToDo fixa player names labels timer etc
 
@@ -140,6 +169,7 @@ public class Client {
         ChessPieceAbstract[][] gamemap = cpa;
         BoardPanel.SquarePanel[][] sqp = gameView.getBoardPanel().getSquares();
 
+        cleanBoard();
         for(int row = 0; row < 8; row++){
             for(int col = 0; col < 8; col++){
                 if(gamemap[row][col] != null){
@@ -150,6 +180,20 @@ public class Client {
                 }
             }
         }
+    }
+
+    public void cleanBoard(){
+        BoardPanel.SquarePanel[][] squarePanel = gameView.getBoardPanel().getSquares();
+
+        for(int row = 0; row < squarePanel.length; row++){
+            for(int col = 0; col < squarePanel[row].length; col++){
+                squarePanel[row][col].removePiece();
+            }
+        }
+    }
+
+    public ObjectOutputStream getOos() {
+        return oos;
     }
 
     public static void main(String[] args) {
