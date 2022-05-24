@@ -7,7 +7,7 @@ import java.awt.*;
 
 public class BoardTestGW {
 
-    public static void main(String[] args) {
+    public static void main(String[] args){
         GameLogic gameLogic = new GameLogic();
 
         //GameView gw = new GameView(gameLogic);

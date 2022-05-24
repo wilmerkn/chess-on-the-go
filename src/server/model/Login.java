@@ -20,17 +20,18 @@ public class Login {
             if (rs.next()) {
                 if (password.equals(rs.getString(2))) {
                     c.close();
+                    System.out.println("Login: true");
                     return true;
                 } else {
                     JOptionPane.showMessageDialog(null, "Wrong password or username, try again");
+                    System.out.println("Login: false");
                     return false;
                 }
             } else {
                 JOptionPane.showMessageDialog(null, "Wrong password or username, try again");
+                System.out.println("Login: false");
                 return false;
             }
-
-
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }

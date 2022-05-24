@@ -13,9 +13,9 @@ public class ChatPanel extends JPanel {
         JButton sendBTN = new JButton("SEND");
 
 
-        chatTA.setBounds(0, 0, 225, 450);
-        messageTF.setBounds(0, 460, 155, 30);
-        sendBTN.setBounds(160, 460, 65, 30);
+        chatTA.setBounds(0, 0, 225, 500);
+        messageTF.setBounds(0, 520, 155, 30);
+        sendBTN.setBounds(160, 520, 65, 30);
 
         add(chatTA);
         add(messageTF);

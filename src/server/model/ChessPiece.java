@@ -5,20 +5,21 @@ import javax.swing.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.io.Serializable;
 
-public class ChessPiece extends ChessPieceAbstract {
+public class ChessPiece extends ChessPieceAbstract implements Serializable {
     private ChessPieceType chessPieceType; //enum for type
     private ChessPieceColor color; //color of a chesspiece (white/black)
     private int[][] moveset; //check best way to go about it
     private int[] attackMoveset;
     private boolean alive;
-    private boolean moved;
+    private int moved;
     private String spriteName;
 
     //constructor color will be null
     public ChessPiece(){
         this.alive = true;
-        this.moved = false;
+        this.moved = 0;
         this.chessPieceType = ChessPieceType.BISHOP;
         this.color = ChessPieceColor.WHITE;
     }
@@ -26,7 +27,7 @@ public class ChessPiece extends ChessPieceAbstract {
     //constructor to give chesspiece color
     public ChessPiece(ChessPieceColor color, ChessPieceType chessPieceType, String spriteName){
         this.alive = true;
-        this.moved = false;
+        this.moved = 0;
         this.chessPieceType = chessPieceType;
         this.color = color;
         this.spriteName = spriteName;
@@ -53,7 +54,6 @@ public class ChessPiece extends ChessPieceAbstract {
         this.moveset = moveset;
     }
 
-
     public void setChessPieceType(ChessPieceType chessPieceType) {
         this.chessPieceType = chessPieceType;
     }
@@ -78,6 +78,14 @@ public class ChessPiece extends ChessPieceAbstract {
         this.spriteName = spriteName;
     }
 
+    public int getMoved() {
+        return moved;
+    }
+
+    public void setMoved(int moved) {
+        this.moved = moved;
+    }
+
     //placeholdermethods
     @Override
     public void attack() {
@@ -92,7 +100,7 @@ public class ChessPiece extends ChessPieceAbstract {
     //to-string
     @Override
     public String toString() {
-        String outText = String.format("%s" + " color: " + "%s", chessPieceType,color);
+        String outText = String.format(/*"ID: " + "%s " + */"%s" + " color: " + "%s",/*System.identityHashCode(this),*/ chessPieceType,color);
         return outText;
     }
 }
