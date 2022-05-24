@@ -88,11 +88,11 @@ public class BoardPanel extends JPanel {
         source.removePiece();
     }
 
-    private void enableMouseListeners() {
+    public void enableMouseListeners() {
         mouseListenersEnabled = true;
     }
 
-    private void disableMouseListeners() {
+    public void disableMouseListeners() {
         mouseListenersEnabled = false;
     }
 

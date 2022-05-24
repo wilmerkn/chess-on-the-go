@@ -66,6 +66,7 @@ public class Client {
 
     public void sendMove(Move move) {
         move.setGameID(gameID);
+        gameView.getBoardPanel().disableMouseListeners();
         try {
             oos.reset();
             oos.writeObject(move);
@@ -178,18 +179,21 @@ public class Client {
                                 }
                             });
                             gameView.setPlayer2Time(state.getTimeControl()+ ":00");
-
-
                             timer2.setInitialDelay(0);
-
-                            //starts timers right away?
                         }
-                        if (state.getPlayerTurn() % 1 != 0 && state.getStarted()){
+                        if(state.getPlayerTurn() % 1 == 0 && state.getPlayer1White() == 1 && username.equals(state.getPlayer1())) {
+                            gameView.getBoardPanel().enableMouseListeners();
+                        } else {
+                            gameView.getBoardPanel().disableMouseListeners();
+                        }
+
+                        if (state.getPlayerTurn() % 1 != 0 && state.getStarted()){ // Svarts tur!
+                            gameView.getBoardPanel().enableMouseListeners();
                             startPlayer1Time();
                         }
-                        if (state.getPlayerTurn() %1 == 0 && state.getStarted()){
+                        if (state.getPlayerTurn() %1 == 0 && state.getStarted()){ // Vits tur
                             startPlayer2Time();
-                        }
+                        }*/
 
                         gameView.setPlayer1Name(state.getPlayer1());
                         gameView.setPlayer2Name(state.getPlayer2());

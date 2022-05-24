@@ -166,17 +166,14 @@ public class Server implements Runnable {
 
                         move.setLegalMove(validMove);
 
-
                         //might have put it to early, should be incremented first when the move is registered
                         //if playerTurn % 1 = 0 then it's one of the players turn, if it isn't then it's the other players turn.
                         //playerTurn is incremented by 0.5 every move.
                         //depending on which turn it is timer should be stopped and started for the other player.
 
                         if(validMove) {
-                            if(state.getPlayer1White() == 1) {
-
+                            if(state.getPlayer1White() == 1 && (move.getUsername().equals(state.getPlayer1()))) {
                                 state.setCpa(update(move, state.getCpa()));
-
                             } else {
                                 inverseMapArray();
                                 state.setCpa(update(move, state.getCpa()));
@@ -186,6 +183,7 @@ public class Server implements Runnable {
                             state.turnIncrement();
                             state.setStarted();
                             if (state.getPlayerTurn() % 1 == 0){
+
                                 //stop timer for player1 and start for the other one
                             } else{
                                 //stop timer for player2 and start for the other one
