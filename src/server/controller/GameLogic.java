@@ -1,9 +1,7 @@
 package server.controller;
-
-import client.board.BoardView;
 import client.gameview.GameView;
 import client.gameview.BoardPanel;
-import client.gameview.GameView;
+import client.gameview.PromotePawnWindow;
 import server.model.*;
 
 import javax.swing.*;
@@ -23,25 +21,156 @@ import java.util.*;
 
 public class GameLogic {
 
-    //private GameView view;
+    private GameView view;
     private GameModel model;
     private GameAudio gameAudio;
+    private ChessPieceAbstract[][] originalBoard;
 
     public GameLogic(){
 
-        //this.view = new GameView(this);
+        this.view = new GameView(this);
         this.model = new GameModel();
         this.gameAudio = new GameAudio();
 
         //all game code runs here
         model.setMap(new GameMap(8));
 
+        initializeMap();
 
+        //inverseMapArray();
 
-        //disableChesspieces();
+        drawMap();
+
+        originalBoard = model.getMap().getMap();
+
     }
 
+    public void initializeMap() {
+        gameAudio.start();
 
+        int mapDim = model.getMap().getMapDimension();
+        ChessPieceAbstract[][] gamemap = model.getMap().getMap();
+        HashMap<Integer, ChessPieceAbstract> chesspieces = model.getChesspieces();
+        //load black chesspieces
+
+        gamemap[0][0] = new ChessPiece(ChessPieceColor.BLACK, ChessPieceType.ROOK, "BR");
+        gamemap[0][1] = new ChessPiece(ChessPieceColor.BLACK, ChessPieceType.KNIGHT, "BN");
+        gamemap[0][2] = new ChessPiece(ChessPieceColor.BLACK, ChessPieceType.BISHOP, "BB");
+        gamemap[0][3] = new ChessPiece(ChessPieceColor.BLACK, ChessPieceType.QUEEN, "BQ");
+        gamemap[0][4] = new ChessPiece(ChessPieceColor.BLACK, ChessPieceType.KING, "BK");
+        gamemap[0][5] = new ChessPiece(ChessPieceColor.BLACK, ChessPieceType.BISHOP, "BB");
+        gamemap[0][6] = new ChessPiece(ChessPieceColor.BLACK, ChessPieceType.KNIGHT, "BN");
+        gamemap[0][7] = new ChessPiece(ChessPieceColor.BLACK, ChessPieceType.ROOK, "BR");
+
+        //loads black Pawns
+        int row = 1;
+        for(int col = 0; col < mapDim; col++){
+            gamemap[row][col] = new ChessPiece(ChessPieceColor.BLACK, ChessPieceType.PAWN, "BP");
+        }
+
+        //load white Pawns
+        row = 6;
+        for(int col = 0; col < mapDim; col++){
+            gamemap[row][col] = new ChessPiece(ChessPieceColor.WHITE, ChessPieceType.PAWN, "WP");
+        }
+
+        //load white chesspieces
+        gamemap[7][0] = new ChessPiece(ChessPieceColor.WHITE, ChessPieceType.ROOK, "WR");
+        gamemap[7][1] = new ChessPiece(ChessPieceColor.WHITE, ChessPieceType.KNIGHT, "WN");
+        gamemap[7][2] = new ChessPiece(ChessPieceColor.WHITE, ChessPieceType.BISHOP, "WB");
+        gamemap[7][3] = new ChessPiece(ChessPieceColor.WHITE, ChessPieceType.QUEEN, "WQ");
+        gamemap[7][4] = new ChessPiece(ChessPieceColor.WHITE, ChessPieceType.KING, "WK");
+        gamemap[7][5] = new ChessPiece(ChessPieceColor.WHITE, ChessPieceType.BISHOP, "WB");
+        gamemap[7][6] = new ChessPiece(ChessPieceColor.WHITE, ChessPieceType.KNIGHT, "WN");
+        gamemap[7][7] = new ChessPiece(ChessPieceColor.WHITE, ChessPieceType.ROOK, "WR");
+
+        for(int r = 0; r < gamemap.length; r++){
+            for(int c = 0; c < gamemap[r].length;c++){
+                if(gamemap[r][c] != null){
+                    ChessPiece chessPiece = (ChessPiece) gamemap[r][c];
+                    ChessPieceType type = chessPiece.getChessPieceType();
+
+                    if(type.equals(ChessPieceType.KING)){
+                        chessPiece.setMoveset(new int[][]{
+                                {1,1,1},
+                                {1,0,1},
+                                {1,1,1}});
+                    }
+                    else if(type.equals(ChessPieceType.QUEEN)){
+                        chessPiece.setMoveset(new int[][]{
+                                {1,2,2,2,2,2,2,1,2,2,2,2,2,2,1},
+                                {2,1,2,2,2,2,2,1,2,2,2,2,2,1,2},
+                                {2,2,1,2,2,2,2,1,2,2,2,2,1,2,2},
+                                {2,2,2,1,2,2,2,1,2,2,2,1,2,2,2},
+                                {2,2,2,2,1,2,2,1,2,2,1,2,2,2,2},
+                                {2,2,2,2,2,1,2,1,2,1,2,2,2,2,2},
+                                {2,2,2,2,2,2,1,1,1,2,2,2,2,2,2},
+                                {1,1,1,1,1,1,1,0,1,1,1,1,1,1,1},
+                                {2,2,2,2,2,2,1,1,1,2,2,2,2,2,2},
+                                {2,2,2,2,2,1,2,1,2,1,2,2,2,2,2},
+                                {2,2,2,2,1,2,2,1,2,2,1,2,2,2,2},
+                                {2,2,2,1,2,2,2,1,2,2,2,1,2,2,2},
+                                {2,2,1,2,2,2,2,1,2,2,2,2,1,2,2},
+                                {2,1,2,2,2,2,2,1,2,2,2,2,2,1,2},
+                                {1,2,2,2,2,2,2,1,2,2,2,2,2,2,1}});
+                    }
+                    else if(type.equals(ChessPieceType.KNIGHT)){
+                        chessPiece.setMoveset(new int[][]{
+                                {2,1,2,1,2},
+                                {1,2,2,2,1},
+                                {2,2,0,2,2},
+                                {1,2,2,2,1},
+                                {2,1,2,1,2}});
+                    }
+                    else if(type.equals(ChessPieceType.BISHOP)){
+                        chessPiece.setMoveset(new int[][]{
+                                {1,2,2,2,2,2,2,2,2,2,2,2,2,2,1},
+                                {2,1,2,2,2,2,2,2,2,2,2,2,2,1,2},
+                                {2,2,1,2,2,2,2,2,2,2,2,2,1,2,2},
+                                {2,2,2,1,2,2,2,2,2,2,2,1,2,2,2},
+                                {2,2,2,2,1,2,2,2,2,2,1,2,2,2,2},
+                                {2,2,2,2,2,1,2,2,2,1,2,2,2,2,2},
+                                {2,2,2,2,2,2,1,2,1,2,2,2,2,2,2},
+                                {2,2,2,2,2,2,2,0,2,2,2,2,2,2,2},
+                                {2,2,2,2,2,2,1,2,1,2,2,2,2,2,2},
+                                {2,2,2,2,2,1,2,2,2,1,2,2,2,2,2},
+                                {2,2,2,2,1,2,2,2,2,2,1,2,2,2,2},
+                                {2,2,2,1,2,2,2,2,2,2,2,1,2,2,2},
+                                {2,2,1,2,2,2,2,2,2,2,2,2,1,2,2},
+                                {2,1,2,2,2,2,2,2,2,2,2,2,2,1,2},
+                                {1,2,2,2,2,2,2,2,2,2,2,2,2,2,1},
+                        });
+                    }
+                    else if(type.equals(ChessPieceType.ROOK)){
+                        chessPiece.setMoveset(new int[][]{
+                                {2,2,2,2,2,2,2,1,2,2,2,2,2,2,2},
+                                {2,2,2,2,2,2,2,1,2,2,2,2,2,2,2},
+                                {2,2,2,2,2,2,2,1,2,2,2,2,2,2,2},
+                                {2,2,2,2,2,2,2,1,2,2,2,2,2,2,2},
+                                {2,2,2,2,2,2,2,1,2,2,2,2,2,2,2},
+                                {2,2,2,2,2,2,2,1,2,2,2,2,2,2,2},
+                                {2,2,2,2,2,2,2,1,2,2,2,2,2,2,2},
+                                {1,1,1,1,1,1,1,0,1,1,1,1,1,1,1},
+                                {2,2,2,2,2,2,2,1,2,2,2,2,2,2,2},
+                                {2,2,2,2,2,2,2,1,2,2,2,2,2,2,2},
+                                {2,2,2,2,2,2,2,1,2,2,2,2,2,2,2},
+                                {2,2,2,2,2,2,2,1,2,2,2,2,2,2,2},
+                                {2,2,2,2,2,2,2,1,2,2,2,2,2,2,2},
+                                {2,2,2,2,2,2,2,1,2,2,2,2,2,2,2},
+                                {2,2,2,2,2,2,2,1,2,2,2,2,2,2,2},
+                        });
+                    }
+                    else if(type.equals(ChessPieceType.PAWN)){
+                            chessPiece.setMoveset(new int[][]{
+                                    {2,1,2},
+                                    {3,1,3},
+                                    {2,0,2},
+                            });
+                    }
+                }
+            }
+        }
+    }
 
     //inverses map array
     public void inverseMapArray(){
@@ -58,10 +187,28 @@ public class GameLogic {
     }
 
     //draws up Gui Map from map array
+    public void drawMap(){
+        int mapDim = model.getMap().getMapDimension();
+        HashMap<String, JLabel> notationLbl = view.getBoardPanel().getNotationToJLMap();
+        ChessPieceAbstract[][] gamemap = model.getMap().getMap();
+        BoardPanel.SquarePanel[][] squarePanel = view.getBoardPanel().getSquares();
+        GameMap map = model.getMap();
 
+        cleanBoard();
+
+        for(int row = 0; row < mapDim; row++){
+            for(int col = 0; col < mapDim; col++){
+                if(gamemap[row][col] != null){
+                    ChessPiece chessPiece = (ChessPiece) gamemap[row][col];
+                    squarePanel[row][col].placePiece(notationLbl.get(chessPiece.getSpriteName()));
+                }
+            }
+        }
+        map.displayMap();
+    }
 
     //method used to update logical game map with chesspieces new position
-    /*public void update(int y_or, int x_or, int y_tr, int x_tr){ //called when chesspiece is moved
+    public void update(int y_or, int x_or, int y_tr, int x_tr){ //called when chesspiece is moved
         ChessPieceAbstract[][] gamemap = model.getMap().getMap();
         BoardPanel.SquarePanel[][] squarePanel = view.getBoardPanel().getSquares();
 
@@ -82,61 +229,49 @@ public class GameLogic {
                         {2,2,2}
                 });
             }
-        check(ChessPieceColor.BLACK, ChessPieceColor.WHITE, gamemap);
-        check(ChessPieceColor.WHITE, ChessPieceColor.BLACK, gamemap);
 
-        gameAudio.playSound("src\\AudioFiles\\mixkit-quick-jump-arcade-game-239.wav",0);
-        inverseMapArray();
-        drawMap();
+        if (tempChesspiece != null && tempChesspiece.getChessPieceType() == ChessPieceType.PAWN ) {
+            if (getLocationX(tempChesspiece, gamemap) == 0) {
+                PromotePawnWindow pawnWindow = new PromotePawnWindow();
+                pawnWindow.chooseChesspiece(this, tempChesspiece.getColor(), tempChesspiece);
+            }
+        }
+            gameAudio.playSound("src\\AudioFiles\\mixkit-quick-jump-arcade-game-239.wav",0);
+
+            check(ChessPieceColor.WHITE, ChessPieceColor.BLACK, gamemap);
+            check(ChessPieceColor.BLACK, ChessPieceColor.WHITE, gamemap);
+            inverseMapArray();
+            drawMap();
     }
-*/
+
     //check for check and checkmate
-    private void check(ChessPieceColor friendlyColor, ChessPieceColor enemyColor, ChessPieceAbstract[][] gamemap){
-        for(int i = 0; i < 8; i++){
-            for(int j = 0; j < 8; j++){
-                try {
-                    ChessPiece king = getTheKing(friendlyColor, gamemap);
-                    ChessPiece chessPiece = (ChessPiece) model.getMap().getMap()[i][j];
-
-                    if (chessPiece != null && chessPiece.getColor().equals(enemyColor)) {
-
-                        if (isCheck(i, j, chessPiece, king) == true) {
-                            //maybe highlight the square or play some sound effect?
-                            if ((isCheckmate(king, enemyColor, friendlyColor) == true)) {
-                                //show checkmateWindow with the name of the winner (maybe show the players username?)
-                                CheckmateWindow checkmateWindow = new CheckmateWindow(enemyColor.toString());
-                            }
-                        }
-                    }
-                }
-
-                catch(ArrayIndexOutOfBoundsException e){
-
-                }
+    public void check(ChessPieceColor friendlyColor, ChessPieceColor enemyColor, ChessPieceAbstract[][] gamemap){
+        ChessPiece king = getTheKing(friendlyColor, gamemap);
+        if (isCheck(king, enemyColor)) {
+            //maybe highlight the square or play some sound effect?
+            if ((isCheckmate(king, enemyColor, friendlyColor) == true)) {
+                //show checkmateWindow with the name of the winner (maybe show the players username?)
+                CheckmateWindow checkmateWindow = new CheckmateWindow(enemyColor.toString());
             }
         }
     }
+
     //method that checks for checkmate
     private boolean isCheckmate(ChessPiece theKing, ChessPieceColor enemyColor, ChessPieceColor friendlyColor) {
         ChessPieceAbstract[][] board = model.getMap().getMap();
-        //get the kings coordinates
-        int row = getLocationX(theKing, board);
-        int col = getLocationY(theKing, board);
-        //this is used to store x and y coordinates of all possible moves that the king can make
         ArrayList<Integer> xKing = new ArrayList<>();
         ArrayList<Integer> yKing = new ArrayList<>();
+        ArrayList<String> deadlyXandY = new ArrayList<String>();
 
-        //this is used to store x and y coordinates of moves that would result in the king being attacked
-        ArrayList<Integer> deadlyX = new ArrayList<>();
-        ArrayList<Integer> deadlyY = new ArrayList<>();
 
+        //create a method for this later
         for(int i = 0; i < 8; i++){
             for(int j = 0; j < 8; j++){
                 ChessPiece cp = (ChessPiece) board[i][j];
                 //store coordinates of moves that are either empty or that have the opposite player's chess pieces on it
                 if(board[i][j]==null || cp.getColor().equals(enemyColor)){
                     //check if the king can move there
-                    if(moveValid(row, col, i, j, board)==true){
+                    if(moveValid(getLocationX(theKing, board), getLocationY(theKing, board), i, j, board)==true){
                         //save the coordinates
                         xKing.add(i);
                         yKing.add(j);
@@ -145,73 +280,85 @@ public class GameLogic {
             }
         }
 
-        try {
-            //loop through the chessboard array and find elements that can directly attack the king
-            for (int xy = 0; xy < xKing.size(); xy++) {
-                for(int i = 0; i < 8; i++){
-                    for(int j = 0; j < 8; j++) {
-                        ChessPiece cp = (ChessPiece) board[i][j];
-                        if (cp != null && cp.getColor().equals(enemyColor)) {
-                            if (checkMove(getLocationX(cp, board), getLocationY(cp, board), cp, xKing.get(xy), yKing.get(xy), theKing) == true) {
-                                deadlyX.add(xKing.get(xy));
-                                deadlyY.add(yKing.get(xy));
-                                System.out.println(cp + " can attack the king from " + getLocationX(cp, board) + ", " + getLocationY(cp, board) + " if the king moves to " + xKing.get(xy) + ", " + yKing.get(xy));
+        deadlyXandY.addAll(deadlyMoves(xKing, yKing, board, theKing, enemyColor));
+        deadlyXandY.addAll(protectedPieces(xKing, yKing, board, friendlyColor, enemyColor));
+
+        //remove this later
+        for(int i = 0; i < xKing.size(); i++) {
+            System.out.println("Possible moves: " + xKing.get(i) + ", " + yKing.get(i));
+        }
+        for(int i = 0; i < deadlyXandY.size(); i++){
+            System.out.println("This is the whole list  " + deadlyXandY.get(i));
+        }
+
+        ArrayList uniqueListOfDeadlyMoves = deleteDuplicates(deadlyXandY);
+        for(int i = 0; i < uniqueListOfDeadlyMoves.size(); i++){
+            System.out.println("Deadly moves: " + deadlyXandY.get(i));
+        }
+        System.out.println("Number of possible moves: " + xKing.size() + ", number of deadly moves: " +uniqueListOfDeadlyMoves.size());
+
+        //return true if the number of possible moves is equal to the number of moves that would result in the kings death
+        if(uniqueListOfDeadlyMoves.size() == xKing.size()){
+            System.out.println("Game Over");
+            return true;
+        }
+
+        return false;
+    }
+
+    //this method returns an arraylist of places on the chess board where the king would still be under attack if moved there
+    private ArrayList<String> deadlyMoves(ArrayList<Integer> xKing, ArrayList<Integer> yKing, ChessPieceAbstract[][] board, ChessPiece theKing, ChessPieceColor enemyColor){
+        ArrayList<String> list = new ArrayList<>();
+        for (int xy = 0; xy < xKing.size(); xy++) {
+            for (int i = 0; i < 8; i++) {
+                for (int j = 0; j < 8; j++) {
+                    ChessPiece cp = (ChessPiece) board[i][j];
+                    if (cp != null && cp.getColor().equals(enemyColor)) {
+                        System.out.println(cp.toString() + " " + getLocationX(cp , board) + ", " + getLocationY(cp, board));
+                        //see if a chess piece could attack the king
+                        if (checkMove(getLocationX(cp, board), getLocationY(cp, board), cp, xKing.get(xy), yKing.get(xy), theKing) == true) {
+                            list.add(xKing.get(xy)+", "+yKing.get(xy));
+                        }
+                    }
+                }
+            }
+        }
+
+        for(int i = 0; i < list.size(); i++){
+            System.out.println("This is deadlyMoves(): " + list.get(i));
+        }
+        return list;
+    }
+
+    //this method returns an arraylist containing the coordinates of chess pieces that are protected
+    //this method is used in the checkmate method, to see if the king can escape a check position by attacking one of the opponent's chess pieces
+    //if by attacking the chess piece the king would find itself in a check position (again), add that position's coordinates in the array list
+    private ArrayList<String> protectedPieces(ArrayList<Integer> xKing, ArrayList<Integer> yKing, ChessPieceAbstract[][] board, ChessPieceColor friendlyColor, ChessPieceColor enemyColor){
+        ArrayList<String> list = new ArrayList<>();
+
+        for(int i = 0; i < 8; i++) {
+            for (int j = 0; j < 8; j++) {
+                for (int xy = 0; xy < xKing.size(); xy++) {
+                    ChessPiece originalCp = (ChessPiece) board[xKing.get(xy)][yKing.get(xy)];
+                    if (originalCp != null) {
+                        ChessPiece chessPiece = (ChessPiece) board[i][j];
+                        if (chessPiece != null && chessPiece.getColor() == enemyColor && chessPiece != originalCp) {
+                            //create a fake chess piece - in this case the getTheKing method is used to do that
+                            ChessPiece fakeChessPiece = getTheKing(friendlyColor, board);
+                            if (checkMove(getLocationX(chessPiece, board), getLocationY(chessPiece, board), chessPiece, getLocationX(originalCp, board), getLocationY(originalCp, board), fakeChessPiece) == true) {
+                               System.out.println(chessPiece + " " + " that is on " + getLocationX(chessPiece, board) + ", " + getLocationY(chessPiece, board) + " protects " + originalCp);
+                                list.add(xKing.get(xy)+", " + yKing.get(xy));
                             }
                         }
                     }
                 }
             }
-
-            //if the king attacks a chess piece that is protected by another chess piece (the king will still be under attack if the move is done)
-            for(int i = 0; i < 8; i++) {
-                for (int j = 0; j < 8; j++) {
-                    for (int xy = 0; xy < xKing.size(); xy++) {
-                        ChessPiece originalCp = (ChessPiece) board[xKing.get(xy)][yKing.get(xy)];
-                        if (originalCp != null) {
-                            ChessPiece chessPiece = (ChessPiece) board[i][j];
-                            if (chessPiece != null && chessPiece.getColor().equals(enemyColor) && chessPiece != originalCp) {
-                                //create a fake chess piece - in this case the getTheKing method is used to do that
-                                ChessPiece fakeChessPiece = getTheKing(friendlyColor, board);
-                                if (checkMove(getLocationX(chessPiece, board), getLocationY(chessPiece, board), chessPiece, getLocationX(originalCp, board), getLocationY(originalCp, board), fakeChessPiece) == true) {
-                                    deadlyX.add(xKing.get(xy));
-                                    deadlyY.add(yKing.get(xy));
-                                    System.out.println(chessPiece + " can attack the king from " + getLocationX(chessPiece, board) + ", " + getLocationY(chessPiece, board) + " if the king moves to " + xKing.get(xy) + ", " + yKing.get(xy));
-                                }
-                            }                        }
-                    }
-                }
-            }
-        }catch (Exception e){
-
         }
 
-
-
-        //remove this later when everything is done
-        for(int i = 0; i < xKing.size(); i++) {
-            System.out.println("Possible moves: " + xKing.get(i) + ", " + yKing.get(i));
+        for(int i = 0; i < list.size(); i++){
+            System.out.println("This is from protectedPieces(): " + list.get(i));
         }
-        //make a new arraylist that stores string values made out of the x and y coordinates
-        ArrayList<String> deadlyCoordinates = new ArrayList<>();
-        for(int i = 0; i < deadlyX.size(); i++){
-            deadlyCoordinates.add(deadlyX.get(i)+","+deadlyY.get(i));
-        }
-        //remove duplicates from the new arraylist
-        ArrayList newArr1 = deleteDuplicates(deadlyCoordinates);
-        //print all the unique locations on the board where the king can not move to
-        for(int i = 0; i < newArr1.size(); i++){
-            System.out.println("Deadly moves: " + deadlyCoordinates.get(i));
-        }
-        System.out.println("Number of possible moves: " + xKing.size() + ", number of deadly moves: " +newArr1.size());
-
-
-
-        //return true if the number of possible moves is equal to the number of moves that would result in the kings death
-        if(newArr1.size() == xKing.size()){
-            System.out.println("Game Over");
-            return true;
-        }
-        return false;
+        return list;
     }
 
     //this method removes duplicates from an arraylist
@@ -224,29 +371,42 @@ public class GameLogic {
     }
 
     //method that checks if the king is attacked
-    public boolean isCheck(int chessPieceRowTarget, int chessPieceColTarget, ChessPiece chessPiece, ChessPiece theKing) {
-        ChessPieceAbstract[][]mapp = model.getMap().getMap();
-        mapp[chessPieceRowTarget][chessPieceColTarget] = chessPiece;
-        int kingX = getLocationX(theKing, model.getMap().getMap());
-        int kingY = getLocationY(theKing, model.getMap().getMap());
-        boolean valid = moveValid(chessPieceRowTarget, chessPieceColTarget, kingX, kingY, mapp);
-        if(valid){
-            System.out.println("CHECK!");
-            return true;
+        public boolean isCheck(ChessPiece theKing, ChessPieceColor enemyColor) {
+            for(int i = 0; i < 8; i++) {
+                for (int j = 0; j < 8; j++) {
+                    try {
+                        ChessPiece chessPiece = (ChessPiece) model.getMap().getMap()[i][j];
+                        if (chessPiece != null && chessPiece.getColor().equals(enemyColor)) {
+                            ChessPieceAbstract[][] mapp = model.getMap().getMap();
+                            int kingX = getLocationX(theKing, model.getMap().getMap());
+                            int kingY = getLocationY(theKing, model.getMap().getMap());
+                            boolean valid = moveValid(i, j, kingX, kingY, mapp);
+                            if (valid) {
+                                System.out.println("CHECK!");
+                                return true;
+                            }
+                        }
+                    }catch (ArrayIndexOutOfBoundsException e){
+
+                    }
+                }
+            }
+            return false;
         }
-        return false;
-    }
 
     //method puts two chess pieces on a chess board and then check if the first chess piece can move on the second chess pieces location
     public boolean checkMove(int chessPiece1Row, int chessPiece1Col, ChessPiece chessPiece1, int chessPiece2Row, int chessPiece2Col, ChessPiece chessPiece2) {
         ChessPieceAbstract[][]mapp = new ChessPieceAbstract[8][8];
+        //create a new ChessPieceAbstract[][] map and copy the elements of the current chess board
         for(int i = 0; i < 8; i++){
             for(int j = 0; j < 8; j++){
                 mapp[i][j] = model.getMap().getMap()[i][j];
             }
         }
+        //put the two chess pieces on the fake chess board
         mapp[chessPiece1Row][chessPiece1Col] = chessPiece1;
         mapp[chessPiece2Row][chessPiece2Col] = chessPiece2;
+        //see if the first chess piece can attack the second chess piece
         boolean valid = moveValid(chessPiece1Row, chessPiece1Col, chessPiece2Row, chessPiece2Col, mapp);
         if(valid){
             return true;
@@ -293,9 +453,82 @@ public class GameLogic {
         return null;
     }
 
+
+    //method returns the rook used in the castle method
+    private ChessPiece getTheRookForCastle(ChessPieceColor kingColor, ChessPieceAbstract[][] gamemap, ChessPiece theKing){
+        for(int i = 0;i < 8; i ++) {
+            for (int j = 0; j < 8; j++) {
+                ChessPiece chessPiece = (ChessPiece) gamemap[i][j];
+                if (chessPiece != null && chessPiece.getColor() == kingColor && chessPiece.getChessPieceType() == ChessPieceType.ROOK) {
+                    if (getLocationX(chessPiece, gamemap) == getLocationX(theKing, gamemap) && Math.abs(getLocationY(theKing, gamemap) - getLocationY(chessPiece, gamemap)) == 2) {
+                        return chessPiece;
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    private boolean kingCanCastle(ChessPieceColor kingColor, ChessPieceColor enemyColor) {
+        ChessPieceAbstract[][] gamemap = model.getMap().getMap();
+        ChessPiece theKing = getTheKing(kingColor, gamemap);
+        ChessPiece theRook = getTheRookForCastle(kingColor, gamemap, theKing);
+        ChessPiece therook2 = null;
+
+        for(int i = 0;i<8; i++){
+            for(int j = 0;  j < 8; j++){
+                ChessPiece cp = (ChessPiece) gamemap[i][j];
+                if(cp!=null){
+                    if(cp.getChessPieceType()==ChessPieceType.ROOK && cp.getColor()==kingColor){
+                        therook2 = cp;
+                    }
+                }
+            }
+        }
+
+        //if the king and / or the rook were not moved, and if the space between them is empty, return true
+        //to see if the places between them are empty, we use the checkMove method that puts checks if the rook can move to the kings place
+        if(//kingWasMoved = false && theRooksWasMoved = false &&
+                checkMove(getLocationX(theRook, gamemap), getLocationY(theRook, gamemap), therook2, getLocationX(theKing, gamemap),
+                getLocationY(theKing, gamemap), getTheKing(enemyColor, gamemap))){
+
+            System.out.println(theKing + " can castle!");
+            return true;
+        }
+        return false;
+    }
+
+    //finds the chess piece the player wants
+    public ChessPiece getChesspiece(ChessPieceColor color, ChessPieceType type){
+        ChessPiece theChessPiece = null;
+        for(int r = 0; r <8; r++){
+            for(int c = 0; c < 8; c++){
+                //loop thorugh the original board
+                ChessPiece cp = (ChessPiece) originalBoard[r][c];
+                if(cp!=null && cp.getChessPieceType()==type && cp.getColor()==color){
+                    theChessPiece = cp;
+                }
+            }
+        }
+        //set the location of that chess piece
+        return theChessPiece;
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
     //todo block highlighting if chesspieces in the way
     //method used to show highlighted movement pattern in GUI
-    /*public void highlightMovementPattern(int srcY,int srcX){
+    public void highlightMovementPattern(int srcY,int srcX){
 
         int YCord = srcY; //get y/x cordinate of piece
         int XCord = srcX;
@@ -342,7 +575,7 @@ public class GameLogic {
                             squarePanel[y][x].toggleHighlight();
                         }
                         if(moveset[y-(YCord-YOffset)][x-(XCord-XOffset)] == 1 && cp.getColor() != ((ChessPiece)gamemap[y][x]).getColor() && cp.getChessPieceType() != ChessPieceType.PAWN && cp.getChessPieceType() != ChessPieceType.ROOK && cp.getChessPieceType() != ChessPieceType.BISHOP && cp.getChessPieceType() != ChessPieceType.QUEEN){ //highlights position if chesspiece is not of same color
-                            squarePanel[y][x].toggleHighlight();
+                             squarePanel[y][x].toggleHighlight();
                         }
                     } catch (Exception e) {
                         continue;
@@ -486,7 +719,7 @@ public class GameLogic {
                 }
 
             }
-    }*/
+    }
 
     //check if move input by user is a valid move in chess
     public boolean moveValid(int sourceRow, int sourceCol, int targetRow, int targetCol, ChessPieceAbstract[][] gamemap){
@@ -535,7 +768,7 @@ public class GameLogic {
         rookobstruction = rookObstruction(sourceRow,sourceCol,targetRow,targetCol,gamemap,cp);
         bishopobstruction = bishopObstruction(sourceRow,sourceCol,targetRow,targetCol,gamemap,cp);
         queenObstruction = queenObstruction(sourceRow,sourceCol,targetRow,targetCol,gamemap,cp);
-
+/*
         System.out.println("Samespot error: " + samespot);
         System.out.println("Withinmoveset error: " + withinMoveset);
         System.out.println("FriendlyObstruction error: " + friendlyObstruction);
@@ -545,6 +778,7 @@ public class GameLogic {
         System.out.println("RookObstruction error: " + rookobstruction);
         System.out.println("BishopObstruction error: " + bishopobstruction);
         System.out.println("queenObstruction error: " + queenObstruction);
+ */
 
         if( (!samespot && !withinMoveset && !friendlyObstruction && !pawnobstruct && !pawnTwoMoveObstruct && !rookobstruction && !bishopobstruction) || (pawnattacks) || ( (!samespot && !withinMoveset && !friendlyObstruction && !pawnobstruct && !pawnTwoMoveObstruct) && !queenObstruction ) ){//if errorchecks are negative make move valid
             return true; //move is valid
@@ -745,23 +979,22 @@ public class GameLogic {
     }
 
     //cleans board of chesspiece sprites
-/*    public void cleanBoard(){
+    public void cleanBoard(){
         BoardPanel.SquarePanel[][] squarePanel = view.getBoardPanel().getSquares();
         for(int row = 0; row < squarePanel.length; row++){
             for(int col = 0; col < squarePanel[row].length; col++){
                 squarePanel[row][col].removePiece();
             }
         }
-    }*/
+    }
 
     //todo work on this
-
-/*    public void disableChesspieces(){
+    /*
+    public void disableChesspieces(){
         int playerTurn = model.getGameState().getPlayerTurn();
         ChessPieceAbstract[][] gamemap = model.getMap().getMap();
         BoardPanel.SquarePanel[][] squarePanel = view.getBoardPanel().getSquares();
         HashMap<String, JLabel> notationlbls = view.getBoardPanel().getNotationToJLMap();
-        BoardPanel bp = view.getBoardPanel();
         //if player turn 1, disable black and vice versa
 
         ChessPiece cp;
@@ -773,7 +1006,8 @@ public class GameLogic {
                     if( gamemap[row][col] != null ){
                         cp = ((ChessPiece)gamemap[row][col]);
                         if(cp.getColor() == ChessPieceColor.BLACK){
-                            bp.setSquareMouseListenerActive(row,col,false);
+                            JLabel peice = notationlbls.get(cp.getSpriteName());
+                            peice.setEnabled(false);
                         }
 
                     }
