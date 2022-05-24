@@ -617,6 +617,7 @@ public class GameLogic {
         boolean rookobstruction = false;
         boolean bishopobstruction = false;
         boolean queenObstruction = false;
+        boolean wrongcolor = false;
 
         samespot = samecpspot(sourceRow,sourceCol,targetRow,targetCol);
         withinMoveset = moveWithinCPMoveset(sourceRow,sourceCol,targetRow,targetCol,movesetOffsetY,movesetOffsetX,yTrOffset,xTrOffset,moveset,cp,gamemap);
@@ -627,6 +628,8 @@ public class GameLogic {
         rookobstruction = rookObstruction(sourceRow,sourceCol,targetRow,targetCol,gamemap,cp);
         bishopobstruction = bishopObstruction(sourceRow,sourceCol,targetRow,targetCol,gamemap,cp);
         queenObstruction = queenObstruction(sourceRow,sourceCol,targetRow,targetCol,gamemap,cp);
+        wrongcolor = playerColor(cp);
+
 
         System.out.println("Samespot error: " + samespot);
         System.out.println("Withinmoveset error: " + withinMoveset);
@@ -638,7 +641,7 @@ public class GameLogic {
         System.out.println("BishopObstruction error: " + bishopobstruction);
         System.out.println("queenObstruction error: " + queenObstruction);
 
-        if( (!samespot && !withinMoveset && !friendlyObstruction && !pawnobstruct && !pawnTwoMoveObstruct && !rookobstruction && !bishopobstruction) || (pawnattacks) || ( (!samespot && !withinMoveset && !friendlyObstruction && !pawnobstruct && !pawnTwoMoveObstruct) && !queenObstruction ) ){//if errorchecks are negative make move valid
+        if( (!samespot && !withinMoveset && !friendlyObstruction && !pawnobstruct && !pawnTwoMoveObstruct && !rookobstruction && !bishopobstruction && !wrongcolor) || (pawnattacks && !wrongcolor) || ( (!samespot && !withinMoveset && !friendlyObstruction && !pawnobstruct && !pawnTwoMoveObstruct) && !queenObstruction && !wrongcolor) ){//if errorchecks are negative make move valid
             return true; //move is valid
         }
         else{
@@ -689,6 +692,14 @@ public class GameLogic {
             if(((ChessPiece)gamemap[targetRow][targetCol]).getColor() != cp.getColor()){
                 return true;
             }
+        }
+        return false;
+    }
+
+    public boolean playerColor(ChessPiece cp){
+
+        if(state.getcolor != cp.getColor()){
+            return true;
         }
         return false;
     }
@@ -848,8 +859,8 @@ public class GameLogic {
     }*/
 
     //todo work on this
-
-/*    public void disableChesspieces(){
+    /*
+    public void disableChesspieces(){
         int playerTurn = model.getGameState().getPlayerTurn();
         ChessPieceAbstract[][] gamemap = model.getMap().getMap();
         BoardPanel.SquarePanel[][] squarePanel = view.getBoardPanel().getSquares();
