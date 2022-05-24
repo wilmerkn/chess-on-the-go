@@ -1,4 +1,6 @@
 package server.controller;
+
+import client.board.BoardView;
 import client.gameview.GameView;
 import client.gameview.BoardPanel;
 import client.gameview.PromotePawnWindow;
@@ -581,6 +583,29 @@ public class GameLogic {
     public boolean moveValid(int sourceRow, int sourceCol, int targetRow, int targetCol, ChessPieceAbstract[][] gamemap){
         ChessPiece cp = (ChessPiece) gamemap[sourceRow][sourceCol];
         int[][] moveset = cp.getMoveset();
+        ChessPieceType chessPieceType = cp.getChessPieceType();
+
+        int movesetOffsetY = -1;
+        int movesetOffsetX = -1;
+
+        try {
+            //get offsets from moveset
+            for(int row = 0; row < moveset.length; row ++){
+                for (int col = 0; col < moveset[row].length; col++){
+                    if(moveset[row][col] == 0){ //find number 0 in moveset array to get offsets
+                        movesetOffsetY = row;
+                        movesetOffsetX = col;
+                        break;
+                    }
+                }
+            }
+
+        } catch (Exception e) {
+
+        }
+
+        int yTrOffset = (sourceRow-targetRow);
+        int xTrOffset = (sourceCol-targetCol);
 
         boolean samespot = false;
         boolean withinMoveset = false;
