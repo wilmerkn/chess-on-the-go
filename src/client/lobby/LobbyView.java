@@ -50,7 +50,7 @@ public class LobbyView extends JFrame {
         lobbyFrame.getContentPane().setSize(CLIENT_DIMENSION);
         lobbyFrame.setBounds(new Rectangle(CLIENT_DIMENSION));
         lobbyFrame.setDefaultCloseOperation(EXIT_ON_CLOSE);
-        lobbyFrame.setResizable(false);
+        lobbyFrame.setResizable(true);
         lobbyFrame.setLocationRelativeTo(null);
     }
 

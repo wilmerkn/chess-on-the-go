@@ -4,11 +4,12 @@ import client.gameview.BoardPanel;
 import client.gameview.GameView;
 import client.lobby.LobbyView;
 import client.login.LoginView;
-import server.controller.GameLogic;
 import server.controller.LoginController;
 import server.model.*;
 
 import javax.swing.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -17,8 +18,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class Client {
-    private static final String HOST = "127.0.0.1";
-    private static final int PORT = 1234;
+    private static final String HOST = "2.tcp.ngrok.io";
+    private static final int PORT = 15217;
 
     private Socket socket;
     private ObjectInputStream ois;
@@ -30,8 +31,11 @@ public class Client {
     private String username;
     private String gameID;
 
-    private GameTimer timer1;
-    private GameTimer timer2;
+    private Timer timer1;
+    private int timer1Time;
+    private Timer timer2;
+    private int timer2Time;
+
 
     public Client() {
         LoginController loginController = new LoginController();
@@ -106,7 +110,6 @@ public class Client {
                             username = request.getUsername();
                             lobbyView = new LobbyView(Client.this);
                             loginView.closeLoginWindow();
-
                         }
                     } else if(obj instanceof ChallengeRequest) {
                         ChallengeRequest challenge = (ChallengeRequest) obj;
@@ -124,43 +127,80 @@ public class Client {
                             oos.writeObject(challenge);
                             oos.flush();
                             lobbyView.dispose();
+                            //set timeControl
 
                         }
 
                     } else if (obj instanceof GameState) {
                         GameState state = (GameState) obj;
-
-                        System.out.println(username + " tar emot gamestate. ID: " + gameID);
+                        //if a move is made by one player, others timer should start
+                        //System.out.println(username + " tar emot gamestate. ID: " + gameID);
                         gameID = state.getGameID();
+                        //get playerTurn, depending on whos turn stop and start timers
 
                         if(!state.getStarted()) {
+                            timer1Time = state.getTimer1Time();
+                            timer2Time = state.getTimer2Time();
+
                             gameView = new GameView(Client.this);
-                            timer1 = new GameTimer(state.getTimeControl());
-                            timer2 = new GameTimer(state.getTimeControl());
+                            timer1 = new Timer(1000, new ActionListener() {
+                                @Override
+                                public void actionPerformed(ActionEvent e) {
+                                    timer1Time--;
+                                    gameView.setPlayer1Time((timer1Time /60) + ":" + (timer1Time %60));
+                                    if(timer1Time==0){
+                                        timer1.stop();
+                                        //should sent signal to server that one player wins, register result in DB in "stats" and then terminate game
+                                        System.out.println("Player 2 wins on time");
+                                    }
+
+                                }
+                            });
+                            gameView.setPlayer1Time(state.getTimeControl()+ ":00");
+
+                            timer1.setInitialDelay(0);
+
+                            timer2 = new Timer(1000, new ActionListener() {
+                                @Override
+                                public void actionPerformed(ActionEvent e) {
+                                    timer2Time--;
+                                    gameView.setPlayer2Time((timer2Time /60) + ":" + (timer2Time %60));
+                                    if(timer2Time==0){
+                                        timer2.stop();
+                                        System.out.println("Player 1 wins on time");
+                                    }
+                                }
+                            });
+                            gameView.setPlayer2Time(state.getTimeControl()+ ":00");
+
+
+                            timer2.setInitialDelay(0);
+
+                            //starts timers right away?
+                        }
+                        if (state.getPlayerTurn() % 1 != 0 && state.getStarted()){
+                            startPlayer1Time();
+                        }
+                        if (state.getPlayerTurn() %1 == 0 && state.getStarted()){
+                            startPlayer2Time();
                         }
 
-                        gameView.setPlayer1Time("" + state.getTimeTimer1());
-                        gameView.setPlayer2Time("" + state.getTimeTimer2());
 
 
                         gameView.setPlayer1Name(state.getPlayer1());
                         gameView.setPlayer2Name(state.getPlayer2());
 
-                        timer1.turnOn();
-                        timer2.turnOn();
-
-
                         drawMap(state.getCpa());
 
-
-                        //ToDo fixa player names labels timer etc
+                        //ToDo timer etc
 
 
                     } else if (obj instanceof Message) {
                         // Lägg message i textArea
                     } else if(obj instanceof ArrayList) {
                         ArrayList<String> players = (ArrayList<String>) obj; // No problem
-                        System.out.println("CLIENT: players length" + players.size());
+                        //
+                        // System.out.println("CLIENT: players length" + players.size());
 
                         lobbyView.getUserPanel().setOnlinePlayers(players);
 
@@ -207,5 +247,14 @@ public class Client {
 
     public static void main(String[] args) {
         new Client();
+    }
+
+    public void startPlayer1Time(){
+        timer2.stop();
+        timer1.start();
+    }
+    public void startPlayer2Time(){
+        timer1.stop();
+        timer2.start();
     }
 }
