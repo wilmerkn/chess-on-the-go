@@ -183,7 +183,6 @@ public class Server implements Runnable {
                             state.turnIncrement();
                             state.setStarted();
                             if (state.getPlayerTurn() % 1 == 0){
-
                                 //stop timer for player1 and start for the other one
                             } else{
                                 //stop timer for player2 and start for the other one
@@ -699,72 +698,6 @@ public class Server implements Runnable {
             System.out.println();
         }
         System.out.println("-----------------------------------------------------------");
-    }
-
-    public boolean moveValid(int sourceRow, int sourceCol, int targetRow, int targetCol, ChessPieceAbstract[][] gamemap){
-        ChessPiece cp = (ChessPiece) gamemap[sourceRow][sourceCol];
-        int[][] moveset = cp.getMoveset();
-        ChessPieceType chessPieceType = cp.getChessPieceType();
-
-        int movesetOffsetY = -1;
-        int movesetOffsetX = -1;
-
-        try {
-            //get offsets from moveset
-            for(int row = 0; row < moveset.length; row ++){
-                for (int col = 0; col < moveset[row].length; col++){
-                    if(moveset[row][col] == 0){ //find number 0 in moveset array to get offsets
-                        movesetOffsetY = row;
-                        movesetOffsetX = col;
-                        break;
-                    }
-                }
-            }
-
-        } catch (Exception e) {
-
-        }
-
-        int yTrOffset = (sourceRow-targetRow);
-        int xTrOffset = (sourceCol-targetCol);
-
-        boolean samespot = false;
-        boolean withinMoveset = false;
-        boolean friendlyObstruction = false;
-        boolean pawnobstruct = false;
-        boolean pawnattacks = false;
-        boolean pawnTwoMoveObstruct = false;
-        boolean rookobstruction = false;
-        boolean bishopobstruction = false;
-        boolean queenObstruction = false;
-
-        samespot = samecpspot(sourceRow, sourceCol, targetRow, targetCol);
-        withinMoveset = moveWithinCPMoveset(sourceRow, sourceCol, targetRow, targetCol, movesetOffsetY, movesetOffsetX, yTrOffset, xTrOffset, moveset, cp, gamemap);
-        friendlyObstruction = friendlyCPObstruction(targetRow,targetCol,gamemap,cp);
-        pawnattacks = pawnAttack(targetRow,targetCol,movesetOffsetY,movesetOffsetX,yTrOffset,xTrOffset,moveset,cp,gamemap);
-        pawnobstruct = pawnObstruct(targetRow,targetCol,gamemap,cp);
-        pawnTwoMoveObstruct = pawnTwoMoves(targetRow,sourceRow,sourceCol,gamemap,cp);
-        rookobstruction = rookObstruction(sourceRow,sourceCol,targetRow,targetCol,gamemap,cp);
-        bishopobstruction = bishopObstruction(sourceRow,sourceCol,targetRow,targetCol,gamemap,cp);
-        queenObstruction = queenObstruction(sourceRow,sourceCol,targetRow,targetCol,gamemap,cp);
-
-        System.out.println("Samespot error: " + samespot);
-        System.out.println("Withinmoveset error: " + withinMoveset);
-        System.out.println("FriendlyObstruction error: " + friendlyObstruction);
-        System.out.println("pawnObstruction error: " + pawnobstruct);
-        System.out.println("PawnAttack: " + pawnattacks);
-        System.out.println("PawnTwoMovesObstruct error: " + pawnTwoMoveObstruct);
-        System.out.println("RookObstruction error: " + rookobstruction);
-        System.out.println("BishopObstruction error: " + bishopobstruction);
-        System.out.println("queenObstruction error: " + queenObstruction);
-
-        if( (!samespot && !withinMoveset && !friendlyObstruction && !pawnobstruct && !pawnTwoMoveObstruct && !rookobstruction && !bishopobstruction) || (pawnattacks) || ( (!samespot && !withinMoveset && !friendlyObstruction && !pawnobstruct && !pawnTwoMoveObstruct) && !queenObstruction ) ){//if errorchecks are negative make move valid
-            return true; //move is valid
-        }
-        else{
-            return false;
-        }
-
     }
 
     public boolean samecpspot(int sR, int sC, int tR, int tC){

@@ -213,7 +213,6 @@ public class Client {
 
                         drawMap(state.getCpa());
 
-                        //ToDo timer etc
 
                     } else if (obj instanceof Message) {
                         // Lägg message i textArea
