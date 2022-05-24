@@ -18,8 +18,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class Client {
-    private static final String HOST = "4.tcp.ngrok.io";
-    private static final int PORT = 16396;
+    private static final String HOST = "127.0.0.1";
+    private static final int PORT = 1234;
 
     private Socket socket;
     private ObjectInputStream ois;
@@ -37,6 +37,7 @@ public class Client {
     private int timer2Time;
 
     private GameState state;
+
 
 
     public Client() {
@@ -139,17 +140,22 @@ public class Client {
                         }
 
                     } else if (obj instanceof GameState) {
+
                         state = (GameState) obj;
                         //if a move is made by one player, others timer should start
                         //System.out.println(username + " tar emot gamestate. ID: " + gameID);
                         gameID = state.getGameID();
                         //get playerTurn, depending on whos turn stop and start timers
+                        //boolean myTurn;
 
                         if(!state.getStarted()) {
+                            gameView = new GameView(Client.this);
                             timer1Time = state.getTimer1Time();
                             timer2Time = state.getTimer2Time();
+                            gameView.getBoardPanel().disableMouseListeners();
 
-                            gameView = new GameView(Client.this);
+
+
                             timer1 = new Timer(1000, new ActionListener() {
                                 @Override
                                 public void actionPerformed(ActionEvent e) {
@@ -181,19 +187,26 @@ public class Client {
                             gameView.setPlayer2Time(state.getTimeControl()+ ":00");
                             timer2.setInitialDelay(0);
                         }
-                        if(state.getPlayerTurn() % 1 == 0 && state.getPlayer1White() == 1 && username.equals(state.getPlayer1())) {
+
+                        if(username.equals(state.getPlayer1()) && state.getPlayerTurn() % 1 == 0 && state.getPlayer1White() == 1) {
                             gameView.getBoardPanel().enableMouseListeners();
-                        } else {
-                            gameView.getBoardPanel().disableMouseListeners();
+                        }
+                        if(username.equals(state.getPlayer2()) && state.getPlayerTurn() % 1 != 0 && state.getPlayer1White() == 1){
+                            gameView.getBoardPanel().enableMouseListeners();
+
+                        }if(username.equals(state.getPlayer1()) && state.getPlayerTurn() % 1 != 0 && state.getPlayer1White() == 0) {
+                            gameView.getBoardPanel().enableMouseListeners();
+                        }
+                        if(username.equals(state.getPlayer2()) && state.getPlayerTurn() % 1 == 0 && state.getPlayer1White() == 0){
+                            gameView.getBoardPanel().enableMouseListeners();
                         }
 
                         if (state.getPlayerTurn() % 1 != 0 && state.getStarted()){ // Svarts tur!
-                            gameView.getBoardPanel().enableMouseListeners();
-                            startPlayer1Time();
+                            startPlayer2Time();
                         }
                         if (state.getPlayerTurn() %1 == 0 && state.getStarted()){ // Vits tur
-                            startPlayer2Time();
-                        }*/
+                            startPlayer1Time();
+                        }
 
                         gameView.setPlayer1Name(state.getPlayer1());
                         gameView.setPlayer2Name(state.getPlayer2());
@@ -205,9 +218,7 @@ public class Client {
                     } else if (obj instanceof Message) {
                         // Lägg message i textArea
                     } else if(obj instanceof ArrayList) {
-                        ArrayList<String> players = (ArrayList<String>) obj; // No problem
-                        //
-                        // System.out.println("CLIENT: players length" + players.size());
+                        ArrayList<String> players = (ArrayList<String>) obj; // No problem// No problem// No problem// No problem// No problem// No problem
 
                         lobbyView.getUserPanel().setOnlinePlayers(players);
                     } else if (obj instanceof Move) {

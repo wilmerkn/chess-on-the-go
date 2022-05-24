@@ -25,7 +25,7 @@ public class BoardPanel extends JPanel {
     private int sourceRow, sourceCol, targetRow, targetCol;
     private final SquarePanel[][] squares = new SquarePanel[8][8];
 
-    private boolean mouseListenersEnabled = true;
+    private boolean mouseListenersEnabled = false;
 
     private HashMap<String, JLabel> notationToJLMap = BoardUtils.pieceNotationToJL();
 
@@ -53,34 +53,7 @@ public class BoardPanel extends JPanel {
         }
         setVisible(true);
         validate();
-        //populateBoard();
     }
-    /*
-    private void populateBoard() {
-        squares[0][0].placePiece(notationToJLMap.get("BR"));
-        squares[0][1].placePiece(notationToJLMap.get("BN"));
-        squares[0][2].placePiece(notationToJLMap.get("BB"));
-        squares[0][3].placePiece(notationToJLMap.get("BQ"));
-        squares[0][4].placePiece(notationToJLMap.get("BK"));
-        squares[0][5].placePiece(notationToJLMap.get("BB"));
-        squares[0][6].placePiece(notationToJLMap.get("BN"));
-        squares[0][7].placePiece(notationToJLMap.get("BR"));
-        for (int i = 0; i < 8; i++) {
-            squares[1][i].placePiece(notationToJLMap.get("BP"));
-            squares[6][i].placePiece(notationToJLMap.get("WP"));
-        }
-        squares[7][0].placePiece(notationToJLMap.get("WR"));
-        squares[7][1].placePiece(notationToJLMap.get("WN"));
-        squares[7][2].placePiece(notationToJLMap.get("WB"));
-        squares[7][3].placePiece(notationToJLMap.get("WQ"));
-        squares[7][4].placePiece(notationToJLMap.get("WK"));
-        squares[7][5].placePiece(notationToJLMap.get("WB"));
-        squares[7][6].placePiece(notationToJLMap.get("WN"));
-        squares[7][7].placePiece(notationToJLMap.get("WR"));
-    }
-
-     */
-
     private void movePiece(SquarePanel source, SquarePanel target) {
         if (!source.isOccupied()) return;
         else if (target.isOccupied()) target.removePiece();
