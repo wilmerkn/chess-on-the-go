@@ -18,8 +18,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class Client {
-    private static final String HOST = "127.0.0.1";
-    private static final int PORT = 1234;
+    private static final String HOST = "4.tcp.ngrok.io";
+    private static final int PORT = 16396;
 
     private Socket socket;
     private ObjectInputStream ois;
@@ -35,6 +35,8 @@ public class Client {
     private int timer1Time;
     private Timer timer2;
     private int timer2Time;
+
+    private GameState state;
 
 
     public Client() {
@@ -94,6 +96,10 @@ public class Client {
         }
     }
 
+    public String getUsername() {
+        return username;
+    }
+
     private class ServerListener extends Thread {
 
         @Override
@@ -132,7 +138,7 @@ public class Client {
                         }
 
                     } else if (obj instanceof GameState) {
-                        GameState state = (GameState) obj;
+                        state = (GameState) obj;
                         //if a move is made by one player, others timer should start
                         //System.out.println(username + " tar emot gamestate. ID: " + gameID);
                         gameID = state.getGameID();
@@ -257,5 +263,202 @@ public class Client {
         timer1.stop();
         timer2.start();
 
+    }
+
+    public ObjectInputStream getOis() {
+        return ois;
+    }
+
+    public void highlightMovementPattern(int srcY, int srcX){
+
+        int YCord = srcY; //get y/x cordinate of piece
+        int XCord = srcX;
+
+        ChessPieceAbstract[][] gamemap = state.getCpa();
+        ChessPiece cp = (ChessPiece) gamemap[YCord][XCord]; //get piece at cordinate
+        int[][] moveset = cp.getMoveset(); //get moveset of piece
+        BoardPanel.SquarePanel[][] squarePanel = gameView.getBoardPanel().getSquares(); //get GUI panel
+
+        int YOffset = 0; //initialize offsets
+        int XOffset = 0;
+
+        try {
+            //get offsets from moveset
+            for(int row = 0; row < moveset.length; row ++){
+                for (int col = 0; col < moveset[row].length; col++){
+                    if(moveset[row][col] == 0){ //find number 0 in moveset array to get offsets
+                        YOffset = row;
+                        XOffset = col;
+                        break;
+                    }
+                }
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        //y/x = cordinate - offset.
+        boolean runOnce = false;
+        for(int y = (YCord - YOffset); y < (YCord-YOffset+moveset.length); y++){
+            for(int x = (XCord - XOffset); x < (XCord-XOffset+moveset.length);x++){
+                try{
+                    if(moveset[y-(YCord-YOffset)][x-(XCord-XOffset)] == 1 && gamemap[y][x] == null && cp.getChessPieceType() != ChessPieceType.ROOK && cp.getChessPieceType() != ChessPieceType.BISHOP && cp.getChessPieceType() != ChessPieceType.QUEEN){ //if there is a 1 in moveset then highlight tile
+                        squarePanel[y][x].toggleHighlight();
+                    }
+                    if(moveset[y-(YCord-YOffset)][x-(XCord-XOffset)] == 1 && gamemap[YCord-1][XCord] !=null && cp.getChessPieceType() == ChessPieceType.PAWN && cp.getMoved() ==0){ // if pawn has 2 moves with enemy obstruction, dehighlight tile behind enemy peice
+                        if(!runOnce){
+                            runOnce = true;
+                            squarePanel[y][x].toggleHighlight();
+                        }
+                    }
+                    if(moveset[y-(YCord-YOffset)][x-(XCord-XOffset)] == 3 && cp.getChessPieceType() == ChessPieceType.PAWN && ((ChessPiece)gamemap[y][x]).getColor() != cp.getColor()){ //highlight if within pawn attack pattern
+                        squarePanel[y][x].toggleHighlight();
+                    }
+                    if(moveset[y-(YCord-YOffset)][x-(XCord-XOffset)] == 1 && cp.getColor() != ((ChessPiece)gamemap[y][x]).getColor() && cp.getChessPieceType() != ChessPieceType.PAWN && cp.getChessPieceType() != ChessPieceType.ROOK && cp.getChessPieceType() != ChessPieceType.BISHOP && cp.getChessPieceType() != ChessPieceType.QUEEN){ //highlights position if chesspiece is not of same color
+                        squarePanel[y][x].toggleHighlight();
+                    }
+                } catch (Exception e) {
+                    continue;
+                }
+
+            }
+        }
+        //todo optimize rotation of patterns
+        //rook highlight logic
+        if(cp.getChessPieceType() == ChessPieceType.ROOK || cp.getChessPieceType() == ChessPieceType.QUEEN){
+            //iterate all sides
+            //first chess peice block rest of tiles from highlighting.
+
+            //checks obstruction upside
+            int yc = (YCord-1);
+            int xc = (XCord+1);
+
+            for(;yc >= 0; yc--){
+                if(gamemap[yc][XCord] == null){
+                    squarePanel[yc][XCord].toggleHighlight();
+                }
+                if(gamemap[yc][XCord] != null && ((ChessPiece)gamemap[yc][XCord]).getColor() != cp.getColor() ){
+                    squarePanel[yc][XCord].toggleHighlight();
+                    break;
+                }
+                else if(gamemap[yc][XCord] != null && ((ChessPiece)gamemap[yc][XCord]).getColor() == cp.getColor() ){
+                    break;
+                }
+            }
+
+            //checks obstruction right side
+            for(;xc <= gamemap.length-1; xc++){
+                if(gamemap[YCord][xc] == null){
+                    squarePanel[YCord][xc].toggleHighlight();
+                }
+                if(gamemap[YCord][xc] != null && ((ChessPiece)gamemap[YCord][xc]).getColor() != cp.getColor() ){
+                    squarePanel[YCord][xc].toggleHighlight();
+                    break;
+                }
+                else if(gamemap[YCord][xc] != null && ((ChessPiece)gamemap[YCord][xc]).getColor() == cp.getColor() ){
+                    break;
+                }
+            }
+
+            //checks obstruction below
+            yc = (YCord+1);
+            for(;yc <= gamemap.length-1; yc++){
+                if(gamemap[yc][XCord] == null){
+                    squarePanel[yc][XCord].toggleHighlight();
+                }
+                if(gamemap[yc][XCord] != null && ((ChessPiece)gamemap[yc][XCord]).getColor() != cp.getColor() ){
+                    squarePanel[yc][XCord].toggleHighlight();
+                    break;
+                }
+                else if(gamemap[yc][XCord] != null && ((ChessPiece)gamemap[yc][XCord]).getColor() == cp.getColor() ){
+                    break;
+                }
+            }
+
+            //checks obstruction left
+            xc = (XCord-1);
+            for(;xc >= 0; xc--){
+                if(gamemap[YCord][xc] == null){
+                    squarePanel[YCord][xc].toggleHighlight();
+                }
+                if(gamemap[YCord][xc] != null && ((ChessPiece)gamemap[YCord][xc]).getColor() != cp.getColor() ){
+                    squarePanel[YCord][xc].toggleHighlight();
+                    break;
+                }
+                else if(gamemap[YCord][xc] != null && ((ChessPiece)gamemap[YCord][xc]).getColor() == cp.getColor() ){
+                    break;
+                }
+            }
+        }
+        //iterate and highlight bishop path unless obstructed by foe or friend
+        if(cp.getChessPieceType() == ChessPieceType.BISHOP || cp.getChessPieceType() == ChessPieceType.QUEEN){
+
+            //top right
+            int xc = (XCord+1);
+            int yc = (YCord-1);
+
+            for(; (yc >= 0) && (xc < gamemap[yc].length); yc--,xc++){
+                if(gamemap[yc][xc] == null){
+                    squarePanel[yc][xc].toggleHighlight();
+                }
+                if(gamemap[yc][xc] != null && ((ChessPiece)gamemap[yc][xc]).getColor() != cp.getColor() ){
+                    squarePanel[yc][xc].toggleHighlight();
+                    break;
+                }
+                else if(gamemap[yc][xc] != null && ((ChessPiece)gamemap[yc][xc]).getColor() == cp.getColor() ){
+                    break;
+                }
+            }
+
+            xc = (XCord+1);
+            yc = (YCord+1);
+
+            for(; (yc < gamemap.length) && xc < gamemap[yc].length; yc++,xc++){
+                if(gamemap[yc][xc] == null){
+                    squarePanel[yc][xc].toggleHighlight();
+                }
+                if(gamemap[yc][xc] != null && ((ChessPiece)gamemap[yc][xc]).getColor() != cp.getColor() ){
+                    squarePanel[yc][xc].toggleHighlight();
+                    break;
+                }
+                else if(gamemap[yc][xc] != null && ((ChessPiece)gamemap[yc][xc]).getColor() == cp.getColor() ){
+                    break;
+                }
+            }
+
+            xc = (XCord-1);
+            yc = (YCord+1);
+
+            for(; (yc < gamemap.length) && xc >= 0; yc++,xc--){
+                if(gamemap[yc][xc] == null){
+                    squarePanel[yc][xc].toggleHighlight();
+                }
+                if(gamemap[yc][xc] != null && ((ChessPiece)gamemap[yc][xc]).getColor() != cp.getColor() ){
+                    squarePanel[yc][xc].toggleHighlight();
+                    break;
+                }
+                else if(gamemap[yc][xc] != null && ((ChessPiece)gamemap[yc][xc]).getColor() == cp.getColor() ){
+                    break;
+                }
+            }
+
+            xc= (XCord-1);
+            yc= (YCord-1);
+
+            for(; (yc >= 0) && xc >= 0; yc--,xc--){
+                if(gamemap[yc][xc] == null){
+                    squarePanel[yc][xc].toggleHighlight();
+                }
+                if(gamemap[yc][xc] != null && ((ChessPiece)gamemap[yc][xc]).getColor() != cp.getColor() ){
+                    squarePanel[yc][xc].toggleHighlight();
+                    break;
+                }
+                else if(gamemap[yc][xc] != null && ((ChessPiece)gamemap[yc][xc]).getColor() == cp.getColor() ){
+                    break;
+                }
+            }
+
+        }
     }
 }

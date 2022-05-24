@@ -132,7 +132,7 @@ public class GameLogic {
                 //store coordinates of moves that are either empty or that have the opposite player's chess pieces on it
                 if(board[i][j]==null || cp.getColor().equals(enemyColor)){
                     //check if the king can move there
-                    if(moveValid(getLocationX(theKing, board), getLocationY(theKing, board), i, j, board)==true){
+                    if(true) {  //moveValid(getLocationX(theKing, board), getLocationY(theKing, board), i, j, board)==true){
                         //save the coordinates
                         xKing.add(i);
                         yKing.add(j);
@@ -241,7 +241,7 @@ public class GameLogic {
                             ChessPieceAbstract[][] mapp = model.getMap().getMap();
                             int kingX = getLocationX(theKing, model.getMap().getMap());
                             int kingY = getLocationY(theKing, model.getMap().getMap());
-                            boolean valid = moveValid(i, j, kingX, kingY, mapp);
+                            boolean valid = true; // moveValid(i, j, kingX, kingY, mapp);
                             if (valid) {
                                 System.out.println("CHECK!");
                                 return true;
@@ -268,10 +268,8 @@ public class GameLogic {
         mapp[chessPiece1Row][chessPiece1Col] = chessPiece1;
         mapp[chessPiece2Row][chessPiece2Col] = chessPiece2;
         //see if the first chess piece can attack the second chess piece
-        boolean valid = moveValid(chessPiece1Row, chessPiece1Col, chessPiece2Row, chessPiece2Col, mapp);
-        if(valid){
-            return true;
-        }
+        //boolean valid = moveValid(chessPiece1Row, chessPiece1Col, chessPiece2Row, chessPiece2Col, mapp);
+
         return false;
     }
 
@@ -583,7 +581,7 @@ public class GameLogic {
     }*/
 
     //check if move input by user is a valid move in chess
-    public boolean moveValid(int sourceRow, int sourceCol, int targetRow, int targetCol, ChessPieceAbstract[][] gamemap){
+    /*public boolean moveValid(int sourceRow, int sourceCol, int targetRow, int targetCol, ChessPieceAbstract[][] gamemap){
         ChessPiece cp = (ChessPiece) gamemap[sourceRow][sourceCol];
         int[][] moveset = cp.getMoveset();
         ChessPieceType chessPieceType = cp.getChessPieceType();
@@ -837,7 +835,7 @@ public class GameLogic {
             return true;
         }
         return false;
-    }
+    }*/
 
     //cleans board of chesspiece sprites
 /*    public void cleanBoard(){

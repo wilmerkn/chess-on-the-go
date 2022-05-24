@@ -214,7 +214,7 @@ public class BoardPanel extends JPanel {
                     if (!squarePanel.isOccupied()) return;
                     sourceRow = squarePanel.getRow();
                     sourceCol = squarePanel.getCol();
-                    //gameLogic.highlightMovementPattern(sourceRow,sourceCol);
+                    client.highlightMovementPattern(sourceRow, sourceCol);
                     squares[sourceRow][sourceCol].toggleHighlight();
                     targetRow = targetCol = -1;
 
@@ -223,7 +223,7 @@ public class BoardPanel extends JPanel {
                     targetCol = squarePanel.getCol();
 
                     if(sourceRow == targetRow && sourceCol == targetCol){
-                        //gameLogic.highlightMovementPattern(sourceRow,sourceCol);
+                        client.highlightMovementPattern(sourceRow, sourceCol);
                         squares[sourceRow][sourceCol].toggleHighlight();
                         sourceRow = sourceCol = targetRow = targetCol = -1;
                         return;
@@ -231,13 +231,20 @@ public class BoardPanel extends JPanel {
                     //valid = gameLogic.moveValid(sourceRow, sourceCol, targetRow, targetCol, gameLogic.getModel().getMap().getMap());
                     //valid = någotfrånServern.isValid() ???????¤¤¤¤¤¤¤
                     Move move = new Move(sourceRow, sourceCol, targetRow, targetCol);
+                    move.setUsername(client.getUsername());
                     client.sendMove(move);
+                    boolean validMove = false;
+                    try {
+                        validMove = client.getOis().readBoolean();
+                    } catch (IOException ex) {
+                        throw new RuntimeException(ex);
+                    }
 
-
-                    valid = true;
-                    if(valid){
+                    if(validMove){
                         //movePiece(squares[sourceRow][sourceCol], squares[targetRow][targetCol]);
                         squares[sourceRow][sourceCol].toggleHighlight();
+                        client.highlightMovementPattern(sourceRow, sourceCol);
+
                         //gameLogic.highlightMovementPattern(sourceRow,sourceCol); //turns off highlights
                         //gameLogic.update(sourceRow,sourceCol,targetRow,targetCol); //update view
                         sourceRow = sourceCol = targetRow = targetCol = -1;

@@ -5,6 +5,7 @@ import java.io.Serializable;
 public class Move implements Serializable {
 
     private String gameID;
+    private String username;
 
     private int sourceRow;
     private int sourceCol;
@@ -50,5 +51,13 @@ public class Move implements Serializable {
 
     public void setGameID(String gameID) {
         this.gameID = gameID;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getUsername() {
+        return username;
     }
 }
