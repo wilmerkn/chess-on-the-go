@@ -113,30 +113,27 @@ public class Server implements Runnable {
 
                             if(state.getPlayer1White() == 1) {
 
-                                playerClientMap.get(usernamePlayerMap.get(challenge.getSenderUsername())).getOos().reset();
-                                playerClientMap.get(usernamePlayerMap.get(challenge.getSenderUsername())).getOos().writeObject(state);
-                                playerClientMap.get(usernamePlayerMap.get(challenge.getSenderUsername())).getOos().flush();
+                                playerClientMap.get(usernamePlayerMap.get(state.getPlayer1())).getOos().reset();
+                                playerClientMap.get(usernamePlayerMap.get(state.getPlayer1())).getOos().writeObject(state);
+                                playerClientMap.get(usernamePlayerMap.get(state.getPlayer1())).getOos().flush();
 
                                 inverseMapArray();
-                                playerClientMap.get(usernamePlayerMap.get(challenge.getReceiverUsername())).getOos().reset();
-                                playerClientMap.get(usernamePlayerMap.get(challenge.getReceiverUsername())).getOos().writeObject(state);
-                                playerClientMap.get(usernamePlayerMap.get(challenge.getReceiverUsername())).getOos().flush();
-                                inverseMapArray();
-
+                                playerClientMap.get(usernamePlayerMap.get(state.getPlayer2())).getOos().reset();
+                                playerClientMap.get(usernamePlayerMap.get(state.getPlayer2())).getOos().writeObject(state);
+                                playerClientMap.get(usernamePlayerMap.get(state.getPlayer2())).getOos().flush();
 
 
                             } else {
-                                inverseMapArray();
-                                playerClientMap.get(usernamePlayerMap.get(challenge.getSenderUsername())).getOos().reset();
-                                playerClientMap.get(usernamePlayerMap.get(challenge.getSenderUsername())).getOos().writeObject(state);
-                                playerClientMap.get(usernamePlayerMap.get(challenge.getSenderUsername())).getOos().flush();
-                                inverseMapArray();
+                                playerClientMap.get(usernamePlayerMap.get(state.getPlayer2())).getOos().reset();
+                                playerClientMap.get(usernamePlayerMap.get(state.getPlayer2())).getOos().writeObject(state);
+                                playerClientMap.get(usernamePlayerMap.get(state.getPlayer2())).getOos().flush();
 
-                                playerClientMap.get(usernamePlayerMap.get(challenge.getReceiverUsername())).getOos().reset();
-                                playerClientMap.get(usernamePlayerMap.get(challenge.getReceiverUsername())).getOos().writeObject(state);
-                                playerClientMap.get(usernamePlayerMap.get(challenge.getReceiverUsername())).getOos().flush();
-
+                                inverseMapArray();
+                                playerClientMap.get(usernamePlayerMap.get(state.getPlayer1())).getOos().reset();
+                                playerClientMap.get(usernamePlayerMap.get(state.getPlayer1())).getOos().writeObject(state);
+                                playerClientMap.get(usernamePlayerMap.get(state.getPlayer1())).getOos().flush();
                             }
+                            inverseMapArray();
 
                             state.setStarted();
 
@@ -156,9 +153,13 @@ public class Server implements Runnable {
 
                         boolean validMove;
 
-                        if(state.getPlayer1White() == 1) {
+                        if(state.getPlayer1White() == 1 && move.getUsername().equals(state.getPlayer1()) && state.getPlayerTurn() % 1 == 0) {
                             validMove = moveValid(move, state.getCpa());
-                        } else {
+                        }
+                        if(state.getPlayer1White() != 1 && move.getUsername().equals(state.getPlayer2()) && state.getPlayerTurn() % 1 == 0){
+                            validMove = moveValid(move, state.getCpa());
+                        }
+                        else {
                             inverseMapArray();
                             validMove = moveValid(move, state.getCpa());
                             inverseMapArray();
@@ -172,9 +173,13 @@ public class Server implements Runnable {
                         //depending on which turn it is timer should be stopped and started for the other player.
 
                         if(validMove) {
-                            if(state.getPlayer1White() == 1 && (move.getUsername().equals(state.getPlayer1()))) {
+                            if(state.getPlayer1White() == 1 && (move.getUsername().equals(state.getPlayer1())) && state.getPlayerTurn() % 1 == 0) {
                                 state.setCpa(update(move, state.getCpa()));
-                            } else {
+                            }
+                            else if(state.getPlayer1White() != 1 && (move.getUsername().equals(state.getPlayer2())) && state.getPlayerTurn() % 1 == 0){
+                                state.setCpa(update(move, state.getCpa()));
+                            }
+                            else {
                                 inverseMapArray();
                                 state.setCpa(update(move, state.getCpa()));
                                 inverseMapArray();
@@ -182,11 +187,6 @@ public class Server implements Runnable {
 
                             state.turnIncrement();
                             state.setStarted();
-                            if (state.getPlayerTurn() % 1 == 0){
-                                //stop timer for player1 and start for the other one
-                            } else{
-                                //stop timer for player2 and start for the other one
-                            }
 
                             if(state.getPlayer1White() == 1) {
 
