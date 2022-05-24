@@ -38,7 +38,7 @@ public class GameView implements ActionListener{
         frame.setBounds(new Rectangle(CLIENT_DIMENSION));
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         frame.setLocationRelativeTo(null);
-        frame.setResizable(false);
+        frame.setResizable(true);
         frame.setLayout(null);
         //frame.getContentPane().setBackground(new Color(35,35,35));
 
