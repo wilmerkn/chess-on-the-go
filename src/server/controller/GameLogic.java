@@ -26,11 +26,14 @@ public class GameLogic {
     //private GameView view;
     private GameModel model;
     private GameAudio gameAudio;
+    private ChessPieceAbstract originalBoard [][];
 
     public GameLogic(){
 
         //this.view = new GameView(this);
+
         this.model = new GameModel();
+        this.originalBoard = model.getMap().getMap();
         this.gameAudio = new GameAudio();
 
         //all game code runs here
