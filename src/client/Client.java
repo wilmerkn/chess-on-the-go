@@ -110,7 +110,6 @@ public class Client {
                             username = request.getUsername();
                             lobbyView = new LobbyView(Client.this);
                             loginView.closeLoginWindow();
-
                         }
                     } else if(obj instanceof ChallengeRequest) {
                         ChallengeRequest challenge = (ChallengeRequest) obj;
@@ -128,41 +127,64 @@ public class Client {
                             oos.writeObject(challenge);
                             oos.flush();
                             lobbyView.dispose();
+                            //set timeControl
 
                         }
 
                     } else if (obj instanceof GameState) {
                         GameState state = (GameState) obj;
-
-                        System.out.println(username + " tar emot gamestate. ID: " + gameID);
+                        //if a move is made by one player, others timer should start
+                        //System.out.println(username + " tar emot gamestate. ID: " + gameID);
                         gameID = state.getGameID();
-
-                        timer1Time = state.getTimer1Time();
-                        timer2Time = state.getTimer2Time();
+                        //get playerTurn, depending on whos turn stop and start timers
 
                         if(!state.getStarted()) {
+                            timer1Time = state.getTimer1Time();
+                            timer2Time = state.getTimer2Time();
+
                             gameView = new GameView(Client.this);
                             timer1 = new Timer(1000, new ActionListener() {
                                 @Override
                                 public void actionPerformed(ActionEvent e) {
                                     timer1Time--;
                                     gameView.setPlayer1Time((timer1Time /60) + ":" + (timer1Time %60));
+                                    if(timer1Time==0){
+                                        timer1.stop();
+                                        //should sent signal to server that one player wins, register result in DB in "stats" and then terminate game
+                                        System.out.println("Player 2 wins on time");
+                                    }
+
                                 }
                             });
+                            gameView.setPlayer1Time(state.getTimeControl()+ ":00");
+
                             timer1.setInitialDelay(0);
 
                             timer2 = new Timer(1000, new ActionListener() {
                                 @Override
                                 public void actionPerformed(ActionEvent e) {
                                     timer2Time--;
-                                    gameView.setPlayer2Time((timer1Time /60) + ":" + (timer1Time %60));
+                                    gameView.setPlayer2Time((timer2Time /60) + ":" + (timer2Time %60));
+                                    if(timer2Time==0){
+                                        timer2.stop();
+                                        System.out.println("Player 1 wins on time");
+                                    }
                                 }
                             });
+                            gameView.setPlayer2Time(state.getTimeControl()+ ":00");
+
+
                             timer2.setInitialDelay(0);
 
-                            timer1.start();
-                            timer2.start();
+                            //starts timers right away?
                         }
+                        if (state.getPlayerTurn() % 1 != 0 && state.getStarted()){
+                            startPlayer1Time();
+                        }
+                        if (state.getPlayerTurn() %1 == 0 && state.getStarted()){
+                            startPlayer2Time();
+                        }
+
 
 
                         gameView.setPlayer1Name(state.getPlayer1());
@@ -170,14 +192,15 @@ public class Client {
 
                         drawMap(state.getCpa());
 
-                        //ToDo fixa player names labels timer etc
+                        //ToDo timer etc
 
 
                     } else if (obj instanceof Message) {
                         // Lägg message i textArea
                     } else if(obj instanceof ArrayList) {
                         ArrayList<String> players = (ArrayList<String>) obj; // No problem
-                        System.out.println("CLIENT: players length" + players.size());
+                        //
+                        // System.out.println("CLIENT: players length" + players.size());
 
                         lobbyView.getUserPanel().setOnlinePlayers(players);
 
@@ -224,5 +247,15 @@ public class Client {
 
     public static void main(String[] args) {
         new Client();
+    }
+
+    public void startPlayer1Time(){
+        timer2.stop();
+        timer1.start();
+    }
+    public void startPlayer2Time(){
+        timer1.stop();
+        timer2.start();
+
     }
 }

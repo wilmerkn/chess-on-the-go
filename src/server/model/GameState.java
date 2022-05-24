@@ -10,7 +10,7 @@ public class GameState implements Serializable {
 
     private String gameID = UUID.randomUUID().toString();
 
-    private int playerTurn;
+    private double playerTurn;
     private boolean checkMate;
 
     private String player1;
@@ -54,6 +54,7 @@ public class GameState implements Serializable {
         });
         timer2.setInitialDelay(0);
     }
+    /*
 
     public void startTimer1() {
         timer1.start();
@@ -70,8 +71,8 @@ public class GameState implements Serializable {
     public void stopTimer2() {
         timer2.stop();
     }
-
-    public int getPlayerTurn() {
+*/
+    public double getPlayerTurn() {
         return playerTurn;
     }
 
@@ -124,7 +125,9 @@ public class GameState implements Serializable {
     }
 
     public void setStarted() {
-        this.started = true;
+        if (playerTurn != 1){
+            this.started = true;
+        }
     }
 
     public boolean getStarted() {
@@ -146,12 +149,17 @@ public class GameState implements Serializable {
     public int getTimer2Time() {
         return timer2Time;
     }
-
+/*
     public Timer getTimer1() {
         return timer1;
     }
 
     public Timer getTimer2() {
         return timer2;
+    }
+*/
+    public void turnIncrement(){
+        playerTurn += 0.5;
+            System.out.println(playerTurn);
     }
 }
