@@ -4,7 +4,9 @@ import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.Serializable;
+import java.util.Random;
 import java.util.UUID;
+import java.security.SecureRandom;
 
 public class GameState implements Serializable {
 
@@ -29,9 +31,13 @@ public class GameState implements Serializable {
 
     private boolean started = false;
 
+    private int player1White;
+
     public GameState(){
         playerTurn = 1;
         checkMate = false;
+        Random rand = new SecureRandom();
+        player1White = rand.nextInt(2);
     }
 
     public void prepareTimers(int timeControl) {
@@ -54,24 +60,31 @@ public class GameState implements Serializable {
         });
         timer2.setInitialDelay(0);
     }
+
+    public int getPlayer1White() {
+        return player1White;
+    }
+
     /*
 
-    public void startTimer1() {
-        timer1.start();
-    }
+        public void startTimer1() {
+            timer1.start();
+        }
 
-    public void stopTimer1() {
-        timer1.stop();
-    }
+        public void stopTimer1() {
+            timer1.stop();
+        }
 
-    public void startTimer2() {
-        timer2.start();
-    }
+        public void startTimer2() {
+            timer2.start();
+        }
 
-    public void stopTimer2() {
-        timer2.stop();
-    }
-*/
+        public void stopTimer2() {
+            timer2.stop();
+        }
+
+
+    */
     public double getPlayerTurn() {
         return playerTurn;
     }

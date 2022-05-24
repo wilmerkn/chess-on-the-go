@@ -21,11 +21,11 @@ public class Move implements Serializable {
         this.targetCol = targetCol;
     }
 
-    private void setLegalMove(boolean bol) {
+    public void setLegalMove(boolean bol) {
         this.legalMove = bol;
     }
 
-    private boolean isLegalMove() {
+    public boolean isLegalMove() {
         return legalMove;
     }
 

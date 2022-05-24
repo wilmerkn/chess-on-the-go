@@ -112,6 +112,7 @@ public class BoardPanel extends JPanel {
         return squares;
     }
 
+
     public static class SquarePanel extends JPanel {
         private final int row;
         private final int col;
@@ -233,23 +234,22 @@ public class BoardPanel extends JPanel {
                     Move move = new Move(sourceRow, sourceCol, targetRow, targetCol);
                     move.setUsername(client.getUsername());
                     client.sendMove(move);
-                    boolean validMove = false;
-                    try {
-                        validMove = client.getOis().readBoolean();
-                    } catch (IOException ex) {
-                        throw new RuntimeException(ex);
-                    }
 
-                    if(validMove){
+
+
                         //movePiece(squares[sourceRow][sourceCol], squares[targetRow][targetCol]);
-                        squares[sourceRow][sourceCol].toggleHighlight();
-                        client.highlightMovementPattern(sourceRow, sourceCol);
+
 
                         //gameLogic.highlightMovementPattern(sourceRow,sourceCol); //turns off highlights
                         //gameLogic.update(sourceRow,sourceCol,targetRow,targetCol); //update view
-                        sourceRow = sourceCol = targetRow = targetCol = -1;
-                        //todo make next turn if this runs
+                    sourceRow = sourceCol = targetRow = targetCol = -1;
+                    for (int i = 0; i < 8; i++) {
+                        for (int j = 0; j < 8; j++) {
+                            if(squares[i][j].getBorder() != null) squares[i][j].setBorder(null);
+                        }
                     }
+                        //todo make next turn if this runs
+
                 }
             } else if (SwingUtilities.isRightMouseButton(e) && !(sourceRow == -1 && sourceCol == -1)) {
                 squares[sourceRow][sourceCol].toggleHighlight();
@@ -266,6 +266,12 @@ public class BoardPanel extends JPanel {
         @Override
         public void mouseExited(MouseEvent e) {}
     }
+
+    public void updateMoveValid(int sRow, int sCol) {
+        squares[sRow][sCol].toggleHighlight();
+        client.highlightMovementPattern(sRow, sCol);
+    }
+
 }
 
 

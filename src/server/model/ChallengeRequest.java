@@ -2,6 +2,7 @@ package server.model;
 
 import java.io.Serializable;
 
+
 public class ChallengeRequest implements Serializable {
     private String senderUsername;
     private String receiverUsername;

@@ -191,15 +191,12 @@ public class Client {
                             startPlayer2Time();
                         }
 
-
-
                         gameView.setPlayer1Name(state.getPlayer1());
                         gameView.setPlayer2Name(state.getPlayer2());
 
                         drawMap(state.getCpa());
 
                         //ToDo timer etc
-
 
                     } else if (obj instanceof Message) {
                         // Lägg message i textArea
@@ -209,6 +206,11 @@ public class Client {
                         // System.out.println("CLIENT: players length" + players.size());
 
                         lobbyView.getUserPanel().setOnlinePlayers(players);
+                    } else if (obj instanceof Move) {
+                        Move move = (Move) obj;
+                        if(move.isLegalMove()) {
+                            gameView.getBoardPanel().updateMoveValid(move.getSourceRow(), move.getSourceCol());
+                        }
 
                     }
                 }
