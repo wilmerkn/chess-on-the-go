@@ -150,7 +150,7 @@ public class BoardView {
                             if(!squarePanel.isOccupied()) return;
                             sourceRow = squarePanel.getRow();
                             sourceCol = squarePanel.getCol();
-                            gameLogic.highlightMovementPattern(sourceRow,sourceCol);
+                            //gameLogic.highlightMovementPattern(sourceRow,sourceCol);
                             squares[sourceRow][sourceCol].toggleHighlight();
                             targetRow = targetCol = -1;
                             //System.out.println("row "+sourceRow);
@@ -160,12 +160,12 @@ public class BoardView {
                             targetRow = squarePanel.getRow();
                             targetCol = squarePanel.getCol();
 
-                            valid = gameLogic.moveValid(sourceRow,sourceCol,targetRow,targetCol);
+                            valid = gameLogic.moveValid(sourceRow,sourceCol,targetRow,targetCol, gameLogic.getModel().getMap().getMap());
                             if(valid){
                                 movePiece(squares[sourceRow][sourceCol], squares[targetRow][targetCol]);
                                 squares[sourceRow][sourceCol].toggleHighlight();
-                                gameLogic.highlightMovementPattern(sourceRow,sourceCol); //turns off highlights
-                                gameLogic.update(sourceRow,sourceCol,targetRow,targetCol); //update view
+                                //gameLogic.highlightMovementPattern(sourceRow,sourceCol); //turns off highlights
+                                //gameLogic.update(sourceRow,sourceCol,targetRow,targetCol); //update view
                                 sourceRow = sourceCol = targetRow = targetCol = -1;
                                 //todo make next turn if this runs
                             }
