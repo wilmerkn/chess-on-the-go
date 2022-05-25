@@ -18,8 +18,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class Client {
-    private static final String HOST = "2.tcp.ngrok.io";
-    private static final int PORT = 17247;
+    private static final String HOST = "127.0.0.1";
+    private static final int PORT = 1234;
 
     private Socket socket;
     private ObjectInputStream ois;
