@@ -864,7 +864,8 @@ public class Server implements Runnable {
         }
         return false;
     }
-
+    //dont think this one is being used, there is another one called pretty much the same thing.
+    /*
     public boolean queenObstruction(int sourceRow,int sourceCol,int targetRow,int targetCol,ChessPieceAbstract[][] gamemap,ChessPiece cp){
 
         boolean diagonal = false;
@@ -890,6 +891,8 @@ public class Server implements Runnable {
         return false;
     }
 
+     */
+
     public void inverseMapArray(){
         int mapDim = 8;
         ChessPieceAbstract[][] gamemap = state.getCpa();
@@ -909,4 +912,6 @@ public class Server implements Runnable {
         System.out.println("Server starting");
         new Server();
     }
+
+
 }

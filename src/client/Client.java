@@ -18,8 +18,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class Client {
-    private static final String HOST = "127.0.0.1";
-    private static final int PORT = 1234;
+    private static final String HOST = "2.tcp.ngrok.io";
+    private static final int PORT = 17247;
 
     private Socket socket;
     private ObjectInputStream ois;
@@ -194,18 +194,13 @@ public class Client {
                             } else if (!username.equals(state.getPlayer2())) {
                                 gameView.setOpponentName(state.getPlayer2());
                             }
-                        } else {
-                            startMyTime();
                         }
-
-
+                        //turns off mouselisteners when it's not your turn, might change it so you cant register a moe when it isnt your turn, but you can check highlights
                         if(username.equals(state.getPlayer1()) && state.getPlayerTurn() % 1 == 0 && state.getPlayer1White() == 1) {
                             gameView.getBoardPanel().enableMouseListeners();
-                            if(state.getStarted()) startMyTime();
                         }
                         if(username.equals(state.getPlayer2()) && state.getPlayerTurn() % 1 != 0 && state.getPlayer1White() == 1){
                             gameView.getBoardPanel().enableMouseListeners();
-
                         }if(username.equals(state.getPlayer1()) && state.getPlayerTurn() % 1 != 0 && state.getPlayer1White() == 0) {
                             gameView.getBoardPanel().enableMouseListeners();
                         }
@@ -213,14 +208,47 @@ public class Client {
                             gameView.getBoardPanel().enableMouseListeners();
                         }
 
-                        if (state.getPlayerTurn() % 1 != 0 && state.getStarted()){ // Svarts tur!
 
-                            //startOpponentTime();
+                        //Timers for both boards
+                        if (state.getStarted()){
+                            if(state.getPlayer1White() == 1) {
+                                if (state.getPlayerTurn() % 1 == 0) {
+                                    if (username.equals(state.getPlayer1())) {
+                                        startMyTime();
+                                    }
+                                    if (username.equals(state.getPlayer2())) {
+                                        startOpponentTime();
+                                    }
+                                }
+                                if (state.getPlayerTurn() % 1 != 0) {
+                                    if (username.equals(state.getPlayer1())) {
+                                        startOpponentTime();
+                                    }
+                                    if (username.equals(state.getPlayer2())){
+                                        startMyTime();
+                                    }
+                                }
+                            }
+                            if(state.getPlayer1White() == 0) {
+                                if (state.getPlayerTurn() % 1 == 0) {
+                                    if (username.equals(state.getPlayer1())) {
+                                        //jag är vit, starta min timer
+                                        startOpponentTime();
+                                    }
+                                    if (username.equals(state.getPlayer2())) {
+                                        startMyTime();
+                                    }
+                                }
+                                if (state.getPlayerTurn() % 1 != 0) {
+                                    if (username.equals(state.getPlayer1())) {
+                                        startMyTime();
+                                    }
+                                    if (username.equals(state.getPlayer2())){
+                                        startOpponentTime();
+                                    }
+                                }
+                            }
                         }
-                        if (state.getPlayerTurn() %1 == 0 && state.getStarted()){ // Vits tur
-                            //startMyTime();
-                        }
-
                         drawMap(state.getCpa());
 
 
