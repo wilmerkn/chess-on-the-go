@@ -443,7 +443,7 @@ public class Server implements Runnable {
         rookobstruction = rookObstruct(sourceRow,sourceCol,targetRow,targetCol,gamemap,cp);
         bishopobstruction = bishopObstruct(sourceRow,sourceCol,targetRow,targetCol,gamemap,cp);
         queenObstruction = queenObstruct(sourceRow,sourceCol,targetRow,targetCol,gamemap,cp);
-
+/*
         System.out.println("Samespot error: " + samespot);
         System.out.println("Withinmoveset error: " + withinMoveset);
         System.out.println("FriendlyObstruction error: " + friendlyObstruction);
@@ -453,7 +453,7 @@ public class Server implements Runnable {
         System.out.println("RookObstruction error: " + rookobstruction);
         System.out.println("BishopObstruction error: " + bishopobstruction);
         System.out.println("queenObstruction error: " + queenObstruction);
-
+*/
         if( (!samespot && !withinMoveset && !friendlyObstruction && !pawnobstruct && !pawnTwoMoveObstruct && !rookobstruction && !bishopobstruction) || (pawnattacks) || ( (!samespot && !withinMoveset && !friendlyObstruction && !pawnobstruct && !pawnTwoMoveObstruct) && !queenObstruction ) ){//if errorchecks are negative make move valid
             return true; //move is valid
         }
@@ -704,14 +704,17 @@ public class Server implements Runnable {
 
         if (isCheck(king, enemyColor, gamemap)) {
             //maybe highlight the square or play some sound effect?
-            if(state.getPlayer1White() != 1 && state.getPlayerTurn() % 1 == 0){
-                if ((isCheckmate(king, ChessPieceColor.WHITE, ChessPieceColor.BLACK, gamemap) == true )) {
+          //  if(state.getPlayer1White() != 1 && state.getPlayerTurn() % 1 == 0){
+
+            //}
+            if(state.getPlayer1White() == 1 && state.getPlayerTurn() % 1 == 0) {
+                if ((isCheckmate(king, ChessPieceColor.BLACK, ChessPieceColor.WHITE, gamemap) == true )) {
                     //show checkmateWindow with the name of the winner (maybe show the players username?)
                     CheckmateWindow checkmateWindow = new CheckmateWindow(enemyColor.toString());
                 }
             }
-            if(state.getPlayer1White() == 1 && state.getPlayerTurn() % 1 == 0) {
-                if ((isCheckmate(king, ChessPieceColor.BLACK, ChessPieceColor.WHITE, gamemap) == true )) {
+            else{
+                if ((isCheckmate(king, ChessPieceColor.WHITE, ChessPieceColor.BLACK, gamemap) == true )) {
                     //show checkmateWindow with the name of the winner (maybe show the players username?)
                     CheckmateWindow checkmateWindow = new CheckmateWindow(enemyColor.toString());
                 }
