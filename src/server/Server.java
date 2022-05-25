@@ -680,6 +680,9 @@ public class Server implements Runnable {
                     {2,2,2}
             });
         }
+        check(ChessPieceColor.BLACK, ChessPieceColor.WHITE, gamemap);
+        check(ChessPieceColor.WHITE, ChessPieceColor.BLACK, gamemap);
+
         //check(ChessPieceColor.BLACK, ChessPieceColor.WHITE, gamemap);
         //check(ChessPieceColor.WHITE, ChessPieceColor.BLACK, gamemap);
 
@@ -688,6 +691,252 @@ public class Server implements Runnable {
         displayMap(gamemap);
         return gamemap;
     }
+
+
+
+
+
+
+
+    //check for check and checkmate
+    public void check(ChessPieceColor friendlyColor, ChessPieceColor enemyColor, ChessPieceAbstract[][] gamemap){
+        ChessPiece king = getTheKing(friendlyColor, gamemap);
+
+        if (isCheck(king, enemyColor, gamemap)) {
+            //maybe highlight the square or play some sound effect?
+            if(state.getPlayer1White() != 1 && state.getPlayerTurn() % 1 == 0){
+                if ((isCheckmate(king, ChessPieceColor.WHITE, ChessPieceColor.BLACK, gamemap) == true )) {
+                    //show checkmateWindow with the name of the winner (maybe show the players username?)
+                    CheckmateWindow checkmateWindow = new CheckmateWindow(enemyColor.toString());
+                }
+            }
+            if(state.getPlayer1White() == 1 && state.getPlayerTurn() % 1 == 0) {
+                if ((isCheckmate(king, ChessPieceColor.BLACK, ChessPieceColor.WHITE, gamemap) == true )) {
+                    //show checkmateWindow with the name of the winner (maybe show the players username?)
+                    CheckmateWindow checkmateWindow = new CheckmateWindow(enemyColor.toString());
+                }
+            }
+
+        }
+    }
+
+    //method that checks for checkmate
+    private boolean isCheckmate(ChessPiece theKing, ChessPieceColor enemyColor, ChessPieceColor friendlyColor, ChessPieceAbstract[][] board ) {
+        ArrayList<Integer> xKing = new ArrayList<>();
+        ArrayList<Integer> yKing = new ArrayList<>();
+        ArrayList<String> deadlyXandY = new ArrayList<String>();
+
+
+        //create a method for this later
+        for(int i = 0; i < 8; i++){
+            for(int j = 0; j < 8; j++){
+                ChessPiece cp = (ChessPiece) board[i][j];
+                //store coordinates of moves that are either empty or that have the opposite player's chess pieces on it
+                if(board[i][j]==null || cp.getColor().equals(enemyColor)){
+                    //check if the king can move there
+                    if(true) {
+
+                        Move kingMove = new Move(getLocationX(theKing, board), getLocationY(theKing, board), i, j);
+
+                        if(moveValid(kingMove, board)==true){
+                            //save the coordinates
+                            xKing.add(i);
+                            yKing.add(j);
+                        }
+                    }
+                }
+            }
+        }
+
+        deadlyXandY.addAll(deadlyMoves(xKing, yKing, board, theKing, enemyColor));
+        deadlyXandY.addAll(protectedPieces(xKing, yKing, board, friendlyColor, enemyColor));
+
+        //remove this later
+        for(int i = 0; i < xKing.size(); i++) {
+            System.out.println("Possible moves: " + xKing.get(i) + ", " + yKing.get(i));
+        }
+        for(int i = 0; i < deadlyXandY.size(); i++){
+            System.out.println("This is the whole list  " + deadlyXandY.get(i));
+        }
+
+        ArrayList uniqueListOfDeadlyMoves = deleteDuplicates(deadlyXandY);
+        for(int i = 0; i < uniqueListOfDeadlyMoves.size(); i++){
+            System.out.println("Deadly moves: " + deadlyXandY.get(i));
+        }
+        System.out.println("Number of possible moves: " + xKing.size() + ", number of deadly moves: " +uniqueListOfDeadlyMoves.size());
+
+        //return true if the number of possible moves is equal to the number of moves that would result in the kings death
+        if(uniqueListOfDeadlyMoves.size() == xKing.size()){
+            System.out.println("Game Over");
+            return true;
+        }
+
+        return false;
+    }
+
+    //this method returns an arraylist of places on the chess board where the king would still be under attack if moved there
+    private ArrayList<String> deadlyMoves(ArrayList<Integer> xKing, ArrayList<Integer> yKing, ChessPieceAbstract[][] board, ChessPiece theKing, ChessPieceColor enemyColor){
+        ArrayList<String> list = new ArrayList<>();
+        for (int xy = 0; xy < xKing.size(); xy++) {
+            for (int i = 0; i < 8; i++) {
+                for (int j = 0; j < 8; j++) {
+                    ChessPiece cp = (ChessPiece) board[i][j];
+                    if (cp != null && cp.getColor().equals(enemyColor)) {
+                        System.out.println(cp + " " + getLocationX(cp , board) + ", " + getLocationY(cp, board));
+                        //see if a chess piece could attack the king
+                        if (checkMove(getLocationX(cp, board), getLocationY(cp, board), cp, xKing.get(xy), yKing.get(xy), theKing, board) == true) {
+                            list.add(xKing.get(xy)+", "+yKing.get(xy));
+                        }
+                    }
+                }
+            }
+        }
+
+        for(int i = 0; i < list.size(); i++){
+            System.out.println("This is deadlyMoves(): " + list.get(i));
+        }
+        return list;
+    }
+
+    //this method returns an arraylist containing the coordinates of chess pieces that are protected
+    //this method is used in the checkmate method, to see if the king can escape a check position by attacking one of the opponent's chess pieces
+    //if by attacking the chess piece the king would find itself in a check position (again), add that position's coordinates in the array list
+    private ArrayList<String> protectedPieces(ArrayList<Integer> xKing, ArrayList<Integer> yKing, ChessPieceAbstract[][] board, ChessPieceColor friendlyColor, ChessPieceColor enemyColor){
+        ArrayList<String> list = new ArrayList<>();
+
+        for(int i = 0; i < 8; i++) {
+            for (int j = 0; j < 8; j++) {
+                for (int xy = 0; xy < xKing.size(); xy++) {
+                    ChessPiece originalCp = (ChessPiece) board[xKing.get(xy)][yKing.get(xy)];
+                    if (originalCp != null) {
+                        ChessPiece chessPiece = (ChessPiece) board[i][j];
+                        if (chessPiece != null && chessPiece.getColor() == enemyColor && chessPiece != originalCp) {
+                            //create a fake chess piece - in this case the getTheKing method is used to do that
+                            ChessPiece fakeChessPiece = getTheKing(friendlyColor, board);
+                            if (checkMove(getLocationX(chessPiece, board), getLocationY(chessPiece, board), chessPiece, getLocationX(originalCp, board), getLocationY(originalCp, board), fakeChessPiece, board) == true) {
+                                System.out.println(chessPiece + " " + " that is on " + getLocationX(chessPiece, board) + ", " + getLocationY(chessPiece, board) + " protects " + originalCp);
+                                list.add(xKing.get(xy)+", " + yKing.get(xy));
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        for(int i = 0; i < list.size(); i++){
+            System.out.println("This is from protectedPieces(): " + list.get(i));
+        }
+        return list;
+    }
+
+    //this method removes duplicates from an arraylist
+    private <T> ArrayList<T> deleteDuplicates(ArrayList<T> arrList) {
+        Set<T> newSet = new LinkedHashSet<>();
+        newSet.addAll(arrList);
+        arrList.clear();
+        arrList.addAll(newSet);
+        return arrList;
+    }
+
+    //method that checks if the king is attacked
+    public boolean isCheck(ChessPiece theKing, ChessPieceColor enemyColor, ChessPieceAbstract[][]mapp) {
+        int kingX = getLocationX(theKing, mapp);
+        int kingY = getLocationY(theKing, mapp);
+
+        for(int i = 0; i < 8; i++) {
+            for (int j = 0; j < 8; j++) {
+                try {
+                    ChessPiece chessPiece = (ChessPiece)mapp[i][j];
+                    if (chessPiece != null && chessPiece.getColor()==enemyColor) {
+
+                        Move chesspieceMove = new Move(i, j, kingX, kingY);
+                        System.out.println("CHESS PIECE " + chessPiece + chesspieceMove);
+                        boolean valid = moveValid(chesspieceMove, mapp);
+                        if (valid) {
+                            System.out.println("CHECK!");
+                            return true;
+                        }
+                    }
+                }catch (ArrayIndexOutOfBoundsException e){
+
+                }
+            }
+        }
+        return false;
+    }
+
+    //method puts two chess pieces on a chess board and then check if the first chess piece can move on the second chess pieces location
+    public boolean checkMove(int chessPiece1Row, int chessPiece1Col, ChessPiece chessPiece1, int chessPiece2Row, int chessPiece2Col, ChessPiece chessPiece2, ChessPieceAbstract[][] board) {
+        ChessPieceAbstract[][]mapp = new ChessPieceAbstract[8][8];
+        //create a new ChessPieceAbstract[][] map and copy the elements of the current chess board
+        for(int i = 0; i < 8; i++){
+            for(int j = 0; j < 8; j++){
+                mapp[i][j] = board[i][j];
+            }
+        }
+        //put the two chess pieces on the fake chess board
+        mapp[chessPiece1Row][chessPiece1Col] = chessPiece1;
+        mapp[chessPiece2Row][chessPiece2Col] = chessPiece2;
+        //see if the first chess piece can attack the second chess piece
+        Move move = new Move(chessPiece1Row, chessPiece1Col, chessPiece2Row, chessPiece2Col);
+        if(moveValid(move, board)){
+            return true;
+        }
+        //boolean valid = moveValid(chessPiece1Row, chessPiece1Col, chessPiece2Row, chessPiece2Col, mapp);
+
+        return false;
+    }
+
+    //method that returns the row of a chess piece
+    public int getLocationX(ChessPiece chessPiece, ChessPieceAbstract[][] map) {
+        for(int i = 0; i < 8; i++){
+            for(int j = 0; j < 8; j++){
+                if(map[i][j] == chessPiece){
+                    return i;
+                }
+            }
+        }
+        return -1;
+    }
+    //method that return a column of a chess piece
+    public int getLocationY(ChessPiece chessPiece, ChessPieceAbstract[][] map) {
+        for(int i = 0; i < 8; i++){
+            for(int j = 0; j < 8; j++){
+                if(map[i][j] == chessPiece){
+                    return j;
+                }
+            }
+        }
+        return -1;
+    }
+    //method that returns a king
+    public ChessPiece getTheKing(ChessPieceColor color, ChessPieceAbstract[][] mapp) {
+        ChessPiece piece = null;
+        for (int i = 0; i < 8; i++) {
+            for (int j = 0; j < 8; j++) {
+                piece = (ChessPiece) mapp[i][j];
+                if (piece == null) {
+                    continue;
+                }
+                if (piece.getChessPieceType().equals(ChessPieceType.KING) && piece.getColor().equals(color)) {
+                    return piece;
+                }
+            }
+        }
+        return null;
+    }
+
+
+
+
+
+
+
+
+
+
+
+
 
     public void displayMap(ChessPieceAbstract[][] cpa){
         System.out.println("-----------------------------------------------------------");
