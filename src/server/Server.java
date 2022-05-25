@@ -152,6 +152,7 @@ public class Server implements Runnable {
                         GameState state = idGameStateMap.get(move.getGameID());
 
                         boolean validMove;
+                        check(move);
 
                         if(state.getPlayer1White() == 1 && move.getUsername().equals(state.getPlayer1()) && state.getPlayerTurn() % 1 == 0) {
                             validMove = moveValid(move, state.getCpa());
@@ -1024,6 +1025,16 @@ public class Server implements Runnable {
         arrList.clear();
         arrList.addAll(newSet);
         return arrList;
+    }
+    public void check(ChessPieceColor friendlyColor, ChessPieceColor enemyColor, ChessPieceAbstract[][] gamemap){
+        ChessPiece king = getTheKing(friendlyColor, gamemap);
+        if (isCheck(king, enemyColor)) {
+            //maybe highlight the square or play some sound effect?
+            if ((isCheckmate(king, enemyColor, friendlyColor) == true)) {
+                //show checkmateWindow with the name of the winner (maybe show the players username?)
+                CheckmateWindow checkmateWindow = new CheckmateWindow(enemyColor.toString());
+            }
+        }
     }
 
     //method that checks if the king is attacked
