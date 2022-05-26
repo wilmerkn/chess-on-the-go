@@ -14,15 +14,15 @@ public class Server implements Runnable {
 
     private static final int PORT = 1234;
 
-    private Hashtable<Player, ClientHandler> playerClientMap; // Testa concurrentHashmap
+    private final Hashtable<Player, ClientHandler> playerClientMap; // Testa concurrentHashmap
     //private List<GameLogic> games = new ArrayList<>();
-    private LoginController loginController = new LoginController();
+    private final LoginController loginController = new LoginController();
 
-    private PlayerList playerList = new PlayerList();
+    private final PlayerList playerList = new PlayerList();
 
-    private HashMap<String, Player> usernamePlayerMap = new HashMap<>();
+    private final HashMap<String, Player> usernamePlayerMap = new HashMap<>();
 
-    private HashMap<String, GameState> idGameStateMap = new HashMap<>();
+    private final HashMap<String, GameState> idGameStateMap = new HashMap<>();
 
 
     public Server() {
@@ -47,7 +47,7 @@ public class Server implements Runnable {
     }
 
     private class ClientHandler extends Thread {
-        private Socket socket;
+        private final Socket socket;
         private ObjectInputStream ois;
         private ObjectOutputStream oos;
         private Player player;
