@@ -54,7 +54,7 @@ public class GameView implements ActionListener{
         opponentTime.setFont(new Font("Sans Serif", Font.BOLD, 15));
         opponentTime.setBounds(565, 25, 565, 25);
 
-        chatPanel = new ChatPanel();
+        chatPanel = new ChatPanel(client);
         chatPanel.setBounds(700, 50, 225, 550);
 
         resignBTN = new JButton("RESIGN");
@@ -97,6 +97,10 @@ public class GameView implements ActionListener{
 
     public void setOpponentTime(String opponentTime) {
         this.opponentTime.setText(opponentTime);
+    }
+
+    public ChatPanel getChatPanel() {
+        return chatPanel;
     }
 
     @Override

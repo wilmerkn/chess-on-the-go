@@ -17,7 +17,8 @@ public class Server implements Runnable {
     private Hashtable<Player, ClientHandler> playerClientMap; // Testa concurrentHashmap
     //private List<GameLogic> games = new ArrayList<>();
     private LoginController loginController = new LoginController();
-    private ArrayList<String> playerList = new ArrayList<>();
+
+    private PlayerList playerList = new PlayerList();
 
     private HashMap<String, Player> usernamePlayerMap = new HashMap<>();
 
@@ -74,14 +75,14 @@ public class Server implements Runnable {
                         boolean loginOk = loginController.checkLogin(loginReq.getUsername(), loginReq.getPassword());
 
                         if(loginOk) {
-                            loginReq.setAccepted(true);
-                            oos.writeObject(loginReq);
-
                             player = new Player(loginReq.getUsername()); // Ska hämtas från databas
+
+                            loginReq.setAccepted(true, player);
+                            oos.writeObject(loginReq);
 
                             usernamePlayerMap.put(player.getUsrName(), player);
                             playerClientMap.put(player, this);
-                            playerList.add(player.getUsrName());
+                            playerList.add(player);
 
                             broadcastPlayers();
                         } else {
@@ -143,7 +144,20 @@ public class Server implements Runnable {
 
                     } else if(object instanceof Message) {
                         Message msg = (Message) object;
-                        // Inte viktigt nu
+
+                        String tempGameID = msg.getGameID();
+                        GameState tempGameState = idGameStateMap.get(tempGameID);
+
+                        tempGameState.getMessages().add(msg);
+
+                        playerClientMap.get(usernamePlayerMap.get(tempGameState.getPlayer1())).getOos().reset();
+                        playerClientMap.get(usernamePlayerMap.get(tempGameState.getPlayer1())).getOos().writeObject(tempGameState.getMessages());
+                        playerClientMap.get(usernamePlayerMap.get(tempGameState.getPlayer1())).getOos().flush();
+
+                        inverseMapArray();
+                        playerClientMap.get(usernamePlayerMap.get(tempGameState.getPlayer2())).getOos().reset();
+                        playerClientMap.get(usernamePlayerMap.get(tempGameState.getPlayer2())).getOos().writeObject(tempGameState.getMessages());
+                        playerClientMap.get(usernamePlayerMap.get(tempGameState.getPlayer2())).getOos().flush();
 
                     } else if(object instanceof Move) {
                         Move move = (Move) object;
@@ -224,7 +238,7 @@ public class Server implements Runnable {
                 }
             } catch (IOException | ClassNotFoundException e) {
                 e.printStackTrace();
-                playerList.remove(player.getUsrName());
+                playerList.remove(player);
                 playerClientMap.remove(player);
                 usernamePlayerMap.remove(player.getUsrName());
                 broadcastPlayers();
@@ -251,7 +265,6 @@ public class Server implements Runnable {
 
             for(ClientHandler client: playerClientMap.values()) {
                 try {
-                    //System.out.println("broadcastPlayers " + playerList.size());
                     client.getOos().reset();
                     client.getOos().writeObject(playerList);
                     client.getOos().flush();

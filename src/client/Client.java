@@ -28,6 +28,7 @@ public class Client {
     private LobbyView lobbyView;
     private GameView gameView;
 
+    private Player player;
     private String username;
     private String gameID;
 
@@ -103,6 +104,18 @@ public class Client {
         return username;
     }
 
+    public void sendMessage(String messageText) {
+        Message message = new Message(gameID, player, messageText);
+        try {
+            oos.reset();
+            oos.writeObject(message);
+            oos.flush();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+    }
+
     private class ServerListener extends Thread {
 
         @Override
@@ -116,6 +129,7 @@ public class Client {
                         if(!request.isAccepted()) {
                             JOptionPane.showMessageDialog(null, "Login failed");
                         } else {
+                            player = request.getPlayer();
                             username = request.getUsername();
                             lobbyView = new LobbyView(Client.this);
                             loginView.closeLoginWindow();
@@ -250,14 +264,12 @@ public class Client {
                             }
                         }
                         drawMap(state.getCpa());
-
-
-                    } else if (obj instanceof Message) {
-                        // Lägg message i textArea
-                    } else if(obj instanceof ArrayList) {
-                        ArrayList<String> players = (ArrayList<String>) obj; // No problem// No problem// No problem// No problem// No problem// No problem
-
-                        lobbyView.getUserPanel().setOnlinePlayers(players);
+                    } else if (obj instanceof ChatLog) {
+                        ChatLog chatLog = (ChatLog) obj;
+                        gameView.getChatPanel().setChatPanelText(chatLog.getStringList());
+                    } else if(obj instanceof PlayerList) {
+                        PlayerList playerList = (PlayerList) obj;
+                        lobbyView.getUserPanel().setOnlinePlayers(playerList.getStringList());
                     } else if (obj instanceof Move) {
                         Move move = (Move) obj;
                         if(move.isLegalMove()) {
