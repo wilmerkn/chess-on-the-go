@@ -22,8 +22,6 @@ public class Server implements Runnable {
 
     private HashMap<String, Player> usernamePlayerMap = new HashMap<>();
 
-    private GameState state;
-
     private HashMap<String, GameState> idGameStateMap = new HashMap<>();
 
 
@@ -103,7 +101,7 @@ public class Server implements Runnable {
                                 }
                             }
                         } else {
-                            state = new GameState();
+                            GameState state = new GameState();
                             idGameStateMap.put(state.getGameID(), state);
 
                             state.setPlayer1(challenge.getSenderUsername());
@@ -118,7 +116,7 @@ public class Server implements Runnable {
                                 playerClientMap.get(usernamePlayerMap.get(state.getPlayer1())).getOos().writeObject(state);
                                 playerClientMap.get(usernamePlayerMap.get(state.getPlayer1())).getOos().flush();
 
-                                inverseMapArray();
+                                inverseMapArray(state);
                                 playerClientMap.get(usernamePlayerMap.get(state.getPlayer2())).getOos().reset();
                                 playerClientMap.get(usernamePlayerMap.get(state.getPlayer2())).getOos().writeObject(state);
                                 playerClientMap.get(usernamePlayerMap.get(state.getPlayer2())).getOos().flush();
@@ -129,12 +127,12 @@ public class Server implements Runnable {
                                 playerClientMap.get(usernamePlayerMap.get(state.getPlayer2())).getOos().writeObject(state);
                                 playerClientMap.get(usernamePlayerMap.get(state.getPlayer2())).getOos().flush();
 
-                                inverseMapArray();
+                                inverseMapArray(state);
                                 playerClientMap.get(usernamePlayerMap.get(state.getPlayer1())).getOos().reset();
                                 playerClientMap.get(usernamePlayerMap.get(state.getPlayer1())).getOos().writeObject(state);
                                 playerClientMap.get(usernamePlayerMap.get(state.getPlayer1())).getOos().flush();
                             }
-                            inverseMapArray();
+                            inverseMapArray(state);
 
                             state.setStarted();
 
@@ -145,24 +143,23 @@ public class Server implements Runnable {
                     } else if(object instanceof Message) {
                         Message msg = (Message) object;
 
-                        String tempGameID = msg.getGameID();
-                        GameState tempGameState = idGameStateMap.get(tempGameID);
+                        String gameID = msg.getGameID();
+                        GameState state = idGameStateMap.get(gameID);
 
-                        tempGameState.getMessages().add(msg);
+                        state.getMessages().add(msg);
 
-                        playerClientMap.get(usernamePlayerMap.get(tempGameState.getPlayer1())).getOos().reset();
-                        playerClientMap.get(usernamePlayerMap.get(tempGameState.getPlayer1())).getOos().writeObject(tempGameState.getMessages());
-                        playerClientMap.get(usernamePlayerMap.get(tempGameState.getPlayer1())).getOos().flush();
+                        playerClientMap.get(usernamePlayerMap.get(state.getPlayer1())).getOos().reset();
+                        playerClientMap.get(usernamePlayerMap.get(state.getPlayer1())).getOos().writeObject(state.getMessages());
+                        playerClientMap.get(usernamePlayerMap.get(state.getPlayer1())).getOos().flush();
 
-                        inverseMapArray();
-                        playerClientMap.get(usernamePlayerMap.get(tempGameState.getPlayer2())).getOos().reset();
-                        playerClientMap.get(usernamePlayerMap.get(tempGameState.getPlayer2())).getOos().writeObject(tempGameState.getMessages());
-                        playerClientMap.get(usernamePlayerMap.get(tempGameState.getPlayer2())).getOos().flush();
+                        inverseMapArray(state);
+                        playerClientMap.get(usernamePlayerMap.get(state.getPlayer2())).getOos().reset();
+                        playerClientMap.get(usernamePlayerMap.get(state.getPlayer2())).getOos().writeObject(state.getMessages());
+                        playerClientMap.get(usernamePlayerMap.get(state.getPlayer2())).getOos().flush();
 
                     } else if(object instanceof Move) {
                         Move move = (Move) object;
 
-                        System.out.println("Move " + move.getGameID());
                         GameState state = idGameStateMap.get(move.getGameID());
 
                         boolean validMove;
@@ -174,9 +171,9 @@ public class Server implements Runnable {
                             validMove = moveValid(move, state.getCpa());
                         }
                         else {
-                            inverseMapArray();
+                            inverseMapArray(state);
                             validMove = moveValid(move, state.getCpa());
-                            inverseMapArray();
+                            inverseMapArray(state);
                         }
 
                         move.setLegalMove(validMove);
@@ -188,15 +185,15 @@ public class Server implements Runnable {
 
                         if(validMove) {
                             if(state.getPlayer1White() == 1 && (move.getUsername().equals(state.getPlayer1())) && state.getPlayerTurn() % 1 == 0) {
-                                state.setCpa(update(move, state.getCpa()));
+                                state.setCpa(update(move, state));
                             }
                             else if(state.getPlayer1White() != 1 && (move.getUsername().equals(state.getPlayer2())) && state.getPlayerTurn() % 1 == 0){
-                                state.setCpa(update(move, state.getCpa()));
+                                state.setCpa(update(move, state));
                             }
                             else {
-                                inverseMapArray();
-                                state.setCpa(update(move, state.getCpa()));
-                                inverseMapArray();
+                                inverseMapArray(state);
+                                state.setCpa(update(move, state));
+                                inverseMapArray(state);
                             }
 
                             state.turnIncrement();
@@ -209,19 +206,19 @@ public class Server implements Runnable {
                                 playerClientMap.get(usernamePlayerMap.get(state.getPlayer1())).getOos().flush();
 
 
-                                inverseMapArray();
+                                inverseMapArray(state);
                                 playerClientMap.get(usernamePlayerMap.get(state.getPlayer2())).getOos().reset();
                                 playerClientMap.get(usernamePlayerMap.get(state.getPlayer2())).getOos().writeObject(state);
                                 playerClientMap.get(usernamePlayerMap.get(state.getPlayer2())).getOos().flush();
-                                inverseMapArray();
+                                inverseMapArray(state);
 
 
                             } else {
-                                inverseMapArray();
+                                inverseMapArray(state);
                                 playerClientMap.get(usernamePlayerMap.get(state.getPlayer1())).getOos().reset();
                                 playerClientMap.get(usernamePlayerMap.get(state.getPlayer1())).getOos().writeObject(state);
                                 playerClientMap.get(usernamePlayerMap.get(state.getPlayer1())).getOos().flush();
-                                inverseMapArray();
+                                inverseMapArray(state);
 
                                 playerClientMap.get(usernamePlayerMap.get(state.getPlayer2())).getOos().reset();
                                 playerClientMap.get(usernamePlayerMap.get(state.getPlayer2())).getOos().writeObject(state);
@@ -486,7 +483,7 @@ public class Server implements Runnable {
     }
 
     //does peice move within moveset
-    public boolean moveWithinCpMoveset(int movesetOffsetY, int movesetOffsetX, int yTrOffset, int xTrOffset, int[][] moveset, ChessPiece cp,ChessPieceAbstract[][] gamemap){
+    public boolean moveWithinCpMoveset(int movesetOffsetY, int movesetOffsetX, int yTrOffset, int xTrOffset, int[][] moveset, ChessPiece cp, ChessPieceAbstract[][] gamemap){
         try{
             if(moveset[movesetOffsetY-yTrOffset][movesetOffsetX-xTrOffset] != 1){
                 return true;
@@ -641,7 +638,7 @@ public class Server implements Runnable {
         return false;
     }
 
-    public boolean queenObstruct(int sourceRow,int sourceCol,int targetRow,int targetCol,ChessPieceAbstract[][] gamemap,ChessPiece cp){
+    public boolean queenObstruct(int sourceRow,int sourceCol,int targetRow,int targetCol, ChessPieceAbstract[][] gamemap,ChessPiece cp){
 
         boolean diagonal = false;
         boolean bishop = false;
@@ -666,14 +663,15 @@ public class Server implements Runnable {
         return false;
     }
 
-    public ChessPieceAbstract[][] update(Move move, ChessPieceAbstract[][] cpa){ //called when chesspiece is moved
+    public ChessPieceAbstract[][] update(Move move, GameState state){ //called when chesspiece is moved
+
+        ChessPieceAbstract[][] gamemap = state.getCpa();
 
         int sourceRow = move.getSourceRow();
         int sourceCol = move.getSourceCol();
         int targetRow = move.getTargetRow();
         int targetCol = move.getTargetCol();
 
-        ChessPieceAbstract[][] gamemap = cpa;
         //BoardPanel.SquarePanel[][] squarePanel = view.getBoardPanel().getSquares();
 
         ChessPiece tempChesspiece = null;
@@ -693,8 +691,8 @@ public class Server implements Runnable {
                     {2,2,2}
             });
         }
-        check(ChessPieceColor.BLACK, ChessPieceColor.WHITE, gamemap);
-        check(ChessPieceColor.WHITE, ChessPieceColor.BLACK, gamemap);
+        check(ChessPieceColor.BLACK, ChessPieceColor.WHITE, state);
+        check(ChessPieceColor.WHITE, ChessPieceColor.BLACK, state);
 
         //check(ChessPieceColor.BLACK, ChessPieceColor.WHITE, gamemap);
         //check(ChessPieceColor.WHITE, ChessPieceColor.BLACK, gamemap);
@@ -712,7 +710,8 @@ public class Server implements Runnable {
 
 
     //check for check and checkmate
-    public void check(ChessPieceColor friendlyColor, ChessPieceColor enemyColor, ChessPieceAbstract[][] gamemap){
+    public void check(ChessPieceColor friendlyColor, ChessPieceColor enemyColor, GameState state){
+        ChessPieceAbstract[][] gamemap = state.getCpa();
         ChessPiece king = getTheKing(friendlyColor, gamemap);
 
         if (isCheck(king, enemyColor, gamemap)) {
@@ -1158,7 +1157,7 @@ public class Server implements Runnable {
 
      */
 
-    public void inverseMapArray(){
+    public void inverseMapArray(GameState state){
         int mapDim = 8;
         ChessPieceAbstract[][] gamemap = state.getCpa();
         ChessPieceAbstract[][] tempChessArray = new ChessPieceAbstract[mapDim][mapDim];
