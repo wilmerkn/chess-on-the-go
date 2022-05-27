@@ -45,21 +45,6 @@ public class GameLogic {
     }
 
 
-
-    //inverses map array
-    public void inverseMapArray(){
-        int mapDim = model.getMap().getMapDimension();
-        ChessPieceAbstract[][] gamemap = model.getMap().getMap();
-        ChessPieceAbstract[][] tempChessArray = new ChessPieceAbstract[mapDim][mapDim];
-
-        for (int row = mapDim - 1; row >= 0; row--) {
-            for (int col = mapDim - 1; col >= 0; col--) {
-                tempChessArray[(mapDim - 1) - row][(mapDim - 1) - col] = gamemap[row][col];
-            }
-        }
-        model.getMap().setMap(tempChessArray);
-    }
-
     //draws up Gui Map from map array
 
 
@@ -328,6 +313,23 @@ public class GameLogic {
         return null;
     }
 
+
+    //finds the chess piece the player wants
+    public ChessPiece getChesspiece(ChessPieceColor color, ChessPieceType type){
+        ChessPiece theChessPiece = null;
+        for(int r = 0; r <8; r++){
+            for(int c = 0; c < 8; c++){
+                //loop thorugh the original board
+                ChessPiece cp = (ChessPiece) originalBoard[r][c];
+                if(cp!=null && cp.getChessPieceType()==type && cp.getColor()==color){
+                    theChessPiece = cp;
+                }
+            }
+        }
+        //set the location of that chess piece
+        return theChessPiece;
+    }
+
     private boolean kingCanCastle(ChessPieceColor kingColor, ChessPieceColor enemyColor) {
         ChessPieceAbstract[][] gamemap = model.getMap().getMap();
         ChessPiece theKing = getTheKing(kingColor, gamemap);
@@ -349,28 +351,12 @@ public class GameLogic {
         //to see if the places between them are empty, we use the checkMove method that puts checks if the rook can move to the kings place
         if(//kingWasMoved = false && theRooksWasMoved = false &&
                 checkMove(getLocationX(theRook, gamemap), getLocationY(theRook, gamemap), therook2, getLocationX(theKing, gamemap),
-                getLocationY(theKing, gamemap), getTheKing(enemyColor, gamemap))){
+                        getLocationY(theKing, gamemap), getTheKing(enemyColor, gamemap))){
 
             System.out.println(theKing + " can castle!");
             return true;
         }
         return false;
-    }
-
-    //finds the chess piece the player wants
-    public ChessPiece getChesspiece(ChessPieceColor color, ChessPieceType type){
-        ChessPiece theChessPiece = null;
-        for(int r = 0; r <8; r++){
-            for(int c = 0; c < 8; c++){
-                //loop thorugh the original board
-                ChessPiece cp = (ChessPiece) originalBoard[r][c];
-                if(cp!=null && cp.getChessPieceType()==type && cp.getColor()==color){
-                    theChessPiece = cp;
-                }
-            }
-        }
-        //set the location of that chess piece
-        return theChessPiece;
     }
 
 

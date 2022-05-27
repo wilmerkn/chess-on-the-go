@@ -25,7 +25,7 @@ public class GameState implements Serializable {
     private int timer1Time;
     private int timer2Time;
 
-    private Message[] messages;
+    private ChatLog messages;
 
     private ChessPieceAbstract[][] cpa;
 
@@ -38,6 +38,7 @@ public class GameState implements Serializable {
         checkMate = false;
         Random rand = new SecureRandom();
         player1White = rand.nextInt(2);
+        messages = new ChatLog();
     }
 
     public void prepareTimers(int timeControl) {
@@ -117,14 +118,6 @@ public class GameState implements Serializable {
         this.player2 = player2;
     }
 
-    public Message[] getMessages() {
-        return messages;
-    }
-
-    public void setMessages(Message[] messages) {
-        this.messages = messages;
-    }
-
     public ChessPieceAbstract[][] getCpa() {
         return cpa;
     }
@@ -162,15 +155,20 @@ public class GameState implements Serializable {
     public int getTimer2Time() {
         return timer2Time;
     }
-/*
-    public Timer getTimer1() {
-        return timer1;
+
+    public ChatLog getMessages() {
+        return messages;
     }
 
-    public Timer getTimer2() {
-        return timer2;
-    }
-*/
+    /*
+        public Timer getTimer1() {
+            return timer1;
+        }
+
+        public Timer getTimer2() {
+            return timer2;
+        }
+    */
     public void turnIncrement(){
         playerTurn += 0.5;
             System.out.println(playerTurn);

@@ -9,14 +9,17 @@ public class LoginRequest implements Serializable {
 
     private boolean accepted;
 
+    private Player player;
+
     public LoginRequest(String username, String password) {
         this.username = username;
         this.password = password;
         this.accepted = false;
     }
 
-    public void setAccepted(boolean accepted) {
+    public void setAccepted(boolean accepted, Player player) {
         this.accepted = accepted;
+        this.player = player;
     }
 
     public boolean isAccepted() {
@@ -29,5 +32,9 @@ public class LoginRequest implements Serializable {
 
     public String getPassword() {
         return password;
+    }
+
+    public Player getPlayer() {
+        return player;
     }
 }

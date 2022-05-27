@@ -11,7 +11,7 @@ import java.util.ArrayList;
 
 public class UserPanel extends JPanel implements ActionListener {
     JLabel userLabel;
-    JList userList;
+    JList<String> userList;
     JButton challengeButton;
     JButton profileButton;
     LobbyView lobbyView;
@@ -23,7 +23,7 @@ public class UserPanel extends JPanel implements ActionListener {
         this.setLayout(null);
 
         userLabel = new JLabel("Online users");
-        userList = new JList();
+        userList = new JList<>();
         challengeButton = new JButton("Challenge");
         profileButton = new JButton("View profile");
 

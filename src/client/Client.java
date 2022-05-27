@@ -28,13 +28,14 @@ public class Client {
     private LobbyView lobbyView;
     private GameView gameView;
 
+    private Player player;
     private String username;
     private String gameID;
 
     private Timer timer1;
-    private int timer1Time;
+    private int myTime;
     private Timer timer2;
-    private int timer2Time;
+    private int opponentTime;
 
     private GameState state;
 
@@ -67,6 +68,7 @@ public class Client {
 
     public void sendMove(Move move) {
         move.setGameID(gameID);
+        startOpponentTime(); //ToDo Fixa
         gameView.getBoardPanel().disableMouseListeners();
         try {
             oos.reset();
@@ -102,6 +104,18 @@ public class Client {
         return username;
     }
 
+    public void sendMessage(String messageText) {
+        Message message = new Message(gameID, player, messageText);
+        try {
+            oos.reset();
+            oos.writeObject(message);
+            oos.flush();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+    }
+
     private class ServerListener extends Thread {
 
         @Override
@@ -115,6 +129,7 @@ public class Client {
                         if(!request.isAccepted()) {
                             JOptionPane.showMessageDialog(null, "Login failed");
                         } else {
+                            player = request.getPlayer();
                             username = request.getUsername();
                             lobbyView = new LobbyView(Client.this);
                             loginView.closeLoginWindow();
@@ -150,18 +165,17 @@ public class Client {
 
                         if(!state.getStarted()) {
                             gameView = new GameView(Client.this);
-                            timer1Time = state.getTimer1Time();
-                            timer2Time = state.getTimer2Time();
+                            myTime = state.getTimeControl()*60;
+                            opponentTime = state.getTimeControl()*60;
                             gameView.getBoardPanel().disableMouseListeners();
-
 
 
                             timer1 = new Timer(1000, new ActionListener() {
                                 @Override
                                 public void actionPerformed(ActionEvent e) {
-                                    timer1Time--;
-                                    gameView.setPlayer1Time((timer1Time /60) + ":" + (timer1Time %60));
-                                    if(timer1Time==0){
+                                    myTime--;
+                                    gameView.setMyTime((myTime /60) + ":" + (myTime %60));
+                                    if(myTime ==0){
                                         timer1.stop();
                                         //should sent signal to server that one player wins, register result in DB in "stats" and then terminate game
                                         System.out.println("Player 2 wins on time");
@@ -169,31 +183,38 @@ public class Client {
 
                                 }
                             });
-                            gameView.setPlayer1Time(state.getTimeControl()+ ":00");
+                            gameView.setMyTime(state.getTimeControl()+ ":00");
 
                             timer1.setInitialDelay(0);
 
                             timer2 = new Timer(1000, new ActionListener() {
                                 @Override
                                 public void actionPerformed(ActionEvent e) {
-                                    timer2Time--;
-                                    gameView.setPlayer2Time((timer2Time /60) + ":" + (timer2Time %60));
-                                    if(timer2Time==0){
+                                    opponentTime--;
+                                    gameView.setOpponentTime((opponentTime /60) + ":" + (opponentTime %60));
+                                    if(opponentTime ==0){
                                         timer2.stop();
                                         System.out.println("Player 1 wins on time");
                                     }
                                 }
                             });
-                            gameView.setPlayer2Time(state.getTimeControl()+ ":00");
+                            gameView.setOpponentTime(state.getTimeControl()+ ":00");
                             timer2.setInitialDelay(0);
-                        }
 
+                            gameView.setMyName(username);
+
+                            if(!username.equals(state.getPlayer1())) {
+                                gameView.setOpponentName(state.getPlayer1());
+                            } else if (!username.equals(state.getPlayer2())) {
+                                gameView.setOpponentName(state.getPlayer2());
+                            }
+                        }
+                        //turns off mouselisteners when it's not your turn, might change it so you cant register a moe when it isnt your turn, but you can check highlights
                         if(username.equals(state.getPlayer1()) && state.getPlayerTurn() % 1 == 0 && state.getPlayer1White() == 1) {
                             gameView.getBoardPanel().enableMouseListeners();
                         }
                         if(username.equals(state.getPlayer2()) && state.getPlayerTurn() % 1 != 0 && state.getPlayer1White() == 1){
                             gameView.getBoardPanel().enableMouseListeners();
-
                         }if(username.equals(state.getPlayer1()) && state.getPlayerTurn() % 1 != 0 && state.getPlayer1White() == 0) {
                             gameView.getBoardPanel().enableMouseListeners();
                         }
@@ -201,25 +222,54 @@ public class Client {
                             gameView.getBoardPanel().enableMouseListeners();
                         }
 
-                        if (state.getPlayerTurn() % 1 != 0 && state.getStarted()){ // Svarts tur!
-                            startPlayer2Time();
-                        }
-                        if (state.getPlayerTurn() %1 == 0 && state.getStarted()){ // Vits tur
-                            startPlayer1Time();
-                        }
 
-                        gameView.setPlayer1Name(state.getPlayer1());
-                        gameView.setPlayer2Name(state.getPlayer2());
-
+                        //Timers for both boards
+                        if (state.getStarted()){
+                            if(state.getPlayer1White() == 1) {
+                                if (state.getPlayerTurn() % 1 == 0) {
+                                    if (username.equals(state.getPlayer1())) {
+                                        startMyTime();
+                                    }
+                                    if (username.equals(state.getPlayer2())) {
+                                        startOpponentTime();
+                                    }
+                                }
+                                if (state.getPlayerTurn() % 1 != 0) {
+                                    if (username.equals(state.getPlayer1())) {
+                                        startOpponentTime();
+                                    }
+                                    if (username.equals(state.getPlayer2())){
+                                        startMyTime();
+                                    }
+                                }
+                            }
+                            if(state.getPlayer1White() == 0) {
+                                if (state.getPlayerTurn() % 1 == 0) {
+                                    if (username.equals(state.getPlayer1())) {
+                                        //jag är vit, starta min timer
+                                        startOpponentTime();
+                                    }
+                                    if (username.equals(state.getPlayer2())) {
+                                        startMyTime();
+                                    }
+                                }
+                                if (state.getPlayerTurn() % 1 != 0) {
+                                    if (username.equals(state.getPlayer1())) {
+                                        startMyTime();
+                                    }
+                                    if (username.equals(state.getPlayer2())){
+                                        startOpponentTime();
+                                    }
+                                }
+                            }
+                        }
                         drawMap(state.getCpa());
-
-
-                    } else if (obj instanceof Message) {
-                        // Lägg message i textArea
-                    } else if(obj instanceof ArrayList) {
-                        ArrayList<String> players = (ArrayList<String>) obj; // No problem// No problem// No problem// No problem// No problem// No problem
-
-                        lobbyView.getUserPanel().setOnlinePlayers(players);
+                    } else if (obj instanceof ChatLog) {
+                        ChatLog chatLog = (ChatLog) obj;
+                        gameView.getChatPanel().setChatPanelText(chatLog.getStringList());
+                    } else if(obj instanceof PlayerList) {
+                        PlayerList playerList = (PlayerList) obj;
+                        lobbyView.getUserPanel().setOnlinePlayers(playerList.getStringList());
                     } else if (obj instanceof Move) {
                         Move move = (Move) obj;
                         if(move.isLegalMove()) {
@@ -271,14 +321,13 @@ public class Client {
         new Client();
     }
 
-    public void startPlayer1Time(){
+    public void startMyTime(){
         timer2.stop();
         timer1.start();
     }
-    public void startPlayer2Time(){
+    public void startOpponentTime(){
         timer1.stop();
         timer2.start();
-
     }
 
     public ObjectInputStream getOis() {
