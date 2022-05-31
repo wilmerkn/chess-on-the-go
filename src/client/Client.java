@@ -113,7 +113,47 @@ public class Client {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
 
+    public void resign() {
+        int answer = JOptionPane.showConfirmDialog(
+                null,
+                "Are you sure you want to resign?",
+                "Resignation",
+                JOptionPane.YES_NO_OPTION
+        );
+
+        if(answer == 0) {
+            ResignRequest request = new ResignRequest(gameID, username);
+            try {
+                oos.reset();
+                oos.writeObject(request);
+                oos.flush();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+            gameView.disposeFrame();
+        }
+    }
+
+    public void offerDraw() {
+        int answer = JOptionPane.showConfirmDialog(
+                null,
+                "Are you sure you want to offer draw?",
+                "Offer draw",
+                JOptionPane.YES_NO_OPTION
+        );
+
+        if(answer == 0) {
+            DrawRequest request = new DrawRequest(gameID, username);
+            try {
+                oos.reset();
+                oos.writeObject(request);
+                oos.flush();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
     }
 
     private class ServerListener extends Thread {
@@ -143,7 +183,6 @@ public class Client {
                                 "Incoming challenge",
                                 JOptionPane.YES_NO_OPTION
                         );
-
                         if(answer == 0) {
                             challenge.accept();
                             oos.reset();
@@ -151,9 +190,7 @@ public class Client {
                             oos.flush();
                             lobbyView.dispose();
                             //set timeControl
-
                         }
-
                     } else if (obj instanceof GameState) {
 
                         state = (GameState) obj;
@@ -180,7 +217,6 @@ public class Client {
                                         //should sent signal to server that one player wins, register result in DB in "stats" and then terminate game
                                         System.out.println("Player 2 wins on time");
                                     }
-
                                 }
                             });
                             gameView.setMyTime(state.getTimeControl()+ ":00");
@@ -275,7 +311,37 @@ public class Client {
                         if(move.isLegalMove()) {
                             gameView.getBoardPanel().updateMoveValid(move.getSourceRow(), move.getSourceCol());
                         }
+                    } else if (obj instanceof ResignRequest) {
+                        JOptionPane.showMessageDialog(null, "You won by resignation!");
+                        gameView.disposeFrame();
+                    } else if (obj instanceof DrawRequest) {
+                        DrawRequest request = (DrawRequest) obj;
+                        if(request.isAccepted()) {
+                            JOptionPane.showMessageDialog(null, "The game is a draw!");
+                            gameView.disposeFrame();
+                        } else {
+                            int answer = JOptionPane.showConfirmDialog(
+                                    null,
+                                    "Accept draw offer?",
+                                    "Draw offered",
+                                    JOptionPane.YES_NO_OPTION
+                            );
 
+                            if(answer == 0) {
+                                request.setAccepted();
+                                try {
+                                    oos.reset();
+                                    oos.writeObject(request);
+                                    oos.flush();
+                                } catch (IOException e) {
+                                    throw new RuntimeException(e);
+                                }
+                                JOptionPane.showMessageDialog(null, "The game is a draw!");
+                                gameView.disposeFrame();
+                            }
+
+
+                        }
                     }
                 }
             } catch (IOException | ClassNotFoundException e) {

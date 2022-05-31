@@ -21,11 +21,12 @@ public class GameView implements ActionListener{
     private JButton offerDrawBTN;
 
     private Client client;
+    private JFrame frame;
 
     public GameView(Client client) {
         this.client = client;
 
-        JFrame frame = new JFrame();
+        frame = new JFrame();
         frame.setTitle("Chess On The Go");
         frame.getContentPane().setSize(CLIENT_DIMENSION);
         frame.setBounds(new Rectangle(CLIENT_DIMENSION));
@@ -106,11 +107,15 @@ public class GameView implements ActionListener{
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == resignBTN) {
-            this.client.startMyTime();
+            client.resign();
         }
         if (e.getSource() == offerDrawBTN) {
-            this.client.startOpponentTime();
+            client.offerDraw();
         }
+    }
+
+    public void disposeFrame() {
+        frame.dispose();
     }
 }
 

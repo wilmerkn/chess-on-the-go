@@ -53,6 +53,4 @@ public class LobbyView extends JFrame {
         lobbyFrame.setResizable(true);
         lobbyFrame.setLocationRelativeTo(null);
     }
-
-
 }

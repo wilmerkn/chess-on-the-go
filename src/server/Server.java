@@ -231,6 +231,41 @@ public class Server implements Runnable {
                             playerClientMap.get(usernamePlayerMap.get(move.getUsername())).getOos().writeObject(move);
                             playerClientMap.get(usernamePlayerMap.get(move.getUsername())).getOos().flush();
                         }
+                    } else if (object instanceof ResignRequest) {
+                        ResignRequest request = (ResignRequest) object;
+                        GameState state = idGameStateMap.get(request.getGameID());
+
+                        if(request.getResigner().equals(state.getPlayer1())) {
+                            playerClientMap.get(usernamePlayerMap.get(state.getPlayer2())).getOos().reset();
+                            playerClientMap.get(usernamePlayerMap.get(state.getPlayer2())).getOos().writeObject(request);
+                            playerClientMap.get(usernamePlayerMap.get(state.getPlayer2())).getOos().flush();
+                        } else if(request.getResigner().equals(state.getPlayer2())) {
+                            playerClientMap.get(usernamePlayerMap.get(state.getPlayer1())).getOos().reset();
+                            playerClientMap.get(usernamePlayerMap.get(state.getPlayer1())).getOos().writeObject(request);
+                            playerClientMap.get(usernamePlayerMap.get(state.getPlayer1())).getOos().flush();
+                        }
+                        //ToDo spara state i databas och ta bort game från mappar.
+                    } else if (object instanceof DrawRequest) {
+                        DrawRequest request = (DrawRequest) object;
+                        GameState state = idGameStateMap.get(request.getGameID());
+
+                        if(request.isAccepted()) {
+                            playerClientMap.get(usernamePlayerMap.get(request.getSender())).getOos().reset();
+                            playerClientMap.get(usernamePlayerMap.get(request.getSender())).getOos().writeObject(request);
+                            playerClientMap.get(usernamePlayerMap.get(request.getSender())).getOos().flush();
+                        } else {
+                            if(request.getSender().equals(state.getPlayer1())) {
+                                playerClientMap.get(usernamePlayerMap.get(state.getPlayer2())).getOos().reset();
+                                playerClientMap.get(usernamePlayerMap.get(state.getPlayer2())).getOos().writeObject(request);
+                                playerClientMap.get(usernamePlayerMap.get(state.getPlayer2())).getOos().flush();
+                            } else {
+                                playerClientMap.get(usernamePlayerMap.get(request.getSender())).getOos().reset();
+                                playerClientMap.get(usernamePlayerMap.get(request.getSender())).getOos().writeObject(request);
+                                playerClientMap.get(usernamePlayerMap.get(request.getSender())).getOos().flush();
+                            }
+                        }
+
+                        //ToDo spara state i databas och ta bort game från mappar.
                     }
                 }
             } catch (IOException | ClassNotFoundException e) {
