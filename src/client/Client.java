@@ -38,6 +38,7 @@ public class Client {
     private int opponentTime;
 
     private GameState state;
+    private String opponent;
 
 
 
@@ -69,10 +70,18 @@ public class Client {
     public void sendMove(Move move) {
         move.setGameID(gameID);
         startOpponentTime(); //ToDo Fixa
-        gameView.getBoardPanel().disableMouseListeners();
         try {
             oos.reset();
             oos.writeObject(move);
+            oos.flush();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    public void sendState(GameState state){
+        try {
+            oos.reset();
+            oos.writeObject(state);
             oos.flush();
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -199,6 +208,15 @@ public class Client {
                         //get playerTurn, depending on whos turn stop and start timers
                         //boolean myTurn;
 
+                        if(state.getWinner().equals(username)){
+                            JOptionPane.showMessageDialog(null, "You won on time!");
+                            gameView.disposeFrame();
+                        }
+                        else if (state.getWinner().equals(opponent)){
+                            JOptionPane.showMessageDialog(null, "You lost on time! :) noob");
+                            gameView.disposeFrame();
+                        }
+
                         if(!state.getStarted()) {
                             gameView = new GameView(Client.this);
                             myTime = state.getTimeControl()*60;
@@ -213,6 +231,8 @@ public class Client {
                                     gameView.setMyTime((myTime /60) + ":" + (myTime %60));
                                     if(myTime ==0){
                                         timer1.stop();
+                                        state.setWinner(opponent);
+                                        sendState(state);
                                         //should sent signal to server that one player wins, register result in DB in "stats" and then terminate game
                                         System.out.println("Player 2 wins on time");
                                     }
@@ -227,7 +247,7 @@ public class Client {
                                 public void actionPerformed(ActionEvent e) {
                                     opponentTime--;
                                     gameView.setOpponentTime((opponentTime /60) + ":" + (opponentTime %60));
-                                    if(opponentTime ==0){
+                                    if(opponentTime == 0){
                                         timer2.stop();
                                         System.out.println("Player 1 wins on time");
                                     }
@@ -240,8 +260,10 @@ public class Client {
 
                             if(!username.equals(state.getPlayer1())) {
                                 gameView.setOpponentName(state.getPlayer1());
+                                opponent = state.getPlayer1();
                             } else if (!username.equals(state.getPlayer2())) {
                                 gameView.setOpponentName(state.getPlayer2());
+                                opponent = state.getPlayer2();
                             }
                         }
                         //turns off mouselisteners when it's not your turn, might change it so you cant register a moe when it isnt your turn, but you can check highlights
@@ -250,10 +272,10 @@ public class Client {
                         }
                         if(username.equals(state.getPlayer2()) && state.getPlayerTurn() % 1 != 0 && state.getPlayer1White() == 1){
                             gameView.getBoardPanel().enableMouseListeners();
-                        }if(username.equals(state.getPlayer1()) && state.getPlayerTurn() % 1 != 0 && state.getPlayer1White() == 0) {
+                        }else if(username.equals(state.getPlayer1()) && state.getPlayerTurn() % 1 != 0 && state.getPlayer1White() == 0) {
                             gameView.getBoardPanel().enableMouseListeners();
                         }
-                        if(username.equals(state.getPlayer2()) && state.getPlayerTurn() % 1 == 0 && state.getPlayer1White() == 0){
+                        else if(username.equals(state.getPlayer2()) && state.getPlayerTurn() % 1 == 0 && state.getPlayer1White() == 0){
                             gameView.getBoardPanel().enableMouseListeners();
                         }
 
@@ -264,17 +286,21 @@ public class Client {
                                 if (state.getPlayerTurn() % 1 == 0) {
                                     if (username.equals(state.getPlayer1())) {
                                         startMyTime();
+                                        gameView.getBoardPanel().enableMouseListeners();
                                     }
                                     if (username.equals(state.getPlayer2())) {
                                         startOpponentTime();
+                                        gameView.getBoardPanel().disableMouseListeners();
                                     }
                                 }
                                 if (state.getPlayerTurn() % 1 != 0) {
                                     if (username.equals(state.getPlayer1())) {
                                         startOpponentTime();
+                                        gameView.getBoardPanel().disableMouseListeners();
                                     }
                                     if (username.equals(state.getPlayer2())){
                                         startMyTime();
+                                        gameView.getBoardPanel().enableMouseListeners();
                                     }
                                 }
                             }
@@ -283,22 +309,27 @@ public class Client {
                                     if (username.equals(state.getPlayer1())) {
                                         //jag är vit, starta min timer
                                         startOpponentTime();
+                                        gameView.getBoardPanel().disableMouseListeners();
                                     }
                                     if (username.equals(state.getPlayer2())) {
                                         startMyTime();
+                                        gameView.getBoardPanel().enableMouseListeners();
                                     }
                                 }
                                 if (state.getPlayerTurn() % 1 != 0) {
                                     if (username.equals(state.getPlayer1())) {
                                         startMyTime();
+                                        gameView.getBoardPanel().enableMouseListeners();
                                     }
                                     if (username.equals(state.getPlayer2())){
                                         startOpponentTime();
+                                        gameView.getBoardPanel().disableMouseListeners();
                                     }
                                 }
                             }
                         }
                         drawMap(state.getCpa());
+                        System.out.println("KLAR");
                     } else if (obj instanceof ChatLog) {
                         ChatLog chatLog = (ChatLog) obj;
                         gameView.getChatPanel().setChatPanelText(chatLog.getStringList());
@@ -350,6 +381,7 @@ public class Client {
             }
         }
     }
+
 
     //ToDo Rita upp skicka över nätverk
     public void drawMap(ChessPieceAbstract[][] cpa){

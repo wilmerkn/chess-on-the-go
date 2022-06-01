@@ -32,6 +32,7 @@ public class GameState implements Serializable {
     private boolean started = false;
 
     private int player1White;
+    private String winner = "";
 
     public GameState(){
         playerTurn = 1;
@@ -160,17 +161,15 @@ public class GameState implements Serializable {
         return messages;
     }
 
-    /*
-        public Timer getTimer1() {
-            return timer1;
-        }
-
-        public Timer getTimer2() {
-            return timer2;
-        }
-    */
     public void turnIncrement(){
         playerTurn += 0.5;
             System.out.println(playerTurn);
+    }
+
+    public void setWinner(String winner) {
+        this.winner = winner;
+    }
+    public String getWinner() {
+        return winner;
     }
 }

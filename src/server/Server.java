@@ -172,7 +172,8 @@ public class Server implements Runnable {
                         if(state.getPlayer1White() == 1 && move.getUsername().equals(state.getPlayer1()) && state.getPlayerTurn() % 1 == 0) {
                             validMove = moveValid(move, state.getCpa());
                         }
-                        if(state.getPlayer1White() != 1 && move.getUsername().equals(state.getPlayer2()) && state.getPlayerTurn() % 1 == 0){
+
+                        else if(state.getPlayer1White() != 1 && move.getUsername().equals(state.getPlayer2()) && state.getPlayerTurn() % 1 == 0){
                             validMove = moveValid(move, state.getCpa());
                         }
                         else {
@@ -181,7 +182,7 @@ public class Server implements Runnable {
                             inverseMapArray(state);
                         }
 
-                        move.setLegalMove(validMove);
+                        //move.setLegalMove(validMove);
 
                         //might have put it to early, should be incremented first when the move is registered
                         //if playerTurn % 1 = 0 then it's one of the players turn, if it isn't then it's the other players turn.
@@ -189,6 +190,7 @@ public class Server implements Runnable {
                         //depending on which turn it is timer should be stopped and started for the other player.
 
                         if(validMove) {
+
                             if(state.getPlayer1White() == 1 && (move.getUsername().equals(state.getPlayer1())) && state.getPlayerTurn() % 1 == 0) {
                                 state.setCpa(update(move, state));
                             }
@@ -199,6 +201,8 @@ public class Server implements Runnable {
                                 inverseMapArray(state);
                                 state.setCpa(update(move, state));
                                 inverseMapArray(state);
+
+                                System.out.println("try again");
                             }
 
                             state.turnIncrement();
@@ -232,9 +236,12 @@ public class Server implements Runnable {
                             }
 
                         } else {
+                            System.out.println("TRY AGAIN");
                             playerClientMap.get(usernamePlayerMap.get(move.getUsername())).getOos().reset();
                             playerClientMap.get(usernamePlayerMap.get(move.getUsername())).getOos().writeObject(move);
                             playerClientMap.get(usernamePlayerMap.get(move.getUsername())).getOos().flush();
+
+
                         }
                     } else if (object instanceof ResignRequest) {
                         ResignRequest request = (ResignRequest) object;
@@ -271,6 +278,16 @@ public class Server implements Runnable {
                         }
 
                         //ToDo spara state i databas och ta bort game från mappar.
+                    }
+                    else if (object instanceof GameState) {
+                        GameState state = (GameState) object;
+                            playerClientMap.get(usernamePlayerMap.get(state.getPlayer1())).getOos().reset();
+                            playerClientMap.get(usernamePlayerMap.get(state.getPlayer1())).getOos().writeObject(state);
+                            playerClientMap.get(usernamePlayerMap.get(state.getPlayer1())).getOos().flush();
+
+                            playerClientMap.get(usernamePlayerMap.get(state.getPlayer2())).getOos().reset();
+                            playerClientMap.get(usernamePlayerMap.get(state.getPlayer2())).getOos().writeObject(state);
+                            playerClientMap.get(usernamePlayerMap.get(state.getPlayer2())).getOos().flush();
                     }
                 }
             } catch (IOException | ClassNotFoundException e) {
@@ -493,7 +510,11 @@ public class Server implements Runnable {
         rookobstruction = rookObstruct(sourceRow,sourceCol,targetRow,targetCol,gamemap,cp);
         bishopobstruction = bishopObstruct(sourceRow,sourceCol,targetRow,targetCol,gamemap,cp);
         queenObstruction = queenObstruct(sourceRow,sourceCol,targetRow,targetCol,gamemap,cp);
-/*
+
+
+        //check(ChessPieceColor.BLACK, ChessPieceColor.WHITE, state);
+        //check(ChessPieceColor.WHITE, ChessPieceColor.BLACK, state);
+
         System.out.println("Samespot error: " + samespot);
         System.out.println("Withinmoveset error: " + withinMoveset);
         System.out.println("FriendlyObstruction error: " + friendlyObstruction);
@@ -503,15 +524,14 @@ public class Server implements Runnable {
         System.out.println("RookObstruction error: " + rookobstruction);
         System.out.println("BishopObstruction error: " + bishopobstruction);
         System.out.println("queenObstruction error: " + queenObstruction);
-*/
-        if( (!samespot && !withinMoveset && !friendlyObstruction && !pawnobstruct && !pawnTwoMoveObstruct && !rookobstruction && !bishopobstruction) || (pawnattacks) || ( (!samespot && !withinMoveset && !friendlyObstruction && !pawnobstruct && !pawnTwoMoveObstruct) && !queenObstruction ) ){//if errorchecks are negative make move valid
+
+        if( (!samespot && !withinMoveset && !friendlyObstruction && !pawnobstruct && !pawnTwoMoveObstruct && !rookobstruction && !bishopobstruction) || (pawnattacks) || ( (!samespot && !withinMoveset && !friendlyObstruction && !pawnobstruct && !pawnTwoMoveObstruct) && !queenObstruction) ){//if errorchecks are negative make move valid
             return true; //move is valid
         }
         else{
             return false;
         }
     }
-
     //did user click the same spot
     public boolean sameCpspot(int sR, int sC, int tR, int tC){
         if(sR == tR && sC == tC){
@@ -677,7 +697,6 @@ public class Server implements Runnable {
         }
         return false;
     }
-
     public boolean queenObstruct(int sourceRow,int sourceCol,int targetRow,int targetCol, ChessPieceAbstract[][] gamemap,ChessPiece cp){
 
         boolean diagonal = false;
@@ -751,28 +770,59 @@ public class Server implements Runnable {
 
     //check for check and checkmate
     public void check(ChessPieceColor friendlyColor, ChessPieceColor enemyColor, GameState state){
-        ChessPieceAbstract[][] gamemap = state.getCpa();
-        ChessPiece king = getTheKing(friendlyColor, gamemap);
+        ChessPieceAbstract[][] gameMap = state.getCpa();
+        ChessPiece king = getTheKing(friendlyColor, gameMap);
 
-        if (isCheck(king, enemyColor, gamemap)) {
+        if (isCheck(king, enemyColor, gameMap)) {
             //maybe highlight the square or play some sound effect?
           //  if(state.getPlayer1White() != 1 && state.getPlayerTurn() % 1 == 0){
 
             //}
+            //om spelare 1 är vit  och det är spelare 1s tur
             if(state.getPlayer1White() == 1 && state.getPlayerTurn() % 1 == 0) {
-                if ((isCheckmate(king, ChessPieceColor.BLACK, ChessPieceColor.WHITE, gamemap) == true )) {
+                //om den svarta kungen är i schack matt WOOHOOO
+                if ((isCheckmate(king, ChessPieceColor.BLACK, ChessPieceColor.WHITE, gameMap))) {
+                    //show checkmateWindow with the name of the winner (maybe show the players username?)
+                    CheckmateWindow checkmateWindow = new CheckmateWindow(enemyColor.toString());
+                }
+            }
+            if(state.getPlayer1White() == 1 && state.getPlayerTurn() % 1 != 0) {
+                if ((isCheckmate(king, ChessPieceColor.WHITE, ChessPieceColor.BLACK, gameMap))) {
+                    //show checkmateWindow with the name of the winner (maybe show the players username?)
+                    CheckmateWindow checkmateWindow = new CheckmateWindow(enemyColor.toString());
+                }
+                if ((isCheckmate(king, ChessPieceColor.BLACK, ChessPieceColor.WHITE, gameMap))) {
+                    //show checkmateWindow with the name of the winner (maybe show the players username?)
+                    CheckmateWindow checkmateWindow = new CheckmateWindow(enemyColor.toString());
+                }
+            }
+            if(state.getPlayer1White() != 1 && state.getPlayerTurn() % 1 == 0){
+                if ((isCheckmate(king, ChessPieceColor.WHITE, ChessPieceColor.BLACK, gameMap))) {
+                    //show checkmateWindow with the name of the winner (maybe show the players username?)
+                    CheckmateWindow checkmateWindow = new CheckmateWindow(enemyColor.toString());
+                }
+                if ((isCheckmate(king, ChessPieceColor.BLACK, ChessPieceColor.WHITE, gameMap))) {
+                    //show checkmateWindow with the name of the winner (maybe show the players username?)
+                    CheckmateWindow checkmateWindow = new CheckmateWindow(enemyColor.toString());
+                }
+            }
+            //om spelare 2 är vit och det är spelare 1s tur
+            if(state.getPlayer1White() != 1 && state.getPlayerTurn() % 1 != 0){
+                //om vit kung är i schack matt WOOHOOO
+
+                if ((isCheckmate(king, ChessPieceColor.WHITE, ChessPieceColor.BLACK, gameMap))) {
                     //show checkmateWindow with the name of the winner (maybe show the players username?)
                     CheckmateWindow checkmateWindow = new CheckmateWindow(enemyColor.toString());
                 }
             }
             else{
-                if ((isCheckmate(king, ChessPieceColor.WHITE, ChessPieceColor.BLACK, gamemap) == true )) {
-                    //show checkmateWindow with the name of the winner (maybe show the players username?)
-                    CheckmateWindow checkmateWindow = new CheckmateWindow(enemyColor.toString());
-                }
+                System.out.println("Schack men inte matt");
             }
 
+
+
         }
+
     }
 
     //method that checks for checkmate
@@ -934,7 +984,7 @@ public class Server implements Runnable {
         mapp[chessPiece2Row][chessPiece2Col] = chessPiece2;
         //see if the first chess piece can attack the second chess piece
         Move move = new Move(chessPiece1Row, chessPiece1Col, chessPiece2Row, chessPiece2Col);
-        if(moveValid(move, board)){
+        if(moveValid(move, mapp)){
             return true;
         }
         //boolean valid = moveValid(chessPiece1Row, chessPiece1Col, chessPiece2Row, chessPiece2Col, mapp);
