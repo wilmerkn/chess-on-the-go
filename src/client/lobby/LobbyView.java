@@ -5,9 +5,9 @@ import client.Client;
 import javax.swing.*;
 import java.awt.*;
 
-public class LobbyView extends JFrame {
+public class LobbyView{
     private static final Dimension CLIENT_DIMENSION = new Dimension(1000, 800);
-    JFrame lobbyFrame;
+    private final JFrame lobbyFrame;
     private static PairingPanel pairingPanel;
     private final UserPanel userPanel;
     private Client client;
@@ -49,8 +49,17 @@ public class LobbyView extends JFrame {
         lobbyFrame.setLayout(null);
         lobbyFrame.getContentPane().setSize(CLIENT_DIMENSION);
         lobbyFrame.setBounds(new Rectangle(CLIENT_DIMENSION));
-        lobbyFrame.setDefaultCloseOperation(EXIT_ON_CLOSE);
+        lobbyFrame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         lobbyFrame.setResizable(true);
         lobbyFrame.setLocationRelativeTo(null);
+    }
+
+    public void restartClient() {
+        this.lobbyFrame.dispose();
+        this.client.disconnect();
+        this.client = new Client();
+    }
+    public void diposeFrame(){
+        this.lobbyFrame.dispose();
     }
 }

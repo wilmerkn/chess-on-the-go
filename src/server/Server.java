@@ -793,7 +793,7 @@ public class Server implements Runnable {
 
                         Move kingMove = new Move(getLocationX(theKing, board), getLocationY(theKing, board), i, j);
 
-                        if(moveValid(kingMove, board)==true){
+                        if(moveValid(kingMove, board)){
                             //save the coordinates
                             xKing.add(i);
                             yKing.add(j);

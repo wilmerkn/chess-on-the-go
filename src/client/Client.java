@@ -89,7 +89,7 @@ public class Client {
         }
     }
 
-    private void disconnect() {
+    public void disconnect() {
         try {
             if (ois != null) ois.close();
             if (oos != null) oos.close();
@@ -188,8 +188,7 @@ public class Client {
                             oos.reset();
                             oos.writeObject(challenge);
                             oos.flush();
-                            lobbyView.dispose();
-                            //set timeControl
+                            lobbyView.diposeFrame();
                         }
                     } else if (obj instanceof GameState) {
 
@@ -305,8 +304,9 @@ public class Client {
                         gameView.getChatPanel().setChatPanelText(chatLog.getStringList());
                     } else if(obj instanceof PlayerList) {
                         PlayerList playerList = (PlayerList) obj;
-                        playerList.remove(username);
-                        lobbyView.getUserPanel().setOnlinePlayers(playerList.getStringList());
+                        ArrayList<String> tempList = playerList.getStringList();
+                        tempList.remove(username);
+                        lobbyView.getUserPanel().setOnlinePlayers(tempList);
                     } else if (obj instanceof Move) {
                         Move move = (Move) obj;
                         if(move.isLegalMove()) {
