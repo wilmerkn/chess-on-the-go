@@ -83,6 +83,7 @@ public class Server implements Runnable {
                             playerList.add(player);
 
                             broadcastPlayers();
+
                         } else {
                             oos.reset();
                             oos.writeObject(loginReq);
