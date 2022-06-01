@@ -63,7 +63,7 @@ public class UserPanel extends JPanel implements ActionListener {
                 lobbyView.getClient().challenge(receiverUsername, timeControl);
             }
             else {
-                JOptionPane.showMessageDialog(null, "Either time control or user you want to challenge isn't selected.");
+                JOptionPane.showMessageDialog(null, "Please select time control and user you want to challenge.");
             }
         }
         if (e.getSource() == profileButton) {

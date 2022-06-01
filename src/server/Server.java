@@ -62,6 +62,10 @@ public class Server implements Runnable {
             }
         }
 
+        public Player getPlayer() {
+            return player;
+        }
+
         @Override
         public void run() {
             try {
@@ -1212,6 +1216,7 @@ public class Server implements Runnable {
         System.out.println("Server starting");
         new Server();
     }
+
 
 
 }

@@ -305,6 +305,7 @@ public class Client {
                         gameView.getChatPanel().setChatPanelText(chatLog.getStringList());
                     } else if(obj instanceof PlayerList) {
                         PlayerList playerList = (PlayerList) obj;
+                        playerList.remove(username);
                         lobbyView.getUserPanel().setOnlinePlayers(playerList.getStringList());
                     } else if (obj instanceof Move) {
                         Move move = (Move) obj;

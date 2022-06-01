@@ -21,4 +21,7 @@ public class PlayerList implements Serializable {
         }
         return stringList;
     }
+    public void remove(String username){
+        list.removeIf(p -> username.equals(p.getUsrName()));
+    }
 }
