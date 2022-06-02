@@ -81,8 +81,8 @@ public class LoginView extends JFrame implements ActionListener {
         this.registerButton = new JButton("Register");
         buttonPanel.add(registerButton);
 
-        init();
         initListeners();
+        init();
     }
 
     private void init() {

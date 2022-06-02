@@ -19,9 +19,7 @@ public class LoginController {
 //kollar med databas att kontot finns via model, finns kontot öppnas brädet
     public boolean checkLogin(String user, String password){
         boolean loginOk;
-
         loginOk = Login.loginCheck(dbCon.getConnection(), user,password);
-
         return loginOk;
     }
 }

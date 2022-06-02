@@ -5,6 +5,7 @@ import client.gameview.PromotePawnWindow;
 import server.controller.LoginController;
 import server.model.*;
 
+import javax.swing.*;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -78,12 +79,12 @@ public class Server implements Runnable {
                     Object object = ois.readObject();
 
                     if (object instanceof LoginRequest) {
-                        LoginRequest loginReq = (LoginRequest) ois.readObject();
+
+                        LoginRequest loginReq = (LoginRequest) object;
                         boolean loginOk = loginController.checkLogin(loginReq.getUsername(), loginReq.getPassword());
 
                         if (loginOk) {
                             player = new Player(loginReq.getUsername()); // Ska hämtas från databas
-
                             loginReq.setAccepted(true, player);
                             oos.writeObject(loginReq);
 
@@ -184,13 +185,6 @@ public class Server implements Runnable {
                             inverseMapArray(state);
                         }
 
-                        //move.setLegalMove(validMove);
-
-                        //might have put it to early, should be incremented first when the move is registered
-                        //if playerTurn % 1 = 0 then it's one of the players turn, if it isn't then it's the other players turn.
-                        //playerTurn is incremented by 0.5 every move.
-                        //depending on which turn it is timer should be stopped and started for the other player.
-
                         if (validMove) {
 
                             if (state.getPlayer1White() == 1 && (move.getUsername().equals(state.getPlayer1())) && state.getPlayerTurn() % 1 == 0) {
@@ -201,8 +195,7 @@ public class Server implements Runnable {
                                 inverseMapArray(state);
                                 state.setCpa(update(move, state));
                                 inverseMapArray(state);
-
-                                System.out.println("try again");
+                                //JOptionPane.showMessageDialog(null, "Illegal move");
                             }
 
                             state.turnIncrement();
@@ -236,7 +229,8 @@ public class Server implements Runnable {
                             }
 
                         } else {
-                            System.out.println("TRY AGAIN");
+                            //if this happens on the first move, timer shoiuldnt start
+                            JOptionPane.showMessageDialog(null, "Illegal move");
                             playerClientMap.get(usernamePlayerMap.get(move.getUsername())).getOos().reset();
                             playerClientMap.get(usernamePlayerMap.get(move.getUsername())).getOos().writeObject(move);
                             playerClientMap.get(usernamePlayerMap.get(move.getUsername())).getOos().flush();
