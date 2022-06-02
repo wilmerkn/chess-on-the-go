@@ -798,6 +798,37 @@ public class Server implements Runnable {
 
         }
     }
+
+        private boolean blockCheck(ChessPiece chessPieceAtackingKing, ChessPieceColor friendlyColor, ChessPieceAbstract[][] board){
+       ArrayList<Integer> xCoordinates = new ArrayList<>();
+       ArrayList<Integer> yCoordinates = new ArrayList<>();
+
+        for(int i = 0; i < 8; i++){
+            for(int j = 0; j < 8; j++){
+                Move move = new Move(getLocationX( chessPieceAtackingKing,board), getLocationY(chessPieceAtackingKing, board), i, j);
+                if(moveValid(move, board)){
+                    xCoordinates.add(i);
+                    yCoordinates.add(j);
+                }
+            }
+        }
+
+        for(int xy = 0; xy < xCoordinates.size(); xy++) {
+            for (int i = 0; i < 8; i++) {
+                for (int j = 0; j < 8; j++) {
+                    ChessPiece cp = (ChessPiece) board[i][j];
+                    if (cp != null && cp.getColor() == friendlyColor) {
+                        Move move = new Move(getLocationX(cp, board), getLocationY(cp, board), xCoordinates.get(xy), yCoordinates.get(xy));
+                        Move move2 = new Move(getLocationX(cp, board), getLocationY(cp, board), getLocationX(chessPieceAtackingKing, board), getLocationY(chessPieceAtackingKing, board));
+                        if (moveValid(move, board) || moveValid(move2, board)) {
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
+        return false;
+    }
     //method that checks for checkmate
     private boolean isCheckmate(ChessPiece theKing, ChessPieceColor enemyColor, ChessPieceColor friendlyColor, ChessPieceAbstract[][] board ) {
         ArrayList<Integer> xKing = new ArrayList<>();
@@ -841,9 +872,19 @@ public class Server implements Runnable {
         System.out.println("Number of possible moves: " + xKing.size() + ", number of deadly moves: " +uniqueListOfDeadlyMoves.size());
 
         //return true if the number of possible moves is equal to the number of moves that would result in the kings death
-        if(uniqueListOfDeadlyMoves.size() == xKing.size()){
-            System.out.println("Game Over");
-            return true;
+        if(uniqueListOfDeadlyMoves.size() == xKing.size()) {
+            for(int i = 0; i < 8; i++){
+                for(int j = 0; j < 8; j++){
+                    ChessPiece cp = (ChessPiece) board[i][j];
+                    if(cp!=null && cp.getColor()==enemyColor) {
+                        if (blockCheck(theKing, friendlyColor, board) == false) {
+                            System.out.println("Game Over");
+                            return true;
+                        }
+                    }
+                }
+            }
+
         }
 
         return false;
