@@ -5,9 +5,7 @@ import java.io.File;
 
 public class GameAudio extends Thread {
 
-    //Clip for the background music
     private Clip backgroundMusicClip;
-    //boolean used to start / stop the thread
     private boolean isRunning = true;
 
 

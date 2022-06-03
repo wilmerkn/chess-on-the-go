@@ -18,8 +18,6 @@ public class BoardView {
     private final BoardPanel boardPanel;
     private boolean mouseListenerEnabled;
     private final HashMap<String, JLabel> notationToJLMap = BoardUtils.pieceNotationToJL();
-    private GameLogic gameLogic;
-
 
     private JLabel checkLabel;
 
@@ -27,21 +25,6 @@ public class BoardView {
         this.boardPanel = new BoardPanel();
         JFrame frame = new JFrame();
         frame.setTitle("Chess On The Go");
-        frame.setSize(CLIENT_DIMENSION);
-        frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        frame.setLocationRelativeTo(null);
-        frame.setVisible(true);
-        frame.add(boardPanel, BorderLayout.CENTER);
-        //boardPanel.populateBoard();
-
-        mouseListenerEnabled = true;
-
-    }
-    public BoardView(GameLogic gameLogic) {
-        this.boardPanel = new BoardPanel();
-        JFrame frame = new JFrame();
-        frame.setTitle("Chess On The Go");
-        this.gameLogic = gameLogic;
         frame.setSize(CLIENT_DIMENSION);
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         frame.setLocationRelativeTo(null);

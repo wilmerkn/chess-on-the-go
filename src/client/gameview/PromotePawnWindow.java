@@ -1,3 +1,10 @@
+/**
+ /PromotePawnWindow
+ /@version 1.0
+ /*@author mirkosmiljanic
+ */
+
+
 package client.gameview;
 import server.Server;
 import server.model.ChessPiece;
@@ -14,7 +21,7 @@ public class PromotePawnWindow {
     private JFrame frame;
     private ChessPiece chessPiece;
 
-    public PromotePawnWindow(Server server) {
+    public PromotePawnWindow() {
         queen = new JButton("Queen");
         rook = new JButton("Rook");
         knight = new JButton("Knight");

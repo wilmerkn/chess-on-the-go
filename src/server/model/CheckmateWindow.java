@@ -1,3 +1,8 @@
+/**
+ /CheckmateWindow: implements ActionListener
+ /@version 1.0
+ /*@author mirkosmiljanic
+ */
 package server.model;
 import javax.swing.*;
 import java.awt.event.ActionEvent;

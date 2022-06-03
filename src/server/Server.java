@@ -455,7 +455,6 @@ public class Server implements Runnable {
 
         ChessPiece cp = (ChessPiece) gamemap[sourceRow][sourceCol];
         int[][] moveset = cp.getMoveset();
-        ChessPieceType chessPieceType = cp.getChessPieceType();
 
         int movesetOffsetY = -1;
         int movesetOffsetX = -1;
@@ -696,7 +695,6 @@ public class Server implements Runnable {
         if ((targetRow - sourceRow == targetCol - sourceCol) || (targetRow - sourceRow == sourceCol - targetCol)) {
             diagonal = true;
         }
-        // System.out.println("is diagonal: " + diagonal);
 
         //check what method to use
         if (diagonal && bishop) {
@@ -716,13 +714,10 @@ public class Server implements Runnable {
         int targetRow = move.getTargetRow();
         int targetCol = move.getTargetCol();
 
-        //BoardPanel.SquarePanel[][] squarePanel = view.getBoardPanel().getSquares();
 
         ChessPiece tempChesspiece = null;
         tempChesspiece = ((ChessPiece) gamemap[sourceRow][sourceCol]);
 
-        //squarePanel[y_tr][x_tr].revalidate(); // new
-        //squarePanel[y_tr][x_tr].repaint(); // new
 
         gamemap[targetRow][targetCol] = tempChesspiece;
         gamemap[sourceRow][sourceCol] = null;
@@ -737,17 +732,13 @@ public class Server implements Runnable {
         }
         if (tempChesspiece != null && tempChesspiece.getChessPieceType() == ChessPieceType.PAWN) {
             if (getLocationX(tempChesspiece, gamemap) == 0) {
-                PromotePawnWindow pawnWindow = new PromotePawnWindow(this);
+                PromotePawnWindow pawnWindow = new PromotePawnWindow();
                 pawnWindow.chooseChesspiece(this, tempChesspiece.getColor());
                 gamemap[targetRow][targetCol] = pawnWindow.getChessPiece();
             }
         }
 
-        //check(ChessPieceColor.BLACK, ChessPieceColor.WHITE, gamemap);
-        //check(ChessPieceColor.WHITE, ChessPieceColor.BLACK, gamemap);
 
-        //gameAudio.playSound("src\\AudioFiles\\mixkit-quick-jump-arcade-game-239.wav",0);
-        //inverseMapArray();
         check(ChessPieceColor.BLACK, ChessPieceColor.WHITE, state, gamemap);
         check(ChessPieceColor.WHITE, ChessPieceColor.BLACK, state, gamemap);
 
@@ -857,19 +848,8 @@ public class Server implements Runnable {
         deadlyXandY.addAll(deadlyMoves(xKing, yKing, board, theKing, enemyColor));
         deadlyXandY.addAll(protectedPieces(xKing, yKing, board, friendlyColor, enemyColor));
 
-        //remove this later
-        for(int i = 0; i < xKing.size(); i++) {
-            System.out.println("Possible moves: " + xKing.get(i) + ", " + yKing.get(i));
-        }
-        for(int i = 0; i < deadlyXandY.size(); i++){
-            System.out.println("This is the whole list  " + deadlyXandY.get(i));
-        }
 
         ArrayList uniqueListOfDeadlyMoves = deleteDuplicates(deadlyXandY);
-        for(int i = 0; i < uniqueListOfDeadlyMoves.size(); i++){
-            System.out.println("Deadly moves: " + deadlyXandY.get(i));
-        }
-        System.out.println("Number of possible moves: " + xKing.size() + ", number of deadly moves: " +uniqueListOfDeadlyMoves.size());
 
         //return true if the number of possible moves is equal to the number of moves that would result in the kings death
         if(uniqueListOfDeadlyMoves.size() == xKing.size()) {
@@ -878,7 +858,6 @@ public class Server implements Runnable {
                     ChessPiece cp = (ChessPiece) board[i][j];
                     if(cp!=null && cp.getColor()==enemyColor) {
                         if (blockCheck(theKing, friendlyColor, board) == false) {
-                            System.out.println("Game Over");
                             return true;
                         }
                     }
@@ -914,9 +893,7 @@ public class Server implements Runnable {
         return list;
     }
 
-    //this method returns an arraylist containing the coordinates of chess pieces that are protected
-    //this method is used in the checkmate method, to see if the king can escape a check position by attacking one of the opponent's chess pieces
-    //if by attacking the chess piece the king would find itself in a check position (again), add that position's coordinates in the array list
+    //see if the chess piece that is attacking the king protected by another chess piece
     private ArrayList<String> protectedPieces(ArrayList<Integer> xKing, ArrayList<Integer> yKing, ChessPieceAbstract[][] board, ChessPieceColor friendlyColor, ChessPieceColor enemyColor){
         ArrayList<String> list = new ArrayList<>();
 
@@ -930,7 +907,6 @@ public class Server implements Runnable {
                             //create a fake chess piece - in this case the getTheKing method is used to do that
                             ChessPiece fakeChessPiece = getTheKing(friendlyColor, board);
                             if (checkMove(getLocationX(chessPiece, board), getLocationY(chessPiece, board), chessPiece, getLocationX(originalCp, board), getLocationY(originalCp, board), fakeChessPiece, board) == true) {
-                                System.out.println(chessPiece + " " + " that is on " + getLocationX(chessPiece, board) + ", " + getLocationY(chessPiece, board) + " protects " + originalCp);
                                 list.add(xKing.get(xy)+", " + yKing.get(xy));
                             }
                         }
@@ -1042,18 +1018,6 @@ public class Server implements Runnable {
         return null;
     }
 
-
-
-
-
-
-
-
-
-
-
-
-
     public void displayMap(ChessPieceAbstract[][] cpa){
         System.out.println("-----------------------------------------------------------");
         for(int row = 0; row < 8; row++){
@@ -1063,74 +1027,6 @@ public class Server implements Runnable {
             System.out.println();
         }
         System.out.println("-----------------------------------------------------------");
-    }
-
-    public boolean samecpspot(int sR, int sC, int tR, int tC){
-        if(sR == tR && sC == tC){
-            //System.out.println("same position!"); debugging
-            return true;
-        }
-        else{
-            return false;
-        }
-    }
-
-    //does peice move within moveset
-    public boolean moveWithinCPMoveset(int sR, int sC, int tR, int tC, int movesetOffsetY, int movesetOffsetX, int yTrOffset, int xTrOffset, int[][] moveset, ChessPiece cp,ChessPieceAbstract[][] gamemap){
-        try{
-            if(moveset[movesetOffsetY-yTrOffset][movesetOffsetX-xTrOffset] != 1){
-                return true;
-            }
-            else{
-                return false;
-            }
-        } catch (Exception e) {
-
-        }
-        return true;
-    }
-
-    //checks if obstruction is of same chesspiece color
-    public boolean friendlyCPObstruction(int targetRow, int targetCol, ChessPieceAbstract[][] gamemap,ChessPiece cp){
-        if(gamemap[targetRow][targetCol] != null){
-            ChessPieceColor obstructionColor = ((ChessPiece)gamemap[targetRow][targetCol]).getColor();
-            if(cp.getColor() == obstructionColor){
-                return true;
-            }
-        }
-        return false;
-    }
-
-    //is pawn obstruct by enemy
-    public boolean pawnObstruct(int targetRow, int targetCol, ChessPieceAbstract[][] gamemap, ChessPiece cp){
-        if(cp.getChessPieceType() == ChessPieceType.PAWN && gamemap[targetRow][targetCol] != null){
-            if(((ChessPiece)gamemap[targetRow][targetCol]).getColor() != cp.getColor()){
-                return true;
-            }
-        }
-        return false;
-    }
-
-    //checks if pawn can move 2 steps ahead if no obstruction is in the way
-    public boolean pawnTwoMoves(int targetRow, int sourceRow, int sourceCol, ChessPieceAbstract[][] gamemap, ChessPiece cp){
-        if(cp.getChessPieceType() == ChessPieceType.PAWN && cp.getMoved() == 0 && gamemap[sourceRow-1][sourceCol] != null && targetRow == sourceRow-2){
-            return true;
-        }
-        return false;
-    }
-
-    //checks if pawn can attack with attack pattern
-    public boolean pawnAttack(int targetRow, int targetCol, int movesetOffsetY, int movesetOffsetX, int yTrOffset, int xTrOffset, int[][] moveset, ChessPiece cp, ChessPieceAbstract[][] gamemap){
-        try{
-            if(cp.getChessPieceType() == ChessPieceType.PAWN && gamemap[targetRow][targetCol] != null && ((ChessPiece)gamemap[targetRow][targetCol]).getColor() != cp.getColor() && moveset[movesetOffsetY-yTrOffset][movesetOffsetX-xTrOffset] == 3){
-                return true;
-            }
-            else{
-                return false;
-            }
-        } catch (Exception e) {
-            return false;
-        }
     }
 
     //highlight Rook path until obstruction
@@ -1229,34 +1125,6 @@ public class Server implements Runnable {
         }
         return false;
     }
-    //dont think this one is being used, there is another one called pretty much the same thing.
-    /*
-    public boolean queenObstruction(int sourceRow,int sourceCol,int targetRow,int targetCol,ChessPieceAbstract[][] gamemap,ChessPiece cp){
-
-        boolean diagonal = false;
-        boolean bishop = false;
-        boolean rook = false;
-
-        bishop = bishopObstruction(sourceRow,sourceCol,targetRow,targetCol,gamemap,cp); //use bishop and rook patterns for queen obstruction
-        rook = rookObstruction(sourceRow,sourceCol,targetRow,targetCol,gamemap,cp);
-
-        //checks if source cordinate and target cordinate is diagonal
-        if( (targetRow - sourceRow == targetCol - sourceCol) || (targetRow - sourceRow == sourceCol - targetCol) ) {
-            diagonal = true;
-        }
-        // System.out.println("is diagonal: " + diagonal);
-
-        //check what method to use
-        if(diagonal && bishop){
-            return true;
-        }
-        else if(!diagonal && rook){
-            return true;
-        }
-        return false;
-    }
-
-     */
 
     public void inverseMapArray(GameState state){
         int mapDim = 8;

@@ -34,7 +34,6 @@ public class GameView implements ActionListener{
         frame.setLocationRelativeTo(null);
         frame.setResizable(true);
         frame.setLayout(null);
-        //frame.getContentPane().setBackground(new Color(35,35,35));
 
         boardPanel = new BoardPanel(client);
         boardPanel.setBounds(7, 50, 650, 650);
