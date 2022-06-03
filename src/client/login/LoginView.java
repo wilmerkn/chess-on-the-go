@@ -15,8 +15,12 @@ import server.controller.LoginController;
 import server.controller.RegisterController;
 
 
+/**
+ * LoginView: Shows the user the login window where they can either choose to register a new user or log in with an existing user.
+ * @version 1.0
+ * @author wilmerknutas
+ */
 public class LoginView extends JFrame implements ActionListener {
-
 
     JFrame loginFrame;
     JPanel picturePanel = new JPanel();
@@ -33,14 +37,12 @@ public class LoginView extends JFrame implements ActionListener {
     private final JLabel passLabel;
     private final LoginController loginController;
     private RegisterController registerController = new RegisterController();
-
-    private Client client;
+    private final Client client;
 
 
     public LoginView(LoginController loginController, Client client) {
         this.loginController = loginController;
         this.client = client;
-
         loginFrame = new JFrame("Chess On The Go - Login");
 
         loginFrame.add(picturePanel);
@@ -104,10 +106,8 @@ public class LoginView extends JFrame implements ActionListener {
         if (e.getSource() == loginButton) {
             client.login(userText.getText(),String.valueOf(passText.getPassword()));
         } else if (e.getSource() == registerButton) {
-            registerController = new RegisterController();
             RegisterView register = new RegisterView(registerController);
         }
-
     }
 
     public void closeLoginWindow() {

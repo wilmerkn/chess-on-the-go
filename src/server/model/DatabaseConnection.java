@@ -1,13 +1,15 @@
 package server.model;
 
-import server.controller.LoginController;
-
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Properties;
-import java.sql.*;
 
+/**
+ * DatabaseConnection: Provides the user with a connection to the pg-admin server when user tries to log in or register
+ * @version 1.0
+ * @author wilmerknutas
+ */
 public class DatabaseConnection {
 
         private final Properties properties;

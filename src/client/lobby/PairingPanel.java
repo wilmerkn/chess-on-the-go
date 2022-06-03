@@ -1,13 +1,15 @@
 package client.lobby;
 
-import client.Client;
-import client.gameview.GameView;
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+/**
+ * PairingPanel: Part of the LobbyView, shows different options for time controls as well as the option to log out.
+ * @version 1.0
+ * @author wilmerknutas
+ */
 public class PairingPanel extends JPanel implements ActionListener {
 
 
@@ -77,10 +79,6 @@ public class PairingPanel extends JPanel implements ActionListener {
         return timeControl;
     }
 
-    //these buttons should start a game, but with a correct constructor that sends in an int, which is time and both players.
-    // Right now its test data
-    //nvm, changing it so it only gets whether the button is selected or not, the game starts when challenge is pressed
-    //should get the index from here instead of actionlisteners.
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == oneMinuteButton) {
@@ -95,7 +93,6 @@ public class PairingPanel extends JPanel implements ActionListener {
         if (e.getSource() == tenMinuteButton) {
             timeControl = 10;
         }
-        //Should log out and open a new login window, not finishing this yet because we are working on the server.
         if (e.getSource() == logOutButton) {
             lobbyView.restartClient();
 

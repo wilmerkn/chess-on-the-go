@@ -4,8 +4,8 @@ import java.io.Serializable;
 
 public class DrawRequest implements Serializable {
 
-    private String gameID;
-    private String sender;
+    private final String gameID;
+    private final String sender;
     private boolean accepted;
 
     public DrawRequest(String gameID, String sender) {

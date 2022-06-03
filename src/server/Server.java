@@ -27,7 +27,7 @@ public class Server implements Runnable {
 
     private final HashMap<String, GameState> idGameStateMap = new HashMap<>();
 
-    private ChessPieceAbstract[][] originalChessboard;
+    private final ChessPieceAbstract[][] originalChessboard;
 
 
     public Server() {
@@ -513,30 +513,19 @@ public class Server implements Runnable {
         System.out.println("BishopObstruction error: " + bishopobstruction);
         System.out.println("queenObstruction error: " + queenObstruction);
 
-        if ((!samespot && !withinMoveset && !friendlyObstruction && !pawnobstruct && !pawnTwoMoveObstruct && !rookobstruction && !bishopobstruction) || (pawnattacks) || ((!samespot && !withinMoveset && !friendlyObstruction && !pawnobstruct && !pawnTwoMoveObstruct) && !queenObstruction)) {//if errorchecks are negative make move valid
-            return true; //move is valid
-        } else {
-            return false;
-        }
+        //if errorchecks are negative make move valid
+        return (!samespot && !withinMoveset && !friendlyObstruction && !pawnobstruct && !pawnTwoMoveObstruct && !rookobstruction && !bishopobstruction) || (pawnattacks) || ((!samespot && !withinMoveset && !friendlyObstruction && !pawnobstruct && !pawnTwoMoveObstruct) && !queenObstruction); //move is valid
     }
 
     //did user click the same spot
     public boolean sameCpspot(int sR, int sC, int tR, int tC) {
-        if (sR == tR && sC == tC) {
-            return true;
-        } else {
-            return false;
-        }
+        return sR == tR && sC == tC;
     }
 
     //does peice move within moveset
     public boolean moveWithinCpMoveset(int movesetOffsetY, int movesetOffsetX, int yTrOffset, int xTrOffset, int[][] moveset, ChessPiece cp, ChessPieceAbstract[][] gamemap) {
         try {
-            if (moveset[movesetOffsetY - yTrOffset][movesetOffsetX - xTrOffset] != 1) {
-                return true;
-            } else {
-                return false;
-            }
+            return moveset[movesetOffsetY - yTrOffset][movesetOffsetX - xTrOffset] != 1;
         } catch (Exception e) {
 
         }
@@ -547,9 +536,7 @@ public class Server implements Runnable {
     public boolean friendlyCpObstruction(int targetRow, int targetCol, ChessPieceAbstract[][] gamemap, ChessPiece cp) {
         if (gamemap[targetRow][targetCol] != null) {
             ChessPieceColor obstructionColor = ((ChessPiece) gamemap[targetRow][targetCol]).getColor();
-            if (cp.getColor() == obstructionColor) {
-                return true;
-            }
+            return cp.getColor() == obstructionColor;
         }
         return false;
     }
@@ -557,29 +544,20 @@ public class Server implements Runnable {
     //is pawn obstruct by enemy
     public boolean pawnObstruction(int targetRow, int targetCol, ChessPieceAbstract[][] gamemap, ChessPiece cp) {
         if (cp.getChessPieceType() == ChessPieceType.PAWN && gamemap[targetRow][targetCol] != null) {
-            if (((ChessPiece) gamemap[targetRow][targetCol]).getColor() != cp.getColor()) {
-                return true;
-            }
+            return ((ChessPiece) gamemap[targetRow][targetCol]).getColor() != cp.getColor();
         }
         return false;
     }
 
     //checks if pawn can move 2 steps ahead if no obstruction is in the way
     public boolean pawn2Moves(int targetRow, int sourceRow, int sourceCol, ChessPieceAbstract[][] gamemap, ChessPiece cp) {
-        if (cp.getChessPieceType() == ChessPieceType.PAWN && cp.getMoved() == 0 && gamemap[sourceRow - 1][sourceCol] != null && targetRow == sourceRow - 2) {
-            return true;
-        }
-        return false;
+        return cp.getChessPieceType() == ChessPieceType.PAWN && cp.getMoved() == 0 && gamemap[sourceRow - 1][sourceCol] != null && targetRow == sourceRow - 2;
     }
 
     //checks if pawn can attack with attack pattern
     public boolean pawnAttacks(int targetRow, int targetCol, int movesetOffsetY, int movesetOffsetX, int yTrOffset, int xTrOffset, int[][] moveset, ChessPiece cp, ChessPieceAbstract[][] gamemap) {
         try {
-            if (cp.getChessPieceType() == ChessPieceType.PAWN && gamemap[targetRow][targetCol] != null && ((ChessPiece) gamemap[targetRow][targetCol]).getColor() != cp.getColor() && moveset[movesetOffsetY - yTrOffset][movesetOffsetX - xTrOffset] == 3) {
-                return true;
-            } else {
-                return false;
-            }
+            return cp.getChessPieceType() == ChessPieceType.PAWN && gamemap[targetRow][targetCol] != null && ((ChessPiece) gamemap[targetRow][targetCol]).getColor() != cp.getColor() && moveset[movesetOffsetY - yTrOffset][movesetOffsetX - xTrOffset] == 3;
         } catch (Exception e) {
             return false;
         }
@@ -701,10 +679,7 @@ public class Server implements Runnable {
         //check what method to use
         if (diagonal && bishop) {
             return true;
-        } else if (!diagonal && rook) {
-            return true;
-        }
-        return false;
+        } else return !diagonal && rook;
     }
 
     public ChessPieceAbstract[][] update(Move move, GameState state) { //called when chesspiece is moved
@@ -995,12 +970,8 @@ public class Server implements Runnable {
         mapp[chessPiece2Row][chessPiece2Col] = chessPiece2;
         //see if the first chess piece can attack the second chess piece
         Move move = new Move(chessPiece1Row, chessPiece1Col, chessPiece2Row, chessPiece2Col);
-        if(moveValid(move, mapp)){
-            return true;
-        }
+        return moveValid(move, mapp);
         //boolean valid = moveValid(chessPiece1Row, chessPiece1Col, chessPiece2Row, chessPiece2Col, mapp);
-
-        return false;
     }
 
     //method that returns the row of a chess piece
@@ -1066,24 +1037,14 @@ public class Server implements Runnable {
     }
 
     public boolean samecpspot(int sR, int sC, int tR, int tC){
-        if(sR == tR && sC == tC){
-            //System.out.println("same position!"); debugging
-            return true;
-        }
-        else{
-            return false;
-        }
+        //System.out.println("same position!"); debugging
+        return sR == tR && sC == tC;
     }
 
     //does peice move within moveset
     public boolean moveWithinCPMoveset(int sR, int sC, int tR, int tC, int movesetOffsetY, int movesetOffsetX, int yTrOffset, int xTrOffset, int[][] moveset, ChessPiece cp,ChessPieceAbstract[][] gamemap){
         try{
-            if(moveset[movesetOffsetY-yTrOffset][movesetOffsetX-xTrOffset] != 1){
-                return true;
-            }
-            else{
-                return false;
-            }
+            return moveset[movesetOffsetY - yTrOffset][movesetOffsetX - xTrOffset] != 1;
         } catch (Exception e) {
 
         }
@@ -1094,9 +1055,7 @@ public class Server implements Runnable {
     public boolean friendlyCPObstruction(int targetRow, int targetCol, ChessPieceAbstract[][] gamemap,ChessPiece cp){
         if(gamemap[targetRow][targetCol] != null){
             ChessPieceColor obstructionColor = ((ChessPiece)gamemap[targetRow][targetCol]).getColor();
-            if(cp.getColor() == obstructionColor){
-                return true;
-            }
+            return cp.getColor() == obstructionColor;
         }
         return false;
     }
@@ -1104,30 +1063,20 @@ public class Server implements Runnable {
     //is pawn obstruct by enemy
     public boolean pawnObstruct(int targetRow, int targetCol, ChessPieceAbstract[][] gamemap, ChessPiece cp){
         if(cp.getChessPieceType() == ChessPieceType.PAWN && gamemap[targetRow][targetCol] != null){
-            if(((ChessPiece)gamemap[targetRow][targetCol]).getColor() != cp.getColor()){
-                return true;
-            }
+            return ((ChessPiece) gamemap[targetRow][targetCol]).getColor() != cp.getColor();
         }
         return false;
     }
 
     //checks if pawn can move 2 steps ahead if no obstruction is in the way
     public boolean pawnTwoMoves(int targetRow, int sourceRow, int sourceCol, ChessPieceAbstract[][] gamemap, ChessPiece cp){
-        if(cp.getChessPieceType() == ChessPieceType.PAWN && cp.getMoved() == 0 && gamemap[sourceRow-1][sourceCol] != null && targetRow == sourceRow-2){
-            return true;
-        }
-        return false;
+        return cp.getChessPieceType() == ChessPieceType.PAWN && cp.getMoved() == 0 && gamemap[sourceRow - 1][sourceCol] != null && targetRow == sourceRow - 2;
     }
 
     //checks if pawn can attack with attack pattern
     public boolean pawnAttack(int targetRow, int targetCol, int movesetOffsetY, int movesetOffsetX, int yTrOffset, int xTrOffset, int[][] moveset, ChessPiece cp, ChessPieceAbstract[][] gamemap){
         try{
-            if(cp.getChessPieceType() == ChessPieceType.PAWN && gamemap[targetRow][targetCol] != null && ((ChessPiece)gamemap[targetRow][targetCol]).getColor() != cp.getColor() && moveset[movesetOffsetY-yTrOffset][movesetOffsetX-xTrOffset] == 3){
-                return true;
-            }
-            else{
-                return false;
-            }
+            return cp.getChessPieceType() == ChessPieceType.PAWN && gamemap[targetRow][targetCol] != null && ((ChessPiece) gamemap[targetRow][targetCol]).getColor() != cp.getColor() && moveset[movesetOffsetY - yTrOffset][movesetOffsetX - xTrOffset] == 3;
         } catch (Exception e) {
             return false;
         }

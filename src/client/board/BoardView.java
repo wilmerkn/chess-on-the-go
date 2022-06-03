@@ -21,8 +21,6 @@ public class BoardView {
     private GameLogic gameLogic;
 
 
-    private JLabel checkLabel;
-
     public BoardView() {
         this.boardPanel = new BoardPanel();
         JFrame frame = new JFrame();
@@ -32,7 +30,6 @@ public class BoardView {
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
         frame.add(boardPanel, BorderLayout.CENTER);
-        //boardPanel.populateBoard();
 
         mouseListenerEnabled = true;
 

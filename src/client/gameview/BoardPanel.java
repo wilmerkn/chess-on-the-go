@@ -25,11 +25,11 @@ public class BoardPanel extends JPanel {
 
     private boolean mouseListenersEnabled = false;
 
-    private HashMap<String, JLabel> notationToJLMap = BoardUtils.pieceNotationToJL();
+    private final HashMap<String, JLabel> notationToJLMap = BoardUtils.pieceNotationToJL();
 
     private final List<SquareMouseListener> mouseListenerList = new ArrayList<SquareMouseListener>();
 
-    private Client client;
+    private final Client client;
 
     public BoardPanel(Client client) {
         super(new GridLayout(8, 8));

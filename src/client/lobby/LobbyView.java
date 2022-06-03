@@ -5,6 +5,11 @@ import client.Client;
 import javax.swing.*;
 import java.awt.*;
 
+/**
+ * LobbyView: Creates a GUI for the lobby, using the PairingPanel as well as the UserPanel and puts them on a new JFrame.
+ * @version 1.0
+ * @author wilmerknutas
+ */
 public class LobbyView{
     private static final Dimension CLIENT_DIMENSION = new Dimension(1000, 800);
     private final JFrame lobbyFrame;
