@@ -1,14 +1,17 @@
 package server.model;
 
 import java.io.Serializable;
-
+/**
+ * LoginRequest: Stores username and password. Created by client when logging in and
+ * is sent to server for verification.
+ * Version: 1.0
+ * Author: Lucas Kylberg
+ */
 public class LoginRequest implements Serializable {
-
     private final String username;
     private final String password;
 
     private boolean accepted;
-
     private Player player;
 
     public LoginRequest(String username, String password) {

@@ -3,7 +3,11 @@ package server.model;
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-
+/**
+ * Message: Class for a message being sent between clients in a game.
+ * Version: 1.0
+ * Author: Lucas Kylberg
+ */
 public class Message implements Serializable {
     private final String gameID;
     private final Player sender;

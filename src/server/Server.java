@@ -4,7 +4,6 @@ import client.gameview.MoveKing;
 import client.gameview.PromotePawnWindow;
 import server.controller.LoginController;
 import server.model.*;
-
 import javax.swing.*;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -14,21 +13,13 @@ import java.net.Socket;
 import java.util.*;
 
 public class Server implements Runnable {
-
     private static final int PORT = 1234;
-
-    private final Hashtable<Player, ClientHandler> playerClientMap; // Testa concurrentHashmap
-    //private List<GameLogic> games = new ArrayList<>();
+    private final Hashtable<Player, ClientHandler> playerClientMap;
     private final LoginController loginController = new LoginController();
-
     private final PlayerList playerList = new PlayerList();
-
     private final HashMap<String, Player> usernamePlayerMap = new HashMap<>();
-
     private final HashMap<String, GameState> idGameStateMap = new HashMap<>();
-
-    private final ChessPieceAbstract[][] originalChessboard;
-
+    private ChessPieceAbstract[][] originalChessboard;
 
     public Server() {
         playerClientMap = new Hashtable<>();
@@ -39,14 +30,12 @@ public class Server implements Runnable {
     @Override
     public void run() {
         System.out.println("Server started");
-
         try (ServerSocket serverSocket = new ServerSocket(PORT)) {
             while (true) {
                 Socket socket = serverSocket.accept();
                 System.out.println("New client connected");
                 new ClientHandler(socket).start();
             }
-
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -77,32 +66,23 @@ public class Server implements Runnable {
             try {
                 while (true) {
                     Object object = ois.readObject();
-
                     if (object instanceof LoginRequest) {
-
                         LoginRequest loginReq = (LoginRequest) object;
                         boolean loginOk = loginController.checkLogin(loginReq.getUsername(), loginReq.getPassword());
-
                         if (loginOk) {
                             player = new Player(loginReq.getUsername()); // Ska hämtas från databas
                             loginReq.setAccepted(true, player);
                             oos.writeObject(loginReq);
-
                             usernamePlayerMap.put(player.getUsrName(), player);
                             playerClientMap.put(player, this);
                             playerList.add(player);
-
                             broadcastPlayers();
-
                         } else {
                             oos.reset();
                             oos.writeObject(loginReq);
                             oos.flush();
                         }
-                    }
-
-                    if (object instanceof ChallengeRequest challenge) {
-
+                    }else if (object instanceof ChallengeRequest challenge) {
                         if (!challenge.isAccepted()) {
                             for (Player player : playerClientMap.keySet()) {
                                 if (player.getUsrName().equals(challenge.getReceiverUsername())) {
@@ -114,15 +94,12 @@ public class Server implements Runnable {
                         } else {
                             GameState state = new GameState();
                             idGameStateMap.put(state.getGameID(), state);
-
                             state.setPlayer1(challenge.getSenderUsername());
                             state.setPlayer2(challenge.getReceiverUsername());
                             state.setTimeControl(challenge.getTimeControl());
                             state.prepareTimers(challenge.getTimeControl());
                             state.setCpa(initializeMap());
-
                             if (state.getPlayer1White() == 1) {
-
                                 playerClientMap.get(usernamePlayerMap.get(state.getPlayer1())).getOos().reset();
                                 playerClientMap.get(usernamePlayerMap.get(state.getPlayer1())).getOos().writeObject(state);
                                 playerClientMap.get(usernamePlayerMap.get(state.getPlayer1())).getOos().flush();
@@ -131,8 +108,6 @@ public class Server implements Runnable {
                                 playerClientMap.get(usernamePlayerMap.get(state.getPlayer2())).getOos().reset();
                                 playerClientMap.get(usernamePlayerMap.get(state.getPlayer2())).getOos().writeObject(state);
                                 playerClientMap.get(usernamePlayerMap.get(state.getPlayer2())).getOos().flush();
-
-
                             } else {
                                 playerClientMap.get(usernamePlayerMap.get(state.getPlayer2())).getOos().reset();
                                 playerClientMap.get(usernamePlayerMap.get(state.getPlayer2())).getOos().writeObject(state);
@@ -144,19 +119,13 @@ public class Server implements Runnable {
                                 playerClientMap.get(usernamePlayerMap.get(state.getPlayer1())).getOos().flush();
                             }
                             inverseMapArray(state);
-
                             state.setStarted();
-
                             System.out.println("Skriver state till clienter");
-
                         }
-
                     } else if (object instanceof Message) {
                         Message msg = (Message) object;
-
                         String gameID = msg.getGameID();
                         GameState state = idGameStateMap.get(gameID);
-
                         state.getMessages().add(msg);
 
                         playerClientMap.get(usernamePlayerMap.get(state.getPlayer1())).getOos().reset();
@@ -167,14 +136,10 @@ public class Server implements Runnable {
                         playerClientMap.get(usernamePlayerMap.get(state.getPlayer2())).getOos().reset();
                         playerClientMap.get(usernamePlayerMap.get(state.getPlayer2())).getOos().writeObject(state.getMessages());
                         playerClientMap.get(usernamePlayerMap.get(state.getPlayer2())).getOos().flush();
-
                     } else if (object instanceof Move) {
                         Move move = (Move) object;
-
                         GameState state = idGameStateMap.get(move.getGameID());
-
                         boolean validMove;
-
                         if (state.getPlayer1White() == 1 && move.getUsername().equals(state.getPlayer1()) && state.getPlayerTurn() % 1 == 0) {
                             validMove = moveValid(move, state.getCpa());
                         } else if (state.getPlayer1White() != 1 && move.getUsername().equals(state.getPlayer2()) && state.getPlayerTurn() % 1 == 0) {
@@ -184,9 +149,7 @@ public class Server implements Runnable {
                             validMove = moveValid(move, state.getCpa());
                             inverseMapArray(state);
                         }
-
                         if (validMove) {
-
                             if (state.getPlayer1White() == 1 && (move.getUsername().equals(state.getPlayer1())) && state.getPlayerTurn() % 1 == 0) {
                                 state.setCpa(update(move, state));
                             } else if (state.getPlayer1White() != 1 && (move.getUsername().equals(state.getPlayer2())) && state.getPlayerTurn() % 1 == 0) {
@@ -195,26 +158,19 @@ public class Server implements Runnable {
                                 inverseMapArray(state);
                                 state.setCpa(update(move, state));
                                 inverseMapArray(state);
-                                //JOptionPane.showMessageDialog(null, "Illegal move");
                             }
-
                             state.turnIncrement();
                             state.setStarted();
-
                             if (state.getPlayer1White() == 1) {
-
                                 playerClientMap.get(usernamePlayerMap.get(state.getPlayer1())).getOos().reset();
                                 playerClientMap.get(usernamePlayerMap.get(state.getPlayer1())).getOos().writeObject(state);
                                 playerClientMap.get(usernamePlayerMap.get(state.getPlayer1())).getOos().flush();
-
 
                                 inverseMapArray(state);
                                 playerClientMap.get(usernamePlayerMap.get(state.getPlayer2())).getOos().reset();
                                 playerClientMap.get(usernamePlayerMap.get(state.getPlayer2())).getOos().writeObject(state);
                                 playerClientMap.get(usernamePlayerMap.get(state.getPlayer2())).getOos().flush();
                                 inverseMapArray(state);
-
-
                             } else {
                                 inverseMapArray(state);
                                 playerClientMap.get(usernamePlayerMap.get(state.getPlayer1())).getOos().reset();
@@ -225,17 +181,12 @@ public class Server implements Runnable {
                                 playerClientMap.get(usernamePlayerMap.get(state.getPlayer2())).getOos().reset();
                                 playerClientMap.get(usernamePlayerMap.get(state.getPlayer2())).getOos().writeObject(state);
                                 playerClientMap.get(usernamePlayerMap.get(state.getPlayer2())).getOos().flush();
-
                             }
-
                         } else {
-                            //if this happens on the first move, timer shoiuldnt start
                             JOptionPane.showMessageDialog(null, "Illegal move");
                             playerClientMap.get(usernamePlayerMap.get(move.getUsername())).getOos().reset();
                             playerClientMap.get(usernamePlayerMap.get(move.getUsername())).getOos().writeObject(move);
                             playerClientMap.get(usernamePlayerMap.get(move.getUsername())).getOos().flush();
-
-
                         }
                     } else if (object instanceof ResignRequest) {
                         ResignRequest request = (ResignRequest) object;
@@ -270,7 +221,6 @@ public class Server implements Runnable {
                                 playerClientMap.get(usernamePlayerMap.get(request.getSender())).getOos().flush();
                             }
                         }
-
                         //ToDo spara state i databas och ta bort game från mappar.
                     } else if (object instanceof GameState) {
                         GameState state = (GameState) object;
@@ -309,7 +259,6 @@ public class Server implements Runnable {
         }
 
         private void broadcastPlayers() {
-
             for (ClientHandler client : playerClientMap.values()) {
                 try {
                     client.getOos().reset();
@@ -325,9 +274,7 @@ public class Server implements Runnable {
 
     public ChessPieceAbstract[][] initializeMap() {
         //gameAudio.start();
-
         int mapDim = 8;
-        HashMap<Integer, ChessPieceAbstract> chessPieces = new HashMap<>();
         ChessPieceAbstract[][] gamemap = new ChessPieceAbstract[mapDim][mapDim];
 
         gamemap[0][0] = new ChessPiece(ChessPieceColor.BLACK, ChessPieceType.ROOK, "BR");
