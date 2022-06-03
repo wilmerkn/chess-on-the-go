@@ -8,23 +8,17 @@ import java.text.NumberFormat;
 public class GameTimerTask implements Runnable, Serializable {
 
     private boolean stopFlag; //stop flag for while loop
-    //private GameView view; //access to view to change text in components
 
-    private int hours;
     private int minutes;
     private int seconds;
-    private String hour;
     private String minute;
     private String second;
     private static final int N = 00;
     private String currentTime;
 
-    private int timeControl;
-
     public GameTimerTask(int timeControl){
         this.minutes = timeControl;
         this.currentTime = "0" + timeControl + ":00";
-        //this.view = null;
         stopFlag = false;
     }
 
@@ -34,7 +28,6 @@ public class GameTimerTask implements Runnable, Serializable {
 
     @Override
     public void run() {
-
         while(!stopFlag){
             try{
                 Thread.sleep(1000);
@@ -43,7 +36,6 @@ public class GameTimerTask implements Runnable, Serializable {
                     seconds = 59; //increment minutes and reset if second = 60
                     minutes--;
                 }
-                //hour = formatter.format(hours);
                 minute = formatter.format(minutes); //formats time to 00 unit
                 second = formatter.format(seconds);
                 String clockTime = String.valueOf(minute + ":" + second);
@@ -51,9 +43,7 @@ public class GameTimerTask implements Runnable, Serializable {
                 if(currentTime.equals("00:00")) {
                     stopFlag = true;
                 }
-                seconds--;
-                 //wait 1 sec
-
+                seconds--; //wait 1 sec
             } catch (Exception e) {
                 e.printStackTrace();
             }

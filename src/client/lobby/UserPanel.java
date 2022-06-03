@@ -1,8 +1,5 @@
 package client.lobby;
 
-import client.gameview.GameView;
-import server.controller.GameLogic;
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;

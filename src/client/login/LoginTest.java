@@ -1,7 +1,6 @@
 package client.login;
 
 import client.Client;
-import server.controller.GameLogic;
 import server.controller.LoginController;
 
 public class LoginTest {

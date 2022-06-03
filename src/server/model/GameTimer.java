@@ -7,10 +7,7 @@ public class GameTimer implements Serializable {
 
     private GameTimerTask threadtask;
 
-    private final int time;
-
     public GameTimer(int time){
-        this.time = time;
         threadtask = new GameTimerTask(time);
     }
 

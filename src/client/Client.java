@@ -40,8 +40,7 @@ public class Client {
     private GameState state;
     private String opponent;
 
-
-
+    //initialize Client
     public Client() {
         LoginController loginController = new LoginController();
         loginView = new LoginView(loginController, this);
@@ -49,6 +48,7 @@ public class Client {
         new ServerListener().start();
     }
 
+    //let user login with password and username
     public void login(String username, String password) {
         LoginRequest loginRequest = new LoginRequest(username, password);
         try {
@@ -57,7 +57,7 @@ public class Client {
             e.printStackTrace();
         }
     }
-
+    //send Challenge request
     public void challenge(String receiverUsername, int timeControl) {
         ChallengeRequest challenge = new ChallengeRequest(username, receiverUsername, timeControl);
         try {
@@ -67,9 +67,10 @@ public class Client {
         }
     }
 
+    //sends out a move from client
     public void sendMove(Move move) {
         move.setGameID(gameID);
-        startOpponentTime(); //ToDo Fixa
+        startOpponentTime(); //ToDo Fix
         try {
             oos.reset();
             oos.writeObject(move);
@@ -78,6 +79,7 @@ public class Client {
             throw new RuntimeException(e);
         }
     }
+    //send current game state
     public void sendState(GameState state){
         try {
             oos.reset();
@@ -88,6 +90,7 @@ public class Client {
         }
     }
 
+    //connect to the server
     private void connect() {
         try {
             socket = new Socket(HOST, PORT);
@@ -98,6 +101,7 @@ public class Client {
         }
     }
 
+    //disconnect from the server
     public void disconnect() {
         try {
             if (ois != null) ois.close();
@@ -109,10 +113,12 @@ public class Client {
         }
     }
 
+    //retrieves username
     public String getUsername() {
         return username;
     }
 
+    //sends a chat message in game
     public void sendMessage(String messageText) {
         Message message = new Message(gameID, player, messageText);
         try {
@@ -124,6 +130,7 @@ public class Client {
         }
     }
 
+    //player requests to resign
     public void resign() {
         int answer = JOptionPane.showConfirmDialog(
                 null,
@@ -145,6 +152,7 @@ public class Client {
         }
     }
 
+    //client sends out request to offer a draw
     public void offerDraw() {
         int answer = JOptionPane.showConfirmDialog(
                 null,
@@ -152,7 +160,6 @@ public class Client {
                 "Offer draw",
                 JOptionPane.YES_NO_OPTION
         );
-
         if(answer == 0) {
             DrawRequest request = new DrawRequest(gameID, username);
             try {
@@ -166,12 +173,11 @@ public class Client {
     }
 
     private class ServerListener extends Thread {
-
+        //handles Server communication
         @Override
         public void run() {
             try {
                 while(true) {
-
                     Object obj = ois.readObject();
                     if(obj instanceof LoginRequest) {
                         LoginRequest request = (LoginRequest) obj;
@@ -200,14 +206,11 @@ public class Client {
                             lobbyView.diposeFrame();
                         }
                     } else if (obj instanceof GameState) {
-
                         state = (GameState) obj;
                         //if a move is made by one player, others timer should start
-                        //System.out.println(username + " tar emot gamestate. ID: " + gameID);
                         gameID = state.getGameID();
                         //get playerTurn, depending on whos turn stop and start timers
                         //boolean myTurn;
-
                         if(state.getWinner().equals(username)){
                             JOptionPane.showMessageDialog(null, "You won on time!");
                             gameView.disposeFrame();
@@ -216,16 +219,14 @@ public class Client {
                             JOptionPane.showMessageDialog(null, "You lost on time! :) noob");
                             gameView.disposeFrame();
                         }
-
                         if(!state.getStarted()) {
                             gameView = new GameView(Client.this);
                             myTime = state.getTimeControl()*60;
                             opponentTime = state.getTimeControl()*60;
                             gameView.getBoardPanel().disableMouseListeners();
-
-
                             timer1 = new Timer(1000, new ActionListener() {
                                 @Override
+                                //checks if time has reached 0 to make a player win by time constraint
                                 public void actionPerformed(ActionEvent e) {
                                     myTime--;
                                     gameView.setMyTime((myTime /60) + ":" + (myTime %60));
@@ -239,9 +240,7 @@ public class Client {
                                 }
                             });
                             gameView.setMyTime(state.getTimeControl()+ ":00");
-
                             timer1.setInitialDelay(0);
-
                             timer2 = new Timer(1000, new ActionListener() {
                                 @Override
                                 public void actionPerformed(ActionEvent e) {
@@ -255,9 +254,7 @@ public class Client {
                             });
                             gameView.setOpponentTime(state.getTimeControl()+ ":00");
                             timer2.setInitialDelay(0);
-
                             gameView.setMyName(username);
-
                             if(!username.equals(state.getPlayer1())) {
                                 gameView.setOpponentName(state.getPlayer1());
                                 opponent = state.getPlayer1();
@@ -278,8 +275,6 @@ public class Client {
                         else if(username.equals(state.getPlayer2()) && state.getPlayerTurn() % 1 == 0 && state.getPlayer1White() == 0){
                             gameView.getBoardPanel().enableMouseListeners();
                         }
-
-
                         //Timers for both boards
                         if (state.getStarted()){
                             if(state.getPlayer1White() == 1) {
@@ -358,7 +353,6 @@ public class Client {
                                     "Draw offered",
                                     JOptionPane.YES_NO_OPTION
                             );
-
                             if(answer == 0) {
                                 request.setAccepted();
                                 try {
@@ -371,8 +365,6 @@ public class Client {
                                 JOptionPane.showMessageDialog(null, "The game is a draw!");
                                 gameView.disposeFrame();
                             }
-
-
                         }
                     }
                 }
@@ -382,29 +374,25 @@ public class Client {
         }
     }
 
-
-    //ToDo Rita upp skicka över nätverk
+    //Method used to draw up/update the Main game board
     public void drawMap(ChessPieceAbstract[][] cpa){
         HashMap<String, JLabel> notationLbl = gameView.getBoardPanel().getNotationToJLMap();
         ChessPieceAbstract[][] gamemap = cpa;
         BoardPanel.SquarePanel[][] sqp = gameView.getBoardPanel().getSquares();
-
         cleanBoard();
         for(int row = 0; row < 8; row++){
             for(int col = 0; col < 8; col++){
                 if(gamemap[row][col] != null){
-
                     ChessPiece chessPiece = (ChessPiece) gamemap[row][col];
                     sqp[row][col].placePiece(notationLbl.get(chessPiece.getSpriteName()));
-
                 }
             }
         }
     }
 
+    //removes all sprites from board
     public void cleanBoard(){
         BoardPanel.SquarePanel[][] squarePanel = gameView.getBoardPanel().getSquares();
-
         for(int row = 0; row < squarePanel.length; row++){
             for(int col = 0; col < squarePanel[row].length; col++){
                 squarePanel[row][col].removePiece();
@@ -412,40 +400,33 @@ public class Client {
         }
     }
 
-    public ObjectOutputStream getOos() {
-        return oos;
-    }
-
+    //method to start a client
     public static void main(String[] args) {
         new Client();
     }
 
+    //start players timer
     public void startMyTime(){
         timer2.stop();
         timer1.start();
     }
+
+    //Start opponents timer
     public void startOpponentTime(){
         timer1.stop();
         timer2.start();
     }
 
-    public ObjectInputStream getOis() {
-        return ois;
-    }
-
+    //hiighlights movement pattern for a clicked chesspiece
     public void highlightMovementPattern(int srcY, int srcX){
-
         int YCord = srcY; //get y/x cordinate of piece
         int XCord = srcX;
-
         ChessPieceAbstract[][] gamemap = state.getCpa();
         ChessPiece cp = (ChessPiece) gamemap[YCord][XCord]; //get piece at cordinate
         int[][] moveset = cp.getMoveset(); //get moveset of piece
         BoardPanel.SquarePanel[][] squarePanel = gameView.getBoardPanel().getSquares(); //get GUI panel
-
         int YOffset = 0; //initialize offsets
         int XOffset = 0;
-
         try {
             //get offsets from moveset
             for(int row = 0; row < moveset.length; row ++){
@@ -457,11 +438,9 @@ public class Client {
                     }
                 }
             }
-
         } catch (Exception e) {
             e.printStackTrace();
         }
-
         //y/x = cordinate - offset.
         boolean runOnce = false;
         for(int y = (YCord - YOffset); y < (YCord-YOffset+moveset.length); y++){
@@ -485,7 +464,6 @@ public class Client {
                 } catch (Exception e) {
                     continue;
                 }
-
             }
         }
         //todo optimize rotation of patterns
@@ -493,11 +471,9 @@ public class Client {
         if(cp.getChessPieceType() == ChessPieceType.ROOK || cp.getChessPieceType() == ChessPieceType.QUEEN){
             //iterate all sides
             //first chess peice block rest of tiles from highlighting.
-
             //checks obstruction upside
             int yc = (YCord-1);
             int xc = (XCord+1);
-
             for(;yc >= 0; yc--){
                 if(gamemap[yc][XCord] == null){
                     squarePanel[yc][XCord].toggleHighlight();
@@ -510,7 +486,6 @@ public class Client {
                     break;
                 }
             }
-
             //checks obstruction right side
             for(;xc <= gamemap.length-1; xc++){
                 if(gamemap[YCord][xc] == null){
@@ -524,7 +499,6 @@ public class Client {
                     break;
                 }
             }
-
             //checks obstruction below
             yc = (YCord+1);
             for(;yc <= gamemap.length-1; yc++){
@@ -539,7 +513,6 @@ public class Client {
                     break;
                 }
             }
-
             //checks obstruction left
             xc = (XCord-1);
             for(;xc >= 0; xc--){
@@ -557,11 +530,9 @@ public class Client {
         }
         //iterate and highlight bishop path unless obstructed by foe or friend
         if(cp.getChessPieceType() == ChessPieceType.BISHOP || cp.getChessPieceType() == ChessPieceType.QUEEN){
-
             //top right
             int xc = (XCord+1);
             int yc = (YCord-1);
-
             for(; (yc >= 0) && (xc < gamemap[yc].length); yc--,xc++){
                 if(gamemap[yc][xc] == null){
                     squarePanel[yc][xc].toggleHighlight();
@@ -574,10 +545,8 @@ public class Client {
                     break;
                 }
             }
-
             xc = (XCord+1);
             yc = (YCord+1);
-
             for(; (yc < gamemap.length) && xc < gamemap[yc].length; yc++,xc++){
                 if(gamemap[yc][xc] == null){
                     squarePanel[yc][xc].toggleHighlight();
@@ -590,10 +559,8 @@ public class Client {
                     break;
                 }
             }
-
             xc = (XCord-1);
             yc = (YCord+1);
-
             for(; (yc < gamemap.length) && xc >= 0; yc++,xc--){
                 if(gamemap[yc][xc] == null){
                     squarePanel[yc][xc].toggleHighlight();
@@ -606,10 +573,8 @@ public class Client {
                     break;
                 }
             }
-
             xc= (XCord-1);
             yc= (YCord-1);
-
             for(; (yc >= 0) && xc >= 0; yc--,xc--){
                 if(gamemap[yc][xc] == null){
                     squarePanel[yc][xc].toggleHighlight();
@@ -622,7 +587,6 @@ public class Client {
                     break;
                 }
             }
-
         }
     }
 }

@@ -1,19 +1,10 @@
 package client.board;
 
-import server.controller.GameLogic;
-
-import org.w3c.dom.ranges.Range;
-import server.model.ChessPiece;
-
-import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.border.Border;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
 import java.util.HashMap;
 
 public class BoardView {
