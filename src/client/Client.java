@@ -38,6 +38,7 @@ public class Client {
     private int opponentTime;
 
     private GameState state;
+    private String opponent;
 
 
 
@@ -69,10 +70,18 @@ public class Client {
     public void sendMove(Move move) {
         move.setGameID(gameID);
         startOpponentTime(); //ToDo Fixa
-        gameView.getBoardPanel().disableMouseListeners();
         try {
             oos.reset();
             oos.writeObject(move);
+            oos.flush();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    public void sendState(GameState state){
+        try {
+            oos.reset();
+            oos.writeObject(state);
             oos.flush();
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -89,7 +98,7 @@ public class Client {
         }
     }
 
-    private void disconnect() {
+    public void disconnect() {
         try {
             if (ois != null) ois.close();
             if (oos != null) oos.close();
@@ -113,7 +122,47 @@ public class Client {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
 
+    public void resign() {
+        int answer = JOptionPane.showConfirmDialog(
+                null,
+                "Are you sure you want to resign?",
+                "Resignation",
+                JOptionPane.YES_NO_OPTION
+        );
+
+        if(answer == 0) {
+            ResignRequest request = new ResignRequest(gameID, username);
+            try {
+                oos.reset();
+                oos.writeObject(request);
+                oos.flush();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+            gameView.disposeFrame();
+        }
+    }
+
+    public void offerDraw() {
+        int answer = JOptionPane.showConfirmDialog(
+                null,
+                "Are you sure you want to offer draw?",
+                "Offer draw",
+                JOptionPane.YES_NO_OPTION
+        );
+
+        if(answer == 0) {
+            DrawRequest request = new DrawRequest(gameID, username);
+            try {
+                oos.reset();
+                oos.writeObject(request);
+                oos.flush();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
     }
 
     private class ServerListener extends Thread {
@@ -143,17 +192,13 @@ public class Client {
                                 "Incoming challenge",
                                 JOptionPane.YES_NO_OPTION
                         );
-
                         if(answer == 0) {
                             challenge.accept();
                             oos.reset();
                             oos.writeObject(challenge);
                             oos.flush();
-                            lobbyView.dispose();
-                            //set timeControl
-
+                            lobbyView.diposeFrame();
                         }
-
                     } else if (obj instanceof GameState) {
 
                         state = (GameState) obj;
@@ -162,6 +207,15 @@ public class Client {
                         gameID = state.getGameID();
                         //get playerTurn, depending on whos turn stop and start timers
                         //boolean myTurn;
+
+                        if(state.getWinner().equals(username)){
+                            JOptionPane.showMessageDialog(null, "You won on time!");
+                            gameView.disposeFrame();
+                        }
+                        else if (state.getWinner().equals(opponent)){
+                            JOptionPane.showMessageDialog(null, "You lost on time! :) noob");
+                            gameView.disposeFrame();
+                        }
 
                         if(!state.getStarted()) {
                             gameView = new GameView(Client.this);
@@ -177,10 +231,11 @@ public class Client {
                                     gameView.setMyTime((myTime /60) + ":" + (myTime %60));
                                     if(myTime ==0){
                                         timer1.stop();
+                                        state.setWinner(opponent);
+                                        sendState(state);
                                         //should sent signal to server that one player wins, register result in DB in "stats" and then terminate game
                                         System.out.println("Player 2 wins on time");
                                     }
-
                                 }
                             });
                             gameView.setMyTime(state.getTimeControl()+ ":00");
@@ -192,7 +247,7 @@ public class Client {
                                 public void actionPerformed(ActionEvent e) {
                                     opponentTime--;
                                     gameView.setOpponentTime((opponentTime /60) + ":" + (opponentTime %60));
-                                    if(opponentTime ==0){
+                                    if(opponentTime == 0){
                                         timer2.stop();
                                         System.out.println("Player 1 wins on time");
                                     }
@@ -205,8 +260,10 @@ public class Client {
 
                             if(!username.equals(state.getPlayer1())) {
                                 gameView.setOpponentName(state.getPlayer1());
+                                opponent = state.getPlayer1();
                             } else if (!username.equals(state.getPlayer2())) {
                                 gameView.setOpponentName(state.getPlayer2());
+                                opponent = state.getPlayer2();
                             }
                         }
                         //turns off mouselisteners when it's not your turn, might change it so you cant register a moe when it isnt your turn, but you can check highlights
@@ -215,10 +272,10 @@ public class Client {
                         }
                         if(username.equals(state.getPlayer2()) && state.getPlayerTurn() % 1 != 0 && state.getPlayer1White() == 1){
                             gameView.getBoardPanel().enableMouseListeners();
-                        }if(username.equals(state.getPlayer1()) && state.getPlayerTurn() % 1 != 0 && state.getPlayer1White() == 0) {
+                        }else if(username.equals(state.getPlayer1()) && state.getPlayerTurn() % 1 != 0 && state.getPlayer1White() == 0) {
                             gameView.getBoardPanel().enableMouseListeners();
                         }
-                        if(username.equals(state.getPlayer2()) && state.getPlayerTurn() % 1 == 0 && state.getPlayer1White() == 0){
+                        else if(username.equals(state.getPlayer2()) && state.getPlayerTurn() % 1 == 0 && state.getPlayer1White() == 0){
                             gameView.getBoardPanel().enableMouseListeners();
                         }
 
@@ -229,17 +286,21 @@ public class Client {
                                 if (state.getPlayerTurn() % 1 == 0) {
                                     if (username.equals(state.getPlayer1())) {
                                         startMyTime();
+                                        gameView.getBoardPanel().enableMouseListeners();
                                     }
                                     if (username.equals(state.getPlayer2())) {
                                         startOpponentTime();
+                                        gameView.getBoardPanel().disableMouseListeners();
                                     }
                                 }
                                 if (state.getPlayerTurn() % 1 != 0) {
                                     if (username.equals(state.getPlayer1())) {
                                         startOpponentTime();
+                                        gameView.getBoardPanel().disableMouseListeners();
                                     }
                                     if (username.equals(state.getPlayer2())){
                                         startMyTime();
+                                        gameView.getBoardPanel().enableMouseListeners();
                                     }
                                 }
                             }
@@ -248,34 +309,71 @@ public class Client {
                                     if (username.equals(state.getPlayer1())) {
                                         //jag är vit, starta min timer
                                         startOpponentTime();
+                                        gameView.getBoardPanel().disableMouseListeners();
                                     }
                                     if (username.equals(state.getPlayer2())) {
                                         startMyTime();
+                                        gameView.getBoardPanel().enableMouseListeners();
                                     }
                                 }
                                 if (state.getPlayerTurn() % 1 != 0) {
                                     if (username.equals(state.getPlayer1())) {
                                         startMyTime();
+                                        gameView.getBoardPanel().enableMouseListeners();
                                     }
                                     if (username.equals(state.getPlayer2())){
                                         startOpponentTime();
+                                        gameView.getBoardPanel().disableMouseListeners();
                                     }
                                 }
                             }
                         }
                         drawMap(state.getCpa());
+                        System.out.println("KLAR");
                     } else if (obj instanceof ChatLog) {
                         ChatLog chatLog = (ChatLog) obj;
                         gameView.getChatPanel().setChatPanelText(chatLog.getStringList());
                     } else if(obj instanceof PlayerList) {
                         PlayerList playerList = (PlayerList) obj;
-                        lobbyView.getUserPanel().setOnlinePlayers(playerList.getStringList());
+                        ArrayList<String> tempList = playerList.getStringList();
+                        tempList.remove(username);
+                        lobbyView.getUserPanel().setOnlinePlayers(tempList);
                     } else if (obj instanceof Move) {
                         Move move = (Move) obj;
                         if(move.isLegalMove()) {
                             gameView.getBoardPanel().updateMoveValid(move.getSourceRow(), move.getSourceCol());
                         }
+                    } else if (obj instanceof ResignRequest) {
+                        JOptionPane.showMessageDialog(null, "You won by resignation!");
+                        gameView.disposeFrame();
+                    } else if (obj instanceof DrawRequest) {
+                        DrawRequest request = (DrawRequest) obj;
+                        if(request.isAccepted()) {
+                            JOptionPane.showMessageDialog(null, "The game is a draw!");
+                            gameView.disposeFrame();
+                        } else {
+                            int answer = JOptionPane.showConfirmDialog(
+                                    null,
+                                    "Accept draw offer?",
+                                    "Draw offered",
+                                    JOptionPane.YES_NO_OPTION
+                            );
 
+                            if(answer == 0) {
+                                request.setAccepted();
+                                try {
+                                    oos.reset();
+                                    oos.writeObject(request);
+                                    oos.flush();
+                                } catch (IOException e) {
+                                    throw new RuntimeException(e);
+                                }
+                                JOptionPane.showMessageDialog(null, "The game is a draw!");
+                                gameView.disposeFrame();
+                            }
+
+
+                        }
                     }
                 }
             } catch (IOException | ClassNotFoundException e) {
@@ -283,6 +381,7 @@ public class Client {
             }
         }
     }
+
 
     //ToDo Rita upp skicka över nätverk
     public void drawMap(ChessPieceAbstract[][] cpa){

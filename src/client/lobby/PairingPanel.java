@@ -1,5 +1,6 @@
 package client.lobby;
 
+import client.Client;
 import client.gameview.GameView;
 
 import javax.swing.*;
@@ -96,7 +97,8 @@ public class PairingPanel extends JPanel implements ActionListener {
         }
         //Should log out and open a new login window, not finishing this yet because we are working on the server.
         if (e.getSource() == logOutButton) {
-            //loginController.logOut();
+            lobbyView.restartClient();
+
         }
     }
 }

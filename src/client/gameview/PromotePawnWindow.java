@@ -1,8 +1,6 @@
 package client.gameview;
-
-import server.controller.GameLogic;
+import server.Server;
 import server.model.ChessPiece;
-import server.model.ChessPieceAbstract;
 import server.model.ChessPieceColor;
 import server.model.ChessPieceType;
 
@@ -11,26 +9,20 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-public class PromotePawnWindow{
+public class PromotePawnWindow {
     private JButton queen, rook, knight, bishop;
-    private JLabel label;
     private JFrame frame;
-    private GameLogic gameLogic;
+    private ChessPiece chessPiece;
 
-
-
-    public PromotePawnWindow() {
-        System.out.println("YESSSSSSSS");
-        this.gameLogic = gameLogic;
+    public PromotePawnWindow(Server server) {
         queen = new JButton("Queen");
         rook = new JButton("Rook");
         knight = new JButton("Knight");
         bishop = new JButton("Bishop");
         frame = new JFrame("Pawn promotion");
 
-
         frame.setLayout(new GridLayout(5, 2));
-        frame.setSize(500,250);
+        frame.setSize(500, 250);
         frame.add(queen);
         frame.add(rook);
         frame.add(knight);
@@ -39,38 +31,53 @@ public class PromotePawnWindow{
     }
 
 
-    public void chooseChesspiece(GameLogic gameLogic,ChessPieceColor color, ChessPiece cp) {
-        queen.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-               gameLogic.getModel().getMap().getMap()[gameLogic.getLocationX(cp,  gameLogic.getModel().getMap().getMap())][gameLogic.getLocationY(cp,  gameLogic.getModel().getMap().getMap())] = gameLogic.getChesspiece(color, ChessPieceType.QUEEN);
-                frame.dispose();
-            }
-        });
+    private boolean buttonIsSelected = false;
 
-        rook.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                gameLogic.getModel().getMap().getMap()[gameLogic.getLocationX(cp,  gameLogic.getModel().getMap().getMap())][gameLogic.getLocationY(cp,  gameLogic.getModel().getMap().getMap())] = gameLogic.getChesspiece(color, ChessPieceType.ROOK);
-                frame.dispose();
-            }
-        });
+    public void chooseChesspiece(Server server, ChessPieceColor color) {
+        while(buttonIsSelected==false) {
+            queen.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    chessPiece = server.getChesspiece(color, ChessPieceType.QUEEN);
+                    buttonIsSelected = true;
+                    frame.dispose();
+                }
+            });
 
-        bishop.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                gameLogic.getModel().getMap().getMap()[gameLogic.getLocationX(cp,  gameLogic.getModel().getMap().getMap())][gameLogic.getLocationY(cp,  gameLogic.getModel().getMap().getMap())] = gameLogic.getChesspiece(color, ChessPieceType.BISHOP);
-                frame.dispose();
-            }
-        });
+            rook.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    chessPiece = server.getChesspiece(color, ChessPieceType.ROOK);
+                    buttonIsSelected = true;
+                    frame.dispose();
 
-        knight.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                gameLogic.getModel().getMap().getMap()[gameLogic.getLocationX(cp,  gameLogic.getModel().getMap().getMap())][gameLogic.getLocationY(cp,  gameLogic.getModel().getMap().getMap())] = gameLogic.getChesspiece(color, ChessPieceType.KNIGHT);
-                frame.dispose();
-            }
-        });
+                }
+            });
+
+            bishop.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    chessPiece = server.getChesspiece(color, ChessPieceType.BISHOP);
+                    buttonIsSelected = true;
+                    frame.dispose();
+
+                }
+            });
+
+            knight.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    chessPiece = server.getChesspiece(color, ChessPieceType.KNIGHT);
+                    buttonIsSelected = true;
+                    frame.dispose();
+
+                }
+            });
+        }
+    }
+
+    public ChessPiece getChessPiece() {
+        return chessPiece;
     }
 
 }

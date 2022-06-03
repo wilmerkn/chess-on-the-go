@@ -81,8 +81,8 @@ public class LoginView extends JFrame implements ActionListener {
         this.registerButton = new JButton("Register");
         buttonPanel.add(registerButton);
 
-        init();
         initListeners();
+        init();
     }
 
     private void init() {
@@ -103,7 +103,6 @@ public class LoginView extends JFrame implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == loginButton) {
             client.login(userText.getText(),String.valueOf(passText.getPassword()));
-            //loginController.checkLogin(userText.getText(), String.valueOf(passText.getPassword()));
         } else if (e.getSource() == registerButton) {
             registerController = new RegisterController();
             RegisterView register = new RegisterView(registerController);

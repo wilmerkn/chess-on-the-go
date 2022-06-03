@@ -57,8 +57,14 @@ public class UserPanel extends JPanel implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == challengeButton) {
             String receiverUsername = (String) userList.getSelectedValue();
+
             int timeControl = lobbyView.getTimeControl();
-            lobbyView.getClient().challenge(receiverUsername, timeControl);
+            if (timeControl != 0 && receiverUsername != null) {
+                lobbyView.getClient().challenge(receiverUsername, timeControl);
+            }
+            else {
+                JOptionPane.showMessageDialog(null, "Please select time control and user you want to challenge.");
+            }
         }
         if (e.getSource() == profileButton) {
             //should check selected profile, maybe pop up with stats? waiting for JList with users to have some testdata
