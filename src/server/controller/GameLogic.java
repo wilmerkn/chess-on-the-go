@@ -24,9 +24,9 @@ import java.util.*;
 public class GameLogic {
 
     //private GameView view;
-    private GameModel model;
-    private GameAudio gameAudio;
-    private ChessPieceAbstract originalBoard [][];
+    private final GameModel model;
+    private final GameAudio gameAudio;
+    private final ChessPieceAbstract[][] originalBoard;
 
     public GameLogic(){
 
@@ -160,7 +160,7 @@ public class GameLogic {
                 for (int j = 0; j < 8; j++) {
                     ChessPiece cp = (ChessPiece) board[i][j];
                     if (cp != null && cp.getColor().equals(enemyColor)) {
-                        System.out.println(cp.toString() + " " + getLocationX(cp , board) + ", " + getLocationY(cp, board));
+                        System.out.println(cp + " " + getLocationX(cp , board) + ", " + getLocationY(cp, board));
                         //see if a chess piece could attack the king
                         if (checkMove(getLocationX(cp, board), getLocationY(cp, board), cp, xKing.get(xy), yKing.get(xy), theKing) == true) {
                             list.add(xKing.get(xy)+", "+yKing.get(xy));

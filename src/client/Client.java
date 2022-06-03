@@ -17,14 +17,20 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+/**
+ * Client: Responsible for providing the user with a GUI, as well as sending information from the user, via server to other clients
+ * @version 1.0
+ * @author wilmerknutas, lucaskylberg, dannygazic, mirkosmiljanic
+ */
+
 public class Client {
-    private static final String HOST = "127.0.0.1";
+    private static final String HOST = "172.20.10.2";
     private static final int PORT = 1234;
 
     private Socket socket;
     private ObjectInputStream ois;
     private ObjectOutputStream oos;
-    private LoginView loginView;
+    private final LoginView loginView;
     private LobbyView lobbyView;
     private GameView gameView;
 
@@ -69,7 +75,7 @@ public class Client {
 
     public void sendMove(Move move) {
         move.setGameID(gameID);
-        startOpponentTime(); //ToDo Fixa
+        startOpponentTime();
         try {
             oos.reset();
             oos.writeObject(move);
@@ -78,6 +84,7 @@ public class Client {
             throw new RuntimeException(e);
         }
     }
+
     public void sendState(GameState state){
         try {
             oos.reset();
@@ -162,6 +169,7 @@ public class Client {
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
+            gameView.disposeFrame();
         }
     }
 
@@ -173,6 +181,7 @@ public class Client {
                 while(true) {
 
                     Object obj = ois.readObject();
+
                     if(obj instanceof LoginRequest) {
                         LoginRequest request = (LoginRequest) obj;
                         if(!request.isAccepted()) {
@@ -192,7 +201,7 @@ public class Client {
                                 "Incoming challenge",
                                 JOptionPane.YES_NO_OPTION
                         );
-                        if(answer == 0) {
+                        if (answer == 0) {
                             challenge.accept();
                             oos.reset();
                             oos.writeObject(challenge);
@@ -200,30 +209,19 @@ public class Client {
                             lobbyView.diposeFrame();
                         }
                     } else if (obj instanceof GameState) {
-
                         state = (GameState) obj;
-                        //if a move is made by one player, others timer should start
-                        //System.out.println(username + " tar emot gamestate. ID: " + gameID);
                         gameID = state.getGameID();
-                        //get playerTurn, depending on whos turn stop and start timers
-                        //boolean myTurn;
-
                         if(state.getWinner().equals(username)){
                             JOptionPane.showMessageDialog(null, "You won on time!");
                             gameView.disposeFrame();
-                        }
-                        else if (state.getWinner().equals(opponent)){
+                        } else if (state.getWinner().equals(opponent)){
                             JOptionPane.showMessageDialog(null, "You lost on time! :) noob");
                             gameView.disposeFrame();
-                        }
-
-                        if(!state.getStarted()) {
+                        } if(!state.getStarted()) {
                             gameView = new GameView(Client.this);
                             myTime = state.getTimeControl()*60;
                             opponentTime = state.getTimeControl()*60;
                             gameView.getBoardPanel().disableMouseListeners();
-
-
                             timer1 = new Timer(1000, new ActionListener() {
                                 @Override
                                 public void actionPerformed(ActionEvent e) {
@@ -233,7 +231,6 @@ public class Client {
                                         timer1.stop();
                                         state.setWinner(opponent);
                                         sendState(state);
-                                        //should sent signal to server that one player wins, register result in DB in "stats" and then terminate game
                                         System.out.println("Player 2 wins on time");
                                     }
                                 }
@@ -266,7 +263,6 @@ public class Client {
                                 opponent = state.getPlayer2();
                             }
                         }
-                        //turns off mouselisteners when it's not your turn, might change it so you cant register a moe when it isnt your turn, but you can check highlights
                         if(username.equals(state.getPlayer1()) && state.getPlayerTurn() % 1 == 0 && state.getPlayer1White() == 1) {
                             gameView.getBoardPanel().enableMouseListeners();
                         }
@@ -278,7 +274,6 @@ public class Client {
                         else if(username.equals(state.getPlayer2()) && state.getPlayerTurn() % 1 == 0 && state.getPlayer1White() == 0){
                             gameView.getBoardPanel().enableMouseListeners();
                         }
-
 
                         //Timers for both boards
                         if (state.getStarted()){
@@ -307,7 +302,6 @@ public class Client {
                             if(state.getPlayer1White() == 0) {
                                 if (state.getPlayerTurn() % 1 == 0) {
                                     if (username.equals(state.getPlayer1())) {
-                                        //jag är vit, starta min timer
                                         startOpponentTime();
                                         gameView.getBoardPanel().disableMouseListeners();
                                     }
@@ -329,16 +323,19 @@ public class Client {
                             }
                         }
                         drawMap(state.getCpa());
-                        System.out.println("KLAR");
                     } else if (obj instanceof ChatLog) {
                         ChatLog chatLog = (ChatLog) obj;
                         gameView.getChatPanel().setChatPanelText(chatLog.getStringList());
-                    } else if(obj instanceof PlayerList) {
+                    }
+
+                    else if(obj instanceof PlayerList) {
                         PlayerList playerList = (PlayerList) obj;
                         ArrayList<String> tempList = playerList.getStringList();
                         tempList.remove(username);
                         lobbyView.getUserPanel().setOnlinePlayers(tempList);
-                    } else if (obj instanceof Move) {
+                    }
+
+                    else if (obj instanceof Move) {
                         Move move = (Move) obj;
                         if(move.isLegalMove()) {
                             gameView.getBoardPanel().updateMoveValid(move.getSourceRow(), move.getSourceCol());
@@ -358,7 +355,6 @@ public class Client {
                                     "Draw offered",
                                     JOptionPane.YES_NO_OPTION
                             );
-
                             if(answer == 0) {
                                 request.setAccepted();
                                 try {
@@ -371,8 +367,6 @@ public class Client {
                                 JOptionPane.showMessageDialog(null, "The game is a draw!");
                                 gameView.disposeFrame();
                             }
-
-
                         }
                     }
                 }
@@ -382,21 +376,16 @@ public class Client {
         }
     }
 
-
-    //ToDo Rita upp skicka över nätverk
     public void drawMap(ChessPieceAbstract[][] cpa){
         HashMap<String, JLabel> notationLbl = gameView.getBoardPanel().getNotationToJLMap();
         ChessPieceAbstract[][] gamemap = cpa;
         BoardPanel.SquarePanel[][] sqp = gameView.getBoardPanel().getSquares();
-
         cleanBoard();
         for(int row = 0; row < 8; row++){
             for(int col = 0; col < 8; col++){
                 if(gamemap[row][col] != null){
-
                     ChessPiece chessPiece = (ChessPiece) gamemap[row][col];
                     sqp[row][col].placePiece(notationLbl.get(chessPiece.getSpriteName()));
-
                 }
             }
         }
@@ -404,16 +393,11 @@ public class Client {
 
     public void cleanBoard(){
         BoardPanel.SquarePanel[][] squarePanel = gameView.getBoardPanel().getSquares();
-
         for(int row = 0; row < squarePanel.length; row++){
             for(int col = 0; col < squarePanel[row].length; col++){
                 squarePanel[row][col].removePiece();
             }
         }
-    }
-
-    public ObjectOutputStream getOos() {
-        return oos;
     }
 
     public static void main(String[] args) {
@@ -424,30 +408,23 @@ public class Client {
         timer2.stop();
         timer1.start();
     }
+
     public void startOpponentTime(){
         timer1.stop();
         timer2.start();
     }
 
-    public ObjectInputStream getOis() {
-        return ois;
-    }
-
     public void highlightMovementPattern(int srcY, int srcX){
-
         int YCord = srcY; //get y/x cordinate of piece
         int XCord = srcX;
-
         ChessPieceAbstract[][] gamemap = state.getCpa();
         ChessPiece cp = (ChessPiece) gamemap[YCord][XCord]; //get piece at cordinate
         int[][] moveset = cp.getMoveset(); //get moveset of piece
         BoardPanel.SquarePanel[][] squarePanel = gameView.getBoardPanel().getSquares(); //get GUI panel
-
         int YOffset = 0; //initialize offsets
         int XOffset = 0;
-
+        //get offsets from moveset
         try {
-            //get offsets from moveset
             for(int row = 0; row < moveset.length; row ++){
                 for (int col = 0; col < moveset[row].length; col++){
                     if(moveset[row][col] == 0){ //find number 0 in moveset array to get offsets
@@ -457,7 +434,6 @@ public class Client {
                     }
                 }
             }
-
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -485,15 +461,12 @@ public class Client {
                 } catch (Exception e) {
                     continue;
                 }
-
             }
         }
-        //todo optimize rotation of patterns
         //rook highlight logic
         if(cp.getChessPieceType() == ChessPieceType.ROOK || cp.getChessPieceType() == ChessPieceType.QUEEN){
             //iterate all sides
-            //first chess peice block rest of tiles from highlighting.
-
+            //first chess piece block rest of tiles from highlighting.
             //checks obstruction upside
             int yc = (YCord-1);
             int xc = (XCord+1);
@@ -539,7 +512,6 @@ public class Client {
                     break;
                 }
             }
-
             //checks obstruction left
             xc = (XCord-1);
             for(;xc >= 0; xc--){
@@ -622,7 +594,6 @@ public class Client {
                     break;
                 }
             }
-
         }
     }
 }

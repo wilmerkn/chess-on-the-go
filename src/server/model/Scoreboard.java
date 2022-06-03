@@ -2,7 +2,7 @@ package server.model;
 import java.sql.Time;
 
 public class Scoreboard {
-    private Player[] player;
+    private final Player[] player;
     private String name;
     private Time time;
     private int score;

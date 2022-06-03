@@ -5,7 +5,7 @@ import java.io.Serializable;
 //work in progress timer class to measure the time of a occuring game of chess
 public class GameTimer implements Serializable {
 
-    private GameTimerTask threadtask;
+    private final GameTimerTask threadtask;
 
     private final int time;
 

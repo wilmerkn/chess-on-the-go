@@ -46,7 +46,7 @@ public class GameTimerTask implements Runnable, Serializable {
                 //hour = formatter.format(hours);
                 minute = formatter.format(minutes); //formats time to 00 unit
                 second = formatter.format(seconds);
-                String clockTime = String.valueOf(minute + ":" + second);
+                String clockTime = minute + ":" + second;
                 currentTime = clockTime;
                 if(currentTime.equals("00:00")) {
                     stopFlag = true;
