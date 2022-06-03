@@ -9,19 +9,19 @@ import java.awt.event.ActionListener;
 
 public class GameView implements ActionListener{
     private static final Dimension CLIENT_DIMENSION = new Dimension(1000, 800);
-    private BoardPanel boardPanel;
-    private ChatPanel chatPanel;
+    private final BoardPanel boardPanel;
+    private final ChatPanel chatPanel;
 
-    private JLabel myName;
-    private JLabel myTime;
-    private JLabel opponentName;
-    private JLabel opponentTime;
+    private final JLabel myName;
+    private final JLabel myTime;
+    private final JLabel opponentName;
+    private final JLabel opponentTime;
 
-    private JButton resignBTN;
-    private JButton offerDrawBTN;
+    private final JButton resignBTN;
+    private final JButton offerDrawBTN;
 
-    private Client client;
-    private JFrame frame;
+    private final Client client;
+    private final JFrame frame;
 
     public GameView(Client client) {
         this.client = client;

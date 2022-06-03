@@ -10,7 +10,7 @@ import java.security.SecureRandom;
 
 public class GameState implements Serializable {
 
-    private String gameID = UUID.randomUUID().toString();
+    private final String gameID = UUID.randomUUID().toString();
 
     private double playerTurn;
     private boolean checkMate;
@@ -25,13 +25,13 @@ public class GameState implements Serializable {
     private int timer1Time;
     private int timer2Time;
 
-    private ChatLog messages;
+    private final ChatLog messages;
 
     private ChessPieceAbstract[][] cpa;
 
     private boolean started = false;
 
-    private int player1White;
+    private final int player1White;
     private String winner = "";
 
     public GameState(){

@@ -2,8 +2,8 @@ package server.model;
 
 public class GameMap {
     private ChessPieceAbstract[][] map;
-    private String[][] mapRep;
-    private int mapDimension;
+    private final String[][] mapRep;
+    private final int mapDimension;
 
     public GameMap(int mapDimension){
         this.mapDimension = mapDimension;

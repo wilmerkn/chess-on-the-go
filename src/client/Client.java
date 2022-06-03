@@ -17,6 +17,12 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+/**
+ * Client: Responsible for providing the user with a GUI, as well as sending information from the user, via server to other clients
+ * @version 1.0
+ * @author wilmerknutas, lucaskylberg, dannygazic, mirkosmiljanic
+ */
+
 public class Client {
     private static final String HOST = "127.0.0.1";
     private static final int PORT = 1234;
@@ -24,7 +30,7 @@ public class Client {
     private Socket socket;
     private ObjectInputStream ois;
     private ObjectOutputStream oos;
-    private LoginView loginView;
+    private final LoginView loginView;
     private LobbyView lobbyView;
     private GameView gameView;
 
@@ -70,7 +76,7 @@ public class Client {
     //sends out a move from client
     public void sendMove(Move move) {
         move.setGameID(gameID);
-        startOpponentTime(); //ToDo Fix
+        startOpponentTime();
         try {
             oos.reset();
             oos.writeObject(move);
@@ -169,6 +175,7 @@ public class Client {
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
+            gameView.disposeFrame();
         }
     }
 
@@ -206,16 +213,13 @@ public class Client {
                             lobbyView.diposeFrame();
                         }
                     } else if (obj instanceof GameState) {
+
                         state = (GameState) obj;
-                        //if a move is made by one player, others timer should start
                         gameID = state.getGameID();
-                        //get playerTurn, depending on whos turn stop and start timers
-                        //boolean myTurn;
                         if(state.getWinner().equals(username)){
                             JOptionPane.showMessageDialog(null, "You won on time!");
                             gameView.disposeFrame();
-                        }
-                        else if (state.getWinner().equals(opponent)){
+                        } else if (state.getWinner().equals(opponent)){
                             JOptionPane.showMessageDialog(null, "You lost on time! :) noob");
                             gameView.disposeFrame();
                         }
@@ -224,6 +228,8 @@ public class Client {
                             myTime = state.getTimeControl()*60;
                             opponentTime = state.getTimeControl()*60;
                             gameView.getBoardPanel().disableMouseListeners();
+
+
                             timer1 = new Timer(1000, new ActionListener() {
                                 @Override
                                 //checks if time has reached 0 to make a player win by time constraint
@@ -302,7 +308,6 @@ public class Client {
                             if(state.getPlayer1White() == 0) {
                                 if (state.getPlayerTurn() % 1 == 0) {
                                     if (username.equals(state.getPlayer1())) {
-                                        //jag är vit, starta min timer
                                         startOpponentTime();
                                         gameView.getBoardPanel().disableMouseListeners();
                                     }
@@ -324,7 +329,6 @@ public class Client {
                             }
                         }
                         drawMap(state.getCpa());
-                        System.out.println("KLAR");
                     } else if (obj instanceof ChatLog) {
                         ChatLog chatLog = (ChatLog) obj;
                         gameView.getChatPanel().setChatPanelText(chatLog.getStringList());
@@ -466,7 +470,6 @@ public class Client {
                 }
             }
         }
-        //todo optimize rotation of patterns
         //rook highlight logic
         if(cp.getChessPieceType() == ChessPieceType.ROOK || cp.getChessPieceType() == ChessPieceType.QUEEN){
             //iterate all sides

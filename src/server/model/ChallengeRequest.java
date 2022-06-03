@@ -4,9 +4,9 @@ import java.io.Serializable;
 
 
 public class ChallengeRequest implements Serializable {
-    private String senderUsername;
+    private final String senderUsername;
     private String receiverUsername;
-    private int timeControl;
+    private final int timeControl;
 
     private boolean accepted = false;
 

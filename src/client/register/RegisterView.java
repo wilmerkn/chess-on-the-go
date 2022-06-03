@@ -1,7 +1,6 @@
 package client.register;
 
 import server.controller.RegisterController;
-import server.model.Register;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -13,6 +12,11 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 
 
+/**
+ * RegisterView: Shows the user the window for registering.
+ * @version 1.0
+ * @author wilmerknutas
+ */
 public class RegisterView extends JFrame implements ActionListener {
     JFrame registerFrame;
     JPanel registerPanel = new JPanel();

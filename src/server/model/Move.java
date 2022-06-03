@@ -7,10 +7,10 @@ public class Move implements Serializable {
     private String gameID;
     private String username;
 
-    private int sourceRow;
-    private int sourceCol;
-    private int targetRow;
-    private int targetCol;
+    private final int sourceRow;
+    private final int sourceCol;
+    private final int targetRow;
+    private final int targetCol;
 
     private boolean legalMove;
 

@@ -4,7 +4,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class MoveKing implements ActionListener{
-    private JFrame frame;
+    private final JFrame frame;
 
     public MoveKing(){
         frame = new JFrame("Check!");

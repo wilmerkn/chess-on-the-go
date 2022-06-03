@@ -11,7 +11,7 @@ import java.awt.event.ActionListener;
 
 public class CheckmateWindow implements ActionListener {
 
-    private JFrame frame;
+    private final JFrame frame;
 
     public CheckmateWindow(String winner){
         frame = new JFrame("Checkmate!");

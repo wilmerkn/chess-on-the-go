@@ -17,8 +17,11 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class PromotePawnWindow {
-    private JButton queen, rook, knight, bishop;
-    private JFrame frame;
+    private final JButton queen;
+    private final JButton rook;
+    private final JButton knight;
+    private final JButton bishop;
+    private final JFrame frame;
     private ChessPiece chessPiece;
 
     public PromotePawnWindow() {
