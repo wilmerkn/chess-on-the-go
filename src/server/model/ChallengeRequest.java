@@ -1,13 +1,15 @@
 package server.model;
 
 import java.io.Serializable;
-
-
+/**
+ * ChallengeRequest: Class used to send challenges between clients via the server.
+ * @Version 1.0
+ * @Author Lucas Kylberg
+ */
 public class ChallengeRequest implements Serializable {
     private String senderUsername;
     private String receiverUsername;
     private int timeControl;
-
     private boolean accepted = false;
 
     public ChallengeRequest(String senderUsername, String receiverUsername, int timeControl) {
@@ -30,10 +32,6 @@ public class ChallengeRequest implements Serializable {
 
     public String getReceiverUsername() {
         return receiverUsername;
-    }
-
-    public void setReceiverUsername(String receiverUsername) {
-        this.receiverUsername = receiverUsername;
     }
 
     public int getTimeControl() {

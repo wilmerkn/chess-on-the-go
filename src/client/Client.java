@@ -18,7 +18,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class Client {
-    private static final String HOST = "127.0.0.1";
+    private static final String HOST = "172.20.10.2";
     private static final int PORT = 1234;
 
     private Socket socket;

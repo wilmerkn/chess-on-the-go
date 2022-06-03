@@ -6,7 +6,11 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
+/**
+ * ChatLog: GUI for playing a game of chess
+ * Version: 1.0
+ * Author: Lucas Kylberg
+ */
 public class GameView implements ActionListener{
     private static final Dimension CLIENT_DIMENSION = new Dimension(1000, 800);
     private BoardPanel boardPanel;
@@ -25,7 +29,6 @@ public class GameView implements ActionListener{
 
     public GameView(Client client) {
         this.client = client;
-
         frame = new JFrame();
         frame.setTitle("Chess On The Go");
         frame.getContentPane().setSize(CLIENT_DIMENSION);
@@ -33,8 +36,7 @@ public class GameView implements ActionListener{
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         frame.setLocationRelativeTo(null);
         frame.setResizable(true);
-        frame.setLayout(null);
-        //frame.getContentPane().setBackground(new Color(35,35,35));
+        frame.setLayout(null);;
 
         boardPanel = new BoardPanel(client);
         boardPanel.setBounds(7, 50, 650, 650);
