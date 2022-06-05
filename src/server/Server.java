@@ -464,6 +464,7 @@ public class Server implements Runnable {
         bishopobstruction = bishopObstruct(sourceRow, sourceCol, targetRow, targetCol, gamemap, cp);
         queenObstruction = queenObstruct(sourceRow, sourceCol, targetRow, targetCol, gamemap, cp);
 
+
         System.out.println("Samespot error: " + samespot);
         System.out.println("Withinmoveset error: " + withinMoveset);
         System.out.println("FriendlyObstruction error: " + friendlyObstruction);
@@ -796,13 +797,8 @@ public class Server implements Runnable {
                         xCoordinates.add(i);
                         yCoordinates.add(j);
                     }
-
                 }
             }
-        }
-
-        if(xCoordinates.size() == 0){
-            return false;
         }
 
         //see if any of the friendly chess pieces can block the check
@@ -810,8 +806,9 @@ public class Server implements Runnable {
             for (int i = 0; i < 8; i++) {
                 for (int j = 0; j < 8; j++) {
                     ChessPiece cp = (ChessPiece) board[i][j];
-                    if (cp != null && cp.getColor() == friendlyColor && cp.getChessPieceType()!=ChessPieceType.KING) {
-                        if(checkMove(getLocationX(cp, board), getLocationY(cp, board), cp,xCoordinates.get(xy), yCoordinates.get(xy), getTheKing(enemyColor, board), board )==true){
+                    if (cp != null && cp.getColor() == friendlyColor && cp.getChessPieceType() != ChessPieceType.KING) {
+                        Move move = new Move(getLocationX(cp, board), getLocationY(cp, board), xCoordinates.get(xy), yCoordinates.get(xy));
+                        if(moveValid(move, board)){
                             piecesBlockingCheck++;
                         }
                     }
@@ -820,7 +817,7 @@ public class Server implements Runnable {
         }
 
         //if there is at least one chess piece that can block check, return false
-        if(piecesBlockingCheck >= 1){
+        if(piecesBlockingCheck > 0){
             return false;
         }
         else {
@@ -862,13 +859,18 @@ public class Server implements Runnable {
                 for(int j = 0; j < 8; j++){
                     ChessPiece cp = (ChessPiece) board[i][j];
                     if(cp!=null && cp.getColor() == enemyColor) {
-                        if (noPieceCanBlockCheck(theKing, cp, friendlyColor, enemyColor, board) == true) {
+                        Move move = new Move(getLocationX(cp, board), getLocationY(cp, board), getLocationX(theKing, board), getLocationY(theKing, board));
+                        if(moveValid(move, board) && noPieceCanBlockCheck(theKing, cp, friendlyColor, enemyColor, board) == true) {
                             return true;
+                        }
+                        else{
+                            continue;
                         }
                     }
                 }
             }
         }
+
         return false;
     }
 
