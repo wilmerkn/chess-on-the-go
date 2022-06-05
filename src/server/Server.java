@@ -401,12 +401,6 @@ public class Server implements Runnable {
             for (int j = 0; j < 8; j++) {
                 ChessPiece chessPiece = (ChessPiece) gamemap[i][j];
                 if (chessPiece != null && chessPiece.getColor() == kingColor && chessPiece.getChessPieceType() == ChessPieceType.ROOK) {
-                  //  System.out.println("CHESS PIECE IS " + chessPiece);
-                 //   System.out.println("X " + getLocationX(chessPiece, gamemap));
-                 //   System.out.println("Y " +  getLocationX(chessPiece, gamemap));
-                 //   System.out.println("Difference beetwen king and cp:" + Math.abs(getLocationY(theKing, gamemap) - getLocationY(chessPiece, gamemap)));
-
-                    //was 3!
                     if (getLocationX(chessPiece, gamemap) == getLocationX(theKing, gamemap) & Math.abs(getLocationY(theKing, gamemap) - getLocationY(chessPiece, gamemap)) == 3) {
                         return chessPiece;
                     }
@@ -886,7 +880,6 @@ public class Server implements Runnable {
                 for (int j = 0; j < 8; j++) {
                     ChessPiece cp = (ChessPiece) board[i][j];
                     if (cp != null && cp.getColor().equals(enemyColor)) {
-                        System.out.println(cp + " " + getLocationX(cp , board) + ", " + getLocationY(cp, board));
                         //see if a chess piece could attack the king
                         if (checkMove(getLocationX(cp, board), getLocationY(cp, board), cp, xKing.get(xy), yKing.get(xy), theKing, board) == true) {
                             list.add(xKing.get(xy)+", "+yKing.get(xy));
